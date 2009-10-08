@@ -66,8 +66,8 @@ public abstract class PolygonRender extends PolygonBody implements Renderizable 
 	 * Renderize Polygon into gl
 	 */
 	public boolean onRender(GL10 gl) {
-		long time = (mTrianglesCount - 2) * android.os.SystemClock.uptimeMillis() % (5000L);
-		gl.glRotatef(0.072f * ((int) time), 0f, 0f, 1.0f);
+		//long time = (mTrianglesCount - 2) * android.os.SystemClock.uptimeMillis() % (5000L);
+		//gl.glRotatef(0.072f * ((int) time), 0f, 0f, 1.0f);
 		gl.glColor4f(mColor[0], mColor[1], mColor[2], mColor[3]);
     	gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);
     	gl.glDrawElements(GL10.GL_TRIANGLES, 3 * mTrianglesCount, GL10.GL_UNSIGNED_SHORT, mIndexBuffer);

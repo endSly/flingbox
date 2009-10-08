@@ -11,7 +11,7 @@ public abstract class PolygonBody extends AtomicBody implements Renderizable {
 	protected final short mTrianglesCount;
 	
 	public PolygonBody(float[] points) {
-		mPoints = PolygonUtils.douglasPeuckerReducer(points, 5.0f);
+		mPoints = PolygonUtils.douglasPeuckerReducer(points, 4.0f);
 		mTriangulationIndexes = PolygonUtils.triangulatePolygon(mPoints);
 
 		mPointsCount = (short) (mPoints.length / 2);

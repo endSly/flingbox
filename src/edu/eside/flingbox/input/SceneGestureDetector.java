@@ -21,6 +21,13 @@ public class SceneGestureDetector extends GestureDetector {
 		public boolean onZoom(float x, float y, float scale);
 		
 		/**
+		 * Called when user stops scrolling
+		 * @param ev
+		 * @return
+		 */
+		public boolean onUp(MotionEvent ev);
+		
+		/**
 		 * Called when user scrolls with 2-fingers
 		 * @param ev 
 		 * @param mLastDownEvent 
@@ -81,6 +88,7 @@ public class SceneGestureDetector extends GestureDetector {
         case MotionEvent.ACTION_UP:
         case MotionEvent.ACTION_CANCEL:
         case MotionEvent.ACTION_OUTSIDE:
+        	mListener.onUp(ev);
         	mLastSize = 0.0f;
         	break;
         

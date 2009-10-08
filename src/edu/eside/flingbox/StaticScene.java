@@ -9,7 +9,6 @@ import edu.eside.flingbox.graphics.Renderizable;
 import edu.eside.flingbox.graphics.SceneRenderer;
 import edu.eside.flingbox.input.SceneGestureDetector;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
-import edu.eside.flingbox.objects.Polygon;
 
 public abstract class StaticScene implements OnInputListener {
 	protected SceneRenderer mSceneRenderer;
@@ -22,34 +21,10 @@ public abstract class StaticScene implements OnInputListener {
 		mOnSceneBodys = new ArrayList<Renderizable>();
 		
 		mSceneRenderer = new SceneRenderer(mOnSceneBodys, 
-				new SceneRenderer.Camera(-160, -240, 320, 480));
+				new SceneRenderer.Camera(0, 0, 320, 480));
 		
 		mGestureDetector = new SceneGestureDetector(c, this);
 		
-		/**  ***** TESTS */
-		float[] points1  = {
-				-64f, -64f,
-				-8f, -64f,
-				-8f, -32f,
-				0, -32f,
-				8f, -32f,
-				8f, -64f,
-				64f, -64f,
-				64f, 64f, 
-				0f, 96f,
-				-64f, 64f
-		};
-		float[] points2  = {
-				-80f, 0f,
-				-160f, 0f,
-				-120f, 80f
-		};
-		
-		Polygon p1 = new Polygon(points1);
-		Polygon p2 = new Polygon(points2);
-		mOnSceneBodys.add((Renderizable)p1);
-		mOnSceneBodys.add((Renderizable)p2);
-
 	}
 	
 	public Renderer getSceneRenderer() {
