@@ -88,10 +88,10 @@ public class PolygonUtils {
 	private static void triangulatePolygon(final float[] points, short[] indexes, 
 			boolean[] included, final int pointsCount, int trianglesCount) {
 		int topPointIndex = 0;
-		float topPoint = points[0];
+		float topPoint = 0.0f;
 		
 		// Find top point to find triangle
-		for (int i = 1; i < pointsCount; i++) 
+		for (int i = 0; i < pointsCount; i++) 
 			if (!included[i] && (points[i * 2] > topPoint)) {
 				topPoint = points[i * 2];
 				topPointIndex = i;
