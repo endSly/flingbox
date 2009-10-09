@@ -10,7 +10,6 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
 import android.graphics.PointF;
-import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import edu.eside.flingbox.graphics.Renderizable;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
@@ -71,18 +70,19 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 		
 	}
 	
-	private final DisplayMetrics mDisplayMetrics;
-	
 	private DrawingRender mDrawingRender;
 	
 	private ArrayList<PointF> mDrawingPattern;
 	private boolean mIsDrawing;
 	private boolean mIsDrawingLocked;
 	
+	// TODO Support for all screen sizes
+	final private float mDisplayWidth = 320f;
+	final private float mDisplayHeight = 480f;
+	
 	public DrawableScene(Context c) {
 		super(c);
-		mDisplayMetrics = new DisplayMetrics();
-		
+
 		mIsDrawing = false;
 		mIsDrawingLocked = false;
 	}
@@ -131,26 +131,20 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 		if (mIsDrawingLocked)
 			return false;
 		
+		// Gets screen projection into the OpenGL space
+		final float x = mCamera.left + (ev.getX() * mCamera.getWidth() / mDisplayWidth);
+		final float y = mCamera.top - (ev.getY() * mCamera.getHeight() / mDisplayHeight);
+
 		if (!mIsDrawing) {
-			// TODO fix this bad and complex solution!!!!
-			/*
-			final float x = (downEv.getX() / mDisplayMetrics.widthPixels) 
-				* mCamera.width + (mCamera.x - (mCamera.width / 2));
-			final float y = (downEv.getY() / mDisplayMetrics.heightPixels) 
-				* mCamera.width * 1.5f + (mCamera.x - (mCamera.width * 1.5f / 2));
-			*/
-			final float x = downEv.getX();
-			final float y = downEv.getY();
-			
 			mDrawingPattern = new ArrayList<PointF>();
-			mDrawingPattern.add(new PointF(x, y));
+			//mDrawingPattern.add(new PointF(x, y));
 			mIsDrawing = true;
 			
 			mDrawingRender = new DrawingRender(mDrawingPattern);
 			mOnSceneBodys.add(mDrawingRender);
 		}
 		
-		mDrawingPattern.add(new PointF(ev.getX(), ev.getY()));
+		mDrawingPattern.add(new PointF(x, y));
 		return true;
 	}
 
