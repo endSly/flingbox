@@ -63,7 +63,7 @@ public abstract class PolygonRender extends PolygonBody implements Renderizable 
 	}
 	
 	/**
-	 * Renderize Polygon into gl
+	 * Renderizes Polygon into gl
 	 */
 	public boolean onRender(GL10 gl) {
 		//final long time = (mTrianglesCount - 8) * android.os.SystemClock.uptimeMillis() % (5000L);

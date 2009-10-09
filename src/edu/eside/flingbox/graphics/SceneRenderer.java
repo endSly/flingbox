@@ -9,56 +9,63 @@ import android.opengl.GLSurfaceView.Renderer;
 
 public class SceneRenderer implements Renderer {
 	
-	/**
-	 * 
-	 * @author endika
-	 */
-	public static class Camera {
-		float mX, mY, mWidth, mHeight;
-		
-		public Camera(float x, float y, float width, float height) {
-			mX = x;
-			mY = y;
-			mWidth = width;
-			mHeight = height;
-		}
-		
-		
-	}
-	
 	private ArrayList<Renderizable> mGraphicsToRender;
-	private Camera mCamera;
+	
+	private int mSurfaceWidth = 100, mSurfaceHeight = 100;
+	
+	private float mCameraX, mCameraY;
+	private float mCameraWidth, mCameraHeight;
+	private boolean mIsCameraChanged = false;
 	
 	/**
 	 * Default Constructor
 	 * @param graphicsToRender	Delegate with ArrayList of Renderizable
 	 */
-	public SceneRenderer(ArrayList<Renderizable> graphicsToRender, Camera camera) {
+	public SceneRenderer(ArrayList<Renderizable> graphicsToRender) {
 		mGraphicsToRender = graphicsToRender;
-		mCamera = camera;
 	}
 	
-	/**
-	 * Sets camera's focus
-	 */
-	public void setCamera(Camera camera) {
-		mCamera = camera;
+	public void setCamera(float x, float y, float width, float height) {
+		mCameraX = x;
+		mCameraY = y;
+		mCameraWidth = width;
+		mCameraHeight = height; 
+		
+		mIsCameraChanged = true;
 	}
-
+	
+	public void setCamera(float x, float y, float width) {
+		mCameraX = x;
+		mCameraY = y;
+		mCameraWidth = width;
+		mCameraHeight = -1.0f; 
+		
+		mIsCameraChanged = true;
+	}
+	
 	/**
 	 * Called to draw the current frame.
 	 */
 	@Override
 	public void onDrawFrame(GL10 gl) {
-		if (mCamera != null) {
+		if (mIsCameraChanged) {
+			// Keep aspect radio
+			final float height = mCameraHeight < 0.0f 
+				? mCameraWidth * mSurfaceHeight / mSurfaceWidth 
+				: mCameraHeight;
+			
+			final float left = mCameraX - (mCameraWidth / 2);
+			final float rigth = mCameraX + (mCameraWidth / 2);
+			final float top = mCameraY + (height / 2);
+			final float bottom = mCameraY - (height / 2);
+			
 			// Set camera. 
 			gl.glMatrixMode(GL10.GL_PROJECTION);
 			gl.glLoadIdentity();
-			gl.glOrthof(mCamera.mX, mCamera.mX + mCamera.mWidth, 
-					mCamera.mY + mCamera.mHeight, mCamera.mY, 0, 1);
+			gl.glOrthof(left, rigth, bottom, top, 0, 1);
 			gl.glShadeModel(GL10.GL_FLAT);
 			// gl.glFrustrumf(...); // We are working with orthogonal projection
-			mCamera = null;
+			mIsCameraChanged = false;
 		}
 		
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
@@ -85,15 +92,18 @@ public class SceneRenderer implements Renderer {
 	 */
 	@Override
 	public void onSurfaceChanged(GL10 gl, int width, int height) { 
+		mSurfaceWidth = width;
+		mSurfaceHeight = height;
+		
 		gl.glViewport(0, 0, width, height);
 		gl.glMatrixMode(GL10.GL_PROJECTION);
 		gl.glLoadIdentity();
-		gl.glOrthof(mCamera.mX, mCamera.mX + mCamera.mWidth, 
-				mCamera.mY + mCamera.mHeight, mCamera.mY, 0, 1);
+		//gl.glOrthof(mCameraLeft, mCameraRigth, mCameraBottom, mCameraTop, 0, 1);
 		gl.glShadeModel(GL10.GL_FLAT);
 
-
-		gl.glColor4x(0x10000, 0x10000, 0x10000, 0x10000);
+		gl.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		
+		mIsCameraChanged = true;
 	}
 
 	/**

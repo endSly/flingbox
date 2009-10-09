@@ -10,6 +10,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
 import android.graphics.PointF;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import edu.eside.flingbox.graphics.Renderizable;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
@@ -70,6 +71,8 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 		
 	}
 	
+	private final DisplayMetrics mDisplayMetrics;
+	
 	private DrawingRender mDrawingRender;
 	
 	private ArrayList<PointF> mDrawingPattern;
@@ -78,6 +81,8 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 	
 	public DrawableScene(Context c) {
 		super(c);
+		mDisplayMetrics = new DisplayMetrics();
+		
 		mIsDrawing = false;
 		mIsDrawingLocked = false;
 	}
@@ -127,8 +132,18 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 			return false;
 		
 		if (!mIsDrawing) {
+			// TODO fix this bad and complex solution!!!!
+			/*
+			final float x = (downEv.getX() / mDisplayMetrics.widthPixels) 
+				* mCamera.width + (mCamera.x - (mCamera.width / 2));
+			final float y = (downEv.getY() / mDisplayMetrics.heightPixels) 
+				* mCamera.width * 1.5f + (mCamera.x - (mCamera.width * 1.5f / 2));
+			*/
+			final float x = downEv.getX();
+			final float y = downEv.getY();
+			
 			mDrawingPattern = new ArrayList<PointF>();
-			mDrawingPattern.add(new PointF(downEv.getX(), downEv.getY()));
+			mDrawingPattern.add(new PointF(x, y));
 			mIsDrawing = true;
 			
 			mDrawingRender = new DrawingRender(mDrawingPattern);

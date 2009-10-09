@@ -11,6 +11,13 @@ import edu.eside.flingbox.input.SceneGestureDetector;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 
 public abstract class StaticScene implements OnInputListener {
+	
+	protected class Camera {
+		float x, y, width;
+	}
+	
+	protected Camera mCamera;
+	
 	protected SceneRenderer mSceneRenderer;
 	protected SceneGestureDetector mGestureDetector;
 	
@@ -20,10 +27,14 @@ public abstract class StaticScene implements OnInputListener {
 		
 		mOnSceneBodys = new ArrayList<Renderizable>();
 		
-		mSceneRenderer = new SceneRenderer(mOnSceneBodys, 
-				new SceneRenderer.Camera(0, 0, 320, 480));
+		mSceneRenderer = new SceneRenderer(mOnSceneBodys);
 		
 		mGestureDetector = new SceneGestureDetector(c, this);
+		
+		// TODO Fix this. this works because System.gc() generates some delay
+		System.gc();
+		
+		mSceneRenderer.setCamera(160, 240, 320);
 		
 	}
 	
@@ -38,15 +49,13 @@ public abstract class StaticScene implements OnInputListener {
 	@Override
 	public boolean onMultitouchScroll(MotionEvent downEvent, MotionEvent ev,
 			float dX, float dY) {
-		mSceneRenderer.setCamera(new SceneRenderer
-				.Camera(-ev.getX(), -ev.getY(), 320, 480));
+		mSceneRenderer.setCamera(ev.getX(), ev.getY(), 320);
 		return true;
 	}
 
 	@Override
 	public boolean onZoom(float x, float y, float scale) {
-		mSceneRenderer.setCamera(new SceneRenderer
-				.Camera(-x, -y, 320 / scale, 480 / scale));
+		mSceneRenderer.setCamera(x, y, 320);
 		return true;
 	}
 
