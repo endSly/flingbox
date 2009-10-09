@@ -44,6 +44,7 @@ public abstract class StaticScene implements OnInputListener {
 	@Override
 	public boolean onMultitouchScroll(MotionEvent downEvent, MotionEvent ev,
 			float dX, float dY) {
+		// TODO dX and dY should be fit into the openGL space
 		mCamera.setPosition(mCamera.getX() + dX, mCamera.getY() + dY, 
 				mCamera.getWidth());
 		return true;
