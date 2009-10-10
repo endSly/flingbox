@@ -40,7 +40,15 @@ public class SceneGestureDetector extends GestureDetector {
 	}
 	
 	/** Handler of processed gesture events */
-	private OnInputListener mListener = null;
+	private OnInputListener mListener;
+	
+	/** Last Size of MotionEvent, used for  */
+	private float mLastSize = 0.0f;
+	private float mLastX = 0f;
+	private float mLastY = 0f;
+	private MotionEvent mLastDownEvent;
+	 // Flag to skip one-touch events after Multitouch event.
+	private boolean mIsMultitouchEvent = false;
 	
 	/**
 	 * 
@@ -54,15 +62,9 @@ public class SceneGestureDetector extends GestureDetector {
 			mListener = (OnInputListener) listener;
 		
 	}
-	
-	/** Last Size of MotionEvent, used for  */
-	private float mLastSize;
-	private float mLastX;
-	private float mLastY;
-	private MotionEvent mLastDownEvent;
 
 	/**
-	 * 
+	 * TODO Improve this function!!!
 	 */
 	public boolean onTouchEvent(MotionEvent ev) {
 		final int action = ev.getAction();
@@ -72,16 +74,15 @@ public class SceneGestureDetector extends GestureDetector {
 
         boolean handled = false;
         
-        if (size > 0.0f && mLastSize > 0.0f)
-        	handled |= mListener.onZoom(x, y, size / mLastSize);
+        if (size > 0.0f)	// Set multitouch flag
+        	mIsMultitouchEvent = true;
+        
+        if (size > 0.0f && mLastSize > 0.0f) {
+        	final float scale = mLastSize / size;
+        	if (scale > 0.625f && scale < 1.6f)	// Skip big scales. Should be an error
+        		handled |= mListener.onZoom(x, y, scale);
+        }
 
-
-    	if (size > 0.0f && mLastSize > 0.0f) {
-    		handled |= mListener.onMultitouchScroll(mLastDownEvent, ev, x - mLastX, y - mLastY);
-    		mLastX = x;
-    		mLastY = y;
-    	}
-    	
         switch (action) {
         case MotionEvent.ACTION_DOWN : 
         	mLastDownEvent = ev;
@@ -89,17 +90,19 @@ public class SceneGestureDetector extends GestureDetector {
         case MotionEvent.ACTION_UP:
         case MotionEvent.ACTION_CANCEL:
         case MotionEvent.ACTION_OUTSIDE:
-        	mListener.onUp(ev);
+        	handled |= mListener.onUp(ev);
         	mLastSize = 0.0f;
+        	mIsMultitouchEvent = false;
         	break;
         
         case MotionEvent.ACTION_MOVE :
-        	// We are locking for multi-touch Scroll Events
+        	// We are locking for multitouch Scroll Events
         	if (size > 0.0f && mLastSize > 0.0f) {
         		handled |= mListener.onMultitouchScroll(mLastDownEvent, ev, x - mLastX, y - mLastY);
         		mLastX = x;
         		mLastY = y;
-        	}
+        	} else if (mIsMultitouchEvent)
+        		handled = true; // Skip single touch after a multitouch event
         	break;
         }
         

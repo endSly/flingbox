@@ -14,7 +14,7 @@ public class PolygonUtils {
 	 */
 	public static float[] douglasPeuckerReducer(float[] points, float epsilon) {
 		final int pointsCount = points.length / 2;
-		if (pointsCount < 4 || epsilon < 0.01)
+		if (pointsCount < 4 || epsilon <= 0.0f)
 			return points;	// No reduction possible
 		
 		// I think that FloatBuffer will be faster than ArrayList<Float>
@@ -69,9 +69,12 @@ public class PolygonUtils {
 	 * algorithm. 
 	 * @param points	Array of polygon's points
 	 * @return			Will return n-2 group of 3 points, for n sides polygon
+	 * 					or null if not enough points
 	 */
 	public static short[] triangulatePolygon(float[] points) {
 		final int pointsCount = points.length / 2;
+		if (pointsCount < 3)
+			return null;
 		
 		// n-2 group of 3 points, for n sides polygon 
 		short[] triangules = new short[3 * (pointsCount - 2)];
@@ -88,14 +91,24 @@ public class PolygonUtils {
 	private static void triangulatePolygon(final float[] points, short[] indexes, 
 			boolean[] included, final int pointsCount, int trianglesCount) {
 		int topPointIndex = 0;
-		float topPoint = 0.0f;
+		float topPoint = -0.0f;
+		boolean didFoundPoint = false;
 		
 		// Find top point to find triangle
-		for (int i = 0; i < pointsCount; i++) 
+		for (int i = 0; i < pointsCount; i++) {
+			// initialize topPoint
+			if (!didFoundPoint && !included[i]) {
+				topPoint = points[i * 2];
+				topPointIndex = i;
+				didFoundPoint = true;
+			}
+			// Find top point
 			if (!included[i] && (points[i * 2] > topPoint)) {
 				topPoint = points[i * 2];
 				topPointIndex = i;
 			}
+		}
+		assert (didFoundPoint);
 		
 		// Exclude point for next iteration
 		included[topPointIndex] = true;

@@ -7,7 +7,7 @@ import edu.eside.flingbox.graphics.Renderizable;
 
 public class Polygon extends PolygonRender implements Renderizable {
 
-	public Polygon(float[] points) {
+	public Polygon(float[] points) throws IllegalArgumentException {
 		super(points);
 	}
 	

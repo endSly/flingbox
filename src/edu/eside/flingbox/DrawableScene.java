@@ -25,8 +25,8 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 			mDrawingPattern = drawingPattern;
 		}
 		
-		@Override
 		public boolean onRender(GL10 gl) {
+
 			final int pointsCount = mDrawingPattern.size();
 			if (pointsCount < 2)
 				return false;
@@ -64,7 +64,6 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 	    	gl.glDrawElements(GL10.GL_LINES, 2 * (pointsCount - 1), 
 	    			GL10.GL_UNSIGNED_SHORT, indexBuffer);
 	    			
-
 	    	return true;
 		}
 		
@@ -93,35 +92,40 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 		
 	}
 	
-	public boolean onUp(MotionEvent ev) {
-		if (mIsDrawing) {
-			// Drawing ends
-			mIsDrawing = false;
-			mIsDrawingLocked = false;
+	public synchronized boolean onUp(MotionEvent ev) {
+		if (!mIsDrawing) 
+			return false;
+		
+		// Drawing ends
+		mIsDrawing = false;
+		mIsDrawingLocked = false;
+		
+		// Remove drawing line
+		mOnSceneBodys.remove(mDrawingRender);
+		mDrawingRender = null;
 			
-			final int pointsCount = mDrawingPattern.size();
-			// if we had points enough
-			if (pointsCount >= 3) {
-				float[] points = new float[pointsCount * 2];
-				for (int i = 0; i < pointsCount; i++) {
-					points[2 * i] = mDrawingPattern.get(i).x;
-					points[2 * i + 1] = mDrawingPattern.get(i).y;
-				}
+		final int pointsCount = mDrawingPattern.size();
+		// if we had points enough
+		if (pointsCount >= 3) {
+			float[] points = new float[pointsCount * 2];
+			for (int i = 0; i < pointsCount; i++) {
+				points[2 * i] = mDrawingPattern.get(i).x;
+				points[2 * i + 1] = mDrawingPattern.get(i).y;
+			}
+			try {
 				Polygon drawedPolygon = new Polygon(points);
 				drawedPolygon.setRandomColor();
 				mOnSceneBodys.add(drawedPolygon);
+			} catch (IllegalArgumentException ex) {
+				// Nothing
 			}
-			mDrawingPattern = null;
-			
-			mOnSceneBodys.remove(mDrawingRender);
-			mDrawingRender = null;
-			
-			// Good moment to call garbage collector
-			System.gc();
-			return true;
 		}
-		
-		return false;
+		mDrawingPattern = null;
+
+		// Good moment to call garbage collector
+		System.gc();
+		return true;
+
 	}
 
 	@Override
