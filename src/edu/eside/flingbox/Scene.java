@@ -18,9 +18,10 @@ public class Scene extends DrawableScene implements OnInputListener {
 		return false;
 	}
 
+	@Override
 	public boolean onDown(MotionEvent e) {
 		// TODO Auto-generated method stub
-		return false;
+		return super.onDown(e);
 	}
 	
 }

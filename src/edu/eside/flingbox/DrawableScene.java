@@ -10,59 +10,84 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
 import android.graphics.PointF;
+import android.opengl.GLException;
 import android.view.MotionEvent;
 import edu.eside.flingbox.graphics.Renderizable;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 import edu.eside.flingbox.objects.Polygon;
 
+/**
+ * Implements drawing methods to {@link StaticScene}
+ */
 public abstract class DrawableScene extends StaticScene implements OnInputListener {
 	
+	/**
+	 * {@link Renderizable} Object witch handles drawing pattern
+	 * and show it to OpenGL's space.
+	 */
 	private class DrawingRender implements Renderizable {
 
 		private final ArrayList<PointF> mDrawingPattern;
 		
+		/**
+		 * Default constructor.
+		 * @param drawingPattern	Actual drawing patter.
+		 */
 		public DrawingRender(ArrayList<PointF> drawingPattern) {
 			mDrawingPattern = drawingPattern;
 		}
 		
+		/**
+		 * Renderizes patter to {@link GL10}.
+		 */
 		public boolean onRender(GL10 gl) {
-
+			assert (mDrawingPattern != null);
+			
+			// We need two or more points to render
 			final int pointsCount = mDrawingPattern.size();
 			if (pointsCount < 2)
 				return false;
-
-			FloatBuffer vertexBuffer = ByteBuffer
-				.allocateDirect(4 * 3 * pointsCount)
-				.order(ByteOrder.nativeOrder())
-				.asFloatBuffer();
-
-			ShortBuffer indexBuffer = ByteBuffer
-				.allocateDirect(2 *  2 * (pointsCount - 1))
-				.order(ByteOrder.nativeOrder())
-				.asShortBuffer();
 			
-			vertexBuffer.position(0);
-			indexBuffer.position(0);
+			try {
+				// Fit points to OpenGL 
+				FloatBuffer vertexBuffer = ByteBuffer
+					.allocateDirect(4 * 3 * pointsCount)
+					.order(ByteOrder.nativeOrder())
+					.asFloatBuffer();
+
+				ShortBuffer indexBuffer = ByteBuffer
+					.allocateDirect(2 *  2 * (pointsCount - 1))
+					.order(ByteOrder.nativeOrder())
+					.asShortBuffer();
 			
-			for (short i = 0; i < (pointsCount - 1); ) {
-				vertexBuffer.put(mDrawingPattern.get(i).x);
-				vertexBuffer.put(mDrawingPattern.get(i).y);
-				vertexBuffer.put(0.0f);
+				// Fit 2D points into 3D space
+				for (short i = 0; i < (pointsCount - 1); ) {
+					vertexBuffer.put(mDrawingPattern.get(i).x);
+					vertexBuffer.put(mDrawingPattern.get(i).y);
+					vertexBuffer.put(0.0f);
 				
-				indexBuffer.put(i++);
-				indexBuffer.put(i);
-			}
-			vertexBuffer.put(mDrawingPattern.get(pointsCount - 1).x);
-			vertexBuffer.put(mDrawingPattern.get(pointsCount - 1).y);
-			vertexBuffer.put(0.0f);
+					indexBuffer.put(i++);	// Set indexes
+					indexBuffer.put(i);
+				}
+				vertexBuffer.put(mDrawingPattern.get(pointsCount - 1).x);	// Put also 
+				vertexBuffer.put(mDrawingPattern.get(pointsCount - 1).y);	// last point.
+				vertexBuffer.put(0.0f);
 
-			vertexBuffer.position(0);
-			indexBuffer.position(0);
+				vertexBuffer.position(0);
+				indexBuffer.position(0);
 			
-			gl.glColor4f(0.0f, 0.0f, 0.8f, 1.0f);
-	    	gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
-	    	gl.glDrawElements(GL10.GL_LINES, 2 * (pointsCount - 1), 
-	    			GL10.GL_UNSIGNED_SHORT, indexBuffer);
+				// Draw it to OpenGL's space
+				try {
+					gl.glColor4f(0.0f, 0.0f, 0.8f, 1.0f);
+					gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
+					gl.glDrawElements(GL10.GL_LINES, 2 * (pointsCount - 1), 
+							GL10.GL_UNSIGNED_SHORT, indexBuffer);
+				} catch (GLException ex) {
+					// Do nothing
+				}
+			} catch (Exception ex) {
+				// Do nothing. Just skip drawing
+			}
 	    			
 	    	return true;
 		}
@@ -70,29 +95,29 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 	}
 	
 	private DrawingRender mDrawingRender;
-	
 	private ArrayList<PointF> mDrawingPattern;
-	private boolean mIsDrawing;
-	private boolean mIsDrawingLocked;
+	
+	private boolean mIsDrawing = false;
+	private boolean mIsDrawingLocked = false;	// Drawing can be locked
 	
 	// TODO Support for all screen sizes
 	final private float mDisplayWidth = 320f;
 	final private float mDisplayHeight = 480f;
 	
+	/**
+	 * Default Constructor for drawing scene
+	 * @param c	Application {@link Context}
+	 */
 	public DrawableScene(Context c) {
 		super(c);
-
-		mIsDrawing = false;
-		mIsDrawingLocked = false;
 	}
 
-	@Override
 	public void onLongPress(MotionEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 	
-	public synchronized boolean onUp(MotionEvent ev) {
+	public boolean onUp(MotionEvent ev) {
 		if (!mIsDrawing) 
 			return false;
 		
@@ -125,7 +150,12 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 		// Good moment to call garbage collector
 		System.gc();
 		return true;
-
+	}
+	
+	@Override
+	public boolean onDown(MotionEvent e) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	@Override
@@ -140,11 +170,17 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 		final float y = mCamera.top - (ev.getY() * mCamera.getHeight() / mDisplayHeight);
 
 		if (!mIsDrawing) {
-			mDrawingPattern = new ArrayList<PointF>();
-			//mDrawingPattern.add(new PointF(x, y));
+			// Start drawing
 			mIsDrawing = true;
 			
+			mDrawingPattern = new ArrayList<PointF>();
 			mDrawingRender = new DrawingRender(mDrawingPattern);
+			
+			final float onDownX = mCamera.left + (downEv.getX() * mCamera.getWidth() / mDisplayWidth);
+			final float onDownY = mCamera.top - (downEv.getY() * mCamera.getHeight() / mDisplayHeight);
+
+			mDrawingPattern.add(new PointF(onDownX, onDownY));
+
 			mOnSceneBodys.add(mDrawingRender);
 		}
 		

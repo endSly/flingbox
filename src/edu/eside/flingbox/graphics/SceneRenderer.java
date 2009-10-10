@@ -7,6 +7,11 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.opengl.GLSurfaceView.Renderer;
 
+/**
+ * 
+ * @author endika
+ *
+ */
 public class SceneRenderer implements Renderer {
 	
 	public class Camera {
@@ -15,7 +20,7 @@ public class SceneRenderer implements Renderer {
 		boolean isChanged;	// Flag
 		
 		// This will store camera position;
-		private float mX = 0f, mY = 0f, mWidth = 100f, mHeight = 100f;
+		private float mX = 0f, mY = 0f, mWidth = 1000f, mHeight = 1000f;
 		private int mSurfaceWidth = 100, mSurfaceHeight = 100;
 		
 		public Camera() {
@@ -87,34 +92,45 @@ public class SceneRenderer implements Renderer {
 	 * Called to draw the current frame.
 	 */
 	@Override
-	public void onDrawFrame(GL10 gl) {
-		if (mCamera.isChanged) {
-			// Set camera. 
-			gl.glMatrixMode(GL10.GL_PROJECTION);
+	public synchronized void onDrawFrame(GL10 gl) {
+		try{
+			/*  Due multi-threaded design of GL10 it is very possible
+			 *	to throw an {@link ConcurrentModificationException}.
+			 */
+			if (mCamera.isChanged) {
+				// Set camera. 
+				gl.glMatrixMode(GL10.GL_PROJECTION);
+				gl.glLoadIdentity();
+				gl.glOrthof(mCamera.left, mCamera.rigth, mCamera.bottom, mCamera.top, 0, 1);
+				gl.glShadeModel(GL10.GL_FLAT);
+				// gl.glFrustrumf(...); // We are working with orthogonal projection
+				mCamera.isChanged = false;
+			}
+		
+			gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+			gl.glMatrixMode(GL10.GL_MODELVIEW);
+			gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 			gl.glLoadIdentity();
-			gl.glOrthof(mCamera.left, mCamera.rigth, mCamera.bottom, mCamera.top, 0, 1);
-			gl.glShadeModel(GL10.GL_FLAT);
-			// gl.glFrustrumf(...); // We are working with orthogonal projection
-			mCamera.isChanged = false;
+
+			// Set background color
+			gl.glClearColor(0.7f, 0.7f, 1.0f, 1.0f);
+
+			// Render All objects
+			for (Renderizable r : mGraphicsToRender) {
+				gl.glPushMatrix();
+				gl.glLoadIdentity();
+				r.onRender(gl);
+				gl.glPopMatrix();
+			}
+
+			gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+		
+		} catch (Exception ex) {
+			/* Do Nothing.
+			 * Just skip drawing until next frame.
+			 */
 		}
 		
-		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-		gl.glMatrixMode(GL10.GL_MODELVIEW);
-		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-		gl.glLoadIdentity();
-
-		// Set background color
-		gl.glClearColor(0.7f, 0.7f, 1.0f, 1.0f);
-		
-		// Render All objects
-		for (Renderizable r : mGraphicsToRender) {
-			gl.glPushMatrix();
-			gl.glLoadIdentity();
-			r.onRender(gl);
-			gl.glPopMatrix();
-		}
-		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
-
 	}
 
 	/**
