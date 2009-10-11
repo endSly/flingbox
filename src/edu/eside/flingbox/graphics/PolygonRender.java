@@ -26,7 +26,7 @@ import java.nio.ShortBuffer;
 import javax.microedition.khronos.opengles.GL10;
 
 import edu.eside.flingbox.graphics.SceneRenderer.Renderizable;
-import edu.eside.flingbox.objects.PolygonBody;
+import edu.eside.flingbox.physics.PolygonPhysics;
 
 /**
  * {@link PolygonRender} handles functions to render {@link Polygon}
@@ -34,7 +34,7 @@ import edu.eside.flingbox.objects.PolygonBody;
  * Translation and rotation values should be set in {@link AtomicBody}
  * and calculated by physic engine.
  */
-public abstract class PolygonRender extends PolygonBody implements Renderizable {
+public abstract class PolygonRender extends PolygonPhysics implements Renderizable {
 	// Buffers needed to allocate graphical polygon
 	private FloatBuffer mVertexBuffer;
 	private ShortBuffer mIndexBuffer;

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.opengl.GLSurfaceView.Renderer;
 import android.view.MotionEvent;
+
 import edu.eside.flingbox.graphics.SceneRenderer.Renderizable;
 import edu.eside.flingbox.graphics.SceneRenderer;
 import edu.eside.flingbox.graphics.SceneRenderer.Camera;
@@ -31,14 +32,22 @@ import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 
 public abstract class StaticScene implements OnInputListener {
 	
+	// Constant limits for the Scene borders
 	final static float SCENE_LEFT_BORDER = -1024f;
 	final static float SCENE_RIGTH_BORDER = 1024f;
 	final static float SCENE_BOTTOM_BORDER = -1024f;
 	final static float SCENE_TOP_BORDER = 1024f;
 	
+	// Constants to Zoom
+	final static float SCENE_MAX_WIDTH = SCENE_RIGTH_BORDER - SCENE_LEFT_BORDER;
+	final static float SCENE_MIN_WIDTH = 128f;
+	
 	// TODO Support for all screen sizes
-	final protected float mDisplayWidth = 320f;
-	final protected float mDisplayHeight = 480f;
+	protected final float mDisplayWidth = 320f;
+	protected final float mDisplayHeight = 480f;
+	
+	// Vibrator instance
+	//protected Vibrator mVibrator;
 	
 	protected Camera mCamera;
 	
@@ -48,9 +57,10 @@ public abstract class StaticScene implements OnInputListener {
 	protected ArrayList<Renderizable> mOnSceneBodys;
 	
 	public StaticScene(Context c) {
+		//mVibrator = (Vibrator)c.getSystemService(Context.VIBRATOR_SERVICE);
+		
 		// Create list of objects.
 		mOnSceneBodys = new ArrayList<Renderizable>();
-		
 		mSceneRenderer = new SceneRenderer(mOnSceneBodys);
 		
 		mGestureDetector = new SceneGestureDetector(c, this);
@@ -73,27 +83,85 @@ public abstract class StaticScene implements OnInputListener {
 			float dX, float dY) {
 		// Fit dX and dY into the openGL space
 		final float width = mCamera.getWidth();
-		final float newX = mCamera.getX() - (dX * width / mDisplayWidth);
-		final float newY = mCamera.getY() + (dY * width / mDisplayWidth); 	// Maintain aspect radio
+		float newX = mCamera.getX() - (dX * width / mDisplayWidth);
+		float newY = mCamera.getY() + (dY * width / mDisplayWidth); 	// Maintain aspect radio
 		
+		// Set positions
 		mCamera.setPosition(newX, newY, width);
+		
+		boolean doSceneFit = false; 
+		// Now check borders. Correct if goes out of range
+		if (mCamera.left < SCENE_LEFT_BORDER) {
+			newX += SCENE_LEFT_BORDER - mCamera.left;
+			doSceneFit = true;
+		} else if (mCamera.rigth > SCENE_RIGTH_BORDER) {
+			newX -= mCamera.rigth - SCENE_RIGTH_BORDER;
+			doSceneFit = true;
+		}
+		if (mCamera.bottom < SCENE_BOTTOM_BORDER) {
+			newY += SCENE_BOTTOM_BORDER - mCamera.bottom;
+			doSceneFit = true;
+		} else if (mCamera.top > SCENE_TOP_BORDER) {
+			newY -= mCamera.top - SCENE_TOP_BORDER;
+			doSceneFit = true;
+		}
+		
+		// Set new corrected position
+		if (doSceneFit)
+			mCamera.setPosition(newX, newY, width);
 		
 		return true;
 	}
 
+	// TODO Improve this!!!!!
+	/**
+	 * Called when multitouch zoom occurs.
+	 * Also corrects to fit camera to scene.
+	 */
 	@Override
 	public boolean onZoom(float x, float y, float scale) {
 		// Fit dX and dY into the openGL space
-		final float newWidth = mCamera.getWidth() * scale;
-		final float newX = mCamera.getX();
-		final float newY = mCamera.getY();
+		float newWidth = mCamera.getWidth() * scale;
+		float newX = mCamera.getX();
+		float newY = mCamera.getY();
 		
+		// Check that zoom is in the range
+		if (newWidth > SCENE_MAX_WIDTH) {
+			newWidth = SCENE_MAX_WIDTH;
+		} else if (newWidth < SCENE_MIN_WIDTH) {
+			newWidth = SCENE_MIN_WIDTH;
+		}
+			
+		// Set new position
 		mCamera.setPosition(newX, newY, newWidth);
+		
+		boolean doSceneFit = false; 
+		// Now check borders. Correct if goes out of range
+		if (mCamera.left < SCENE_LEFT_BORDER) {
+			newX += SCENE_LEFT_BORDER - mCamera.left;
+			doSceneFit = true;
+		} else if (mCamera.rigth > SCENE_RIGTH_BORDER) {
+			newX -= mCamera.rigth - SCENE_RIGTH_BORDER;
+			doSceneFit = true;
+		}
+		
+		if (mCamera.bottom < SCENE_BOTTOM_BORDER && mCamera.top > SCENE_TOP_BORDER) {
+			newY = 0f;
+			doSceneFit = true;
+		} else if (mCamera.bottom < SCENE_BOTTOM_BORDER) {
+			newY += SCENE_BOTTOM_BORDER - mCamera.bottom;
+			doSceneFit = true;
+		} else if (mCamera.top > SCENE_TOP_BORDER) {
+			newY -= mCamera.top - SCENE_TOP_BORDER;
+			doSceneFit = true;
+		}
+		
+		// Set new corrected position
+		if (doSceneFit)
+			mCamera.setPosition(newX, newY, newWidth);
 		
 		return true;
 	}
-
-
 
 
 }

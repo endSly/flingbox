@@ -48,6 +48,7 @@ public class FlingboxActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
+        
         // Set OpenGL's surface
         setContentView(mSurface);
     }

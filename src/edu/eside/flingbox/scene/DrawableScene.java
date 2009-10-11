@@ -161,6 +161,9 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 			} catch (Exception ex) {
 				mOnSceneBodys.remove(drawedPolygon);
 			}
+			
+			// Vibrate as haptic feedback
+			//mVibrator.vibrate(150);
 		}
 		mDrawingPattern = null;
 
