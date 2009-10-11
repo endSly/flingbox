@@ -30,7 +30,7 @@ import android.content.Context;
 import android.graphics.PointF;
 import android.opengl.GLException;
 import android.view.MotionEvent;
-import edu.eside.flingbox.graphics.Renderizable;
+import edu.eside.flingbox.graphics.SceneRenderer.Renderizable;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 import edu.eside.flingbox.objects.Polygon;
 
@@ -167,6 +167,19 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 		// Good moment to call garbage collector
 		System.gc();
 		return true;
+	}
+	
+	public void onSingletouchCancel() {
+		// lock drawing until up event
+		mIsDrawingLocked = true;
+		mIsDrawing = false;
+		
+		// Remove actual drawing
+		mOnSceneBodys.remove(mDrawingRender);
+		mDrawingRender = null;
+		
+		// Good moment to call to Garbage Collector
+		System.gc();
 	}
 	
 	@Override

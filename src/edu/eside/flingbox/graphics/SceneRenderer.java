@@ -26,12 +26,37 @@ import javax.microedition.khronos.opengles.GL10;
 import android.opengl.GLSurfaceView.Renderer;
 
 /**
- * 
- * @author endika
+ * {@link SceneRenderer} handles functions to render 
+ * {@link Scene} into {@link GLSurfaceView} space by 
+ * {@link Renderer} interface.
  *
+ * Defines {@link Renderizable} interface witch should be 
+ * implemented by on scene bodys to be rendered.
  */
 public class SceneRenderer implements Renderer {
 	
+	/**
+	 * {@link Renderizable} interface witch should be 
+	 * implemented by on scene bodys to be rendered.
+	 */
+	public interface Renderizable {
+		/**
+		 * Called when object has to be rendered.
+		 * When {link onRender} called a new OpenGL's matrix has
+		 * been pushed to stack, so do not use gl.glPushMatrix() or
+		 * gl.glPopMatrix().
+		 * 
+		 * @param gl	OpenGL's space
+		 * @return		true if render consumed
+		 */
+		public boolean onRender(GL10 gl);
+	}
+	
+	/**
+	 * Specifies OpenGL camera interface.
+	 * By setting camera's position and width camera could 
+	 * be moved.
+	 */
 	public class Camera {
 		// This will be used by OpenGL
 		public float left, rigth, top, bottom;
@@ -41,10 +66,20 @@ public class SceneRenderer implements Renderer {
 		private float mX = 0f, mY = 0f, mWidth = 1000f, mHeight = 1000f;
 		private int mSurfaceWidth = 100, mSurfaceHeight = 100;
 		
-		public Camera() {
+		/**
+		 * Default constructor
+		 */
+		Camera() {
 			updateGLCamera();
 		}
 		
+		/**
+		 * Set surface and calculates camera's position and width
+		 * to kept aspect ratio.
+		 * 
+		 * @param surfaceWidth		Surface's width
+		 * @param surfaceHeight		Surface's height
+		 */
 		public void setSurfaceSize(int surfaceWidth, int surfaceHeight) {
 			mSurfaceWidth = surfaceWidth;
 			mSurfaceHeight = surfaceHeight;
@@ -54,6 +89,13 @@ public class SceneRenderer implements Renderer {
 			updateGLCamera();
 		}
 		
+		/**
+		 * Sets Camera's position.
+		 * @param x		Center of the focus, x
+		 * @param y		Center of the focus, y
+		 * @param width	Width of camera's frame.
+		 * 		height is calculated to keep aspect ratio
+		 */
 		public void setPosition(float x, float y, final float width) {
 			mX = x;
 			mY = y;
@@ -63,35 +105,55 @@ public class SceneRenderer implements Renderer {
 			updateGLCamera();
 		}
 	
+		/**
+		 * Sets coordinates needed by OpenGL from camera's position
+		 */
 		private void updateGLCamera() {
-			this.left = mX - mWidth / 2;
-			this.rigth = mX + mWidth / 2;
-			this.bottom = mY - mHeight / 2;
-			this.top = mY + mHeight / 2;
+			final float halfWidth = mWidth / 2;
+			final float halfHeight = mHeight / 2;
+			
+			this.left = mX - halfWidth;
+			this.rigth = mX + halfWidth;
+			this.bottom = mY - halfHeight;
+			this.top = mY + halfHeight;
 			
 			this.isChanged = true;
 		}
 		
+		/**
+		 * @return	x of camera's position
+		 */
 		public float getX() {
 			return mX;
 		}
 		
+		/**
+		 * @return	y of camera's position
+		 */
 		public float getY() {
 			return mY;
 		}
 		
+		/**
+		 * @return	width of camera's frame
+		 */
 		public float getWidth() {
 			return mWidth;
 		}
 		
+		/**
+		 * @return	height of camera's frame
+		 */
 		public float getHeight() {
 			return mHeight;
 		}
 	}
 	
-	private ArrayList<Renderizable> mGraphicsToRender;
+	// Stores objects that will be renderized
+	private final ArrayList<Renderizable> mGraphicsToRender;
 	
-	private Camera mCamera;
+	// Stores camera for this scene
+	private final Camera mCamera;
 	
 	/**
 	 * Default Constructor
@@ -102,6 +164,9 @@ public class SceneRenderer implements Renderer {
 		mCamera = new Camera();
 	}
 	
+	/**
+	 * @return	Camera for current scene
+	 */
 	public Camera getCamera() {
 		return mCamera;
 	}
@@ -124,7 +189,8 @@ public class SceneRenderer implements Renderer {
 				// gl.glFrustrumf(...); // We are working with orthogonal projection
 				mCamera.isChanged = false;
 			}
-		
+			
+			// Set up OpenGL's Scene
 			gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 			gl.glMatrixMode(GL10.GL_MODELVIEW);
 			gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
@@ -135,17 +201,19 @@ public class SceneRenderer implements Renderer {
 
 			// Render All objects
 			for (Renderizable r : mGraphicsToRender) {
+				// Work with new stacked matrix
 				gl.glPushMatrix();
 				gl.glLoadIdentity();
 				r.onRender(gl);
 				gl.glPopMatrix();
 			}
-
+			// End drawing
 			gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 		
 		} catch (Exception ex) {
 			/* Do Nothing.
 			 * Just skip drawing until next frame.
+			 * This will origin image blink.	 * 
 			 */
 		}
 		
@@ -156,6 +224,7 @@ public class SceneRenderer implements Renderer {
 	 */
 	@Override
 	public void onSurfaceChanged(GL10 gl, int width, int height) { 
+		// Set surface size to camera
 		mCamera.setSurfaceSize(width, height);
 		
 		gl.glViewport(0, 0, width, height);
@@ -182,7 +251,6 @@ public class SceneRenderer implements Renderer {
 
 		gl.glClearColor(0, 0, 0, 1);
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-		
 
 	}
 	

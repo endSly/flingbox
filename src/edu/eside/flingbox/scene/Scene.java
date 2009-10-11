@@ -30,7 +30,7 @@ public class Scene extends DrawableScene implements OnInputListener {
 		super(c);
 	}
 
-	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+	public boolean onFling(MotionEvent onDownEv, MotionEvent ev, float velocityX,
 			float velocityY) {
 		// TODO Auto-generated method stub
 		return false;

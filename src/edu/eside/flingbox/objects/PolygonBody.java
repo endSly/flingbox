@@ -18,7 +18,7 @@
 
 package edu.eside.flingbox.objects;
 
-import edu.eside.flingbox.graphics.Renderizable;
+import edu.eside.flingbox.graphics.SceneRenderer.Renderizable;
 import edu.eside.flingbox.math.PolygonUtils;
 
 public abstract class PolygonBody extends AtomicBody implements Renderizable {

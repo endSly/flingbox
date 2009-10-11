@@ -21,7 +21,7 @@ package edu.eside.flingbox.objects;
 import java.util.Random;
 
 import edu.eside.flingbox.graphics.PolygonRender;
-import edu.eside.flingbox.graphics.Renderizable;
+import edu.eside.flingbox.graphics.SceneRenderer.Renderizable;
 
 public class Polygon extends PolygonRender implements Renderizable {
 

@@ -26,6 +26,10 @@ import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
 
+/**
+ * Flingbox main activity
+ *
+ */
 public class FlingboxActivity extends Activity {
 	private GLSurfaceView mSurface;
 	private Scene mScene; 
@@ -40,13 +44,18 @@ public class FlingboxActivity extends Activity {
         mSurface = new GLSurfaceView(this);
         mSurface.setRenderer(mScene.getSceneRenderer());
 
+        // Request full screen view
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
+        // Set OpenGL's surface
         setContentView(mSurface);
     }
     
+    /** Called when touch event occurs. */
     public boolean onTouchEvent(MotionEvent ev) {
     	return mScene.onTouchEvent(ev);
     }
+    
+    
 }

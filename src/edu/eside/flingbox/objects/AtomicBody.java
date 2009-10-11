@@ -18,9 +18,20 @@
 
 package edu.eside.flingbox.objects;
 
-import edu.eside.flingbox.graphics.Renderizable;
+import edu.eside.flingbox.graphics.SceneRenderer.Renderizable;
 
+/**
+ * An AtomicBody is a general abstraction witch handles 
+ * basic data that any object should have.
+ * Any physical object on scene should inherit from
+ * {@link AtomicBody}.
+ * 
+ * Also Bodys witch will be rendered should inherit from
+ * AtomicBody
+ */
 public abstract class AtomicBody implements Renderizable {
-
+	// Position of the object on scene
+	protected float mPositionX, mPositionY;
+	protected float mAngle;
 
 }

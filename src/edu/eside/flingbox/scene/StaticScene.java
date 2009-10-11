@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.opengl.GLSurfaceView.Renderer;
 import android.view.MotionEvent;
-import edu.eside.flingbox.graphics.Renderizable;
+import edu.eside.flingbox.graphics.SceneRenderer.Renderizable;
 import edu.eside.flingbox.graphics.SceneRenderer;
 import edu.eside.flingbox.graphics.SceneRenderer.Camera;
 import edu.eside.flingbox.input.SceneGestureDetector;

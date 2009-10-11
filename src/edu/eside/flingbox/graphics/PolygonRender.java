@@ -25,23 +25,38 @@ import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import edu.eside.flingbox.graphics.SceneRenderer.Renderizable;
 import edu.eside.flingbox.objects.PolygonBody;
 
+/**
+ * {@link PolygonRender} handles functions to render {@link Polygon}
+ * into OpenGL's space. 
+ * Translation and rotation values should be set in {@link AtomicBody}
+ * and calculated by physic engine.
+ */
 public abstract class PolygonRender extends PolygonBody implements Renderizable {
 	// Buffers needed to allocate graphical polygon
 	private FloatBuffer mVertexBuffer;
 	private ShortBuffer mIndexBuffer;
 	
+	// stores polygon's color
 	private float[] mColor;
 	
+	/**
+	 * Default constructor of PolygonRender.
+	 * initializes values needed by OpenGL.
+	 * @param points	Polygon's points
+	 */
 	public PolygonRender(float[] points) {
 		super(points);
-		initialize();
+		mColor = new float[4];
+		initialize();	// initialize values needed by OpenGL.
 	}
 
+	/**
+	 * Initializes values needed by OpenGL.
+	 */
 	private void initialize() {
-		mColor = new float[4];
-		
 		// Set color for the object
 		mColor[0] = 0.0f;
 		mColor[1] = 0.0f;
@@ -72,6 +87,14 @@ public abstract class PolygonRender extends PolygonBody implements Renderizable 
 		mIndexBuffer.position(0);
 	}
 	
+	/**
+	 * Sets color of the polygon
+	 * @param r		Red channel [0, 1]
+	 * @param g		Green channel [0, 1]
+	 * @param b		Blue channel [0, 1]
+	 * @param alpha	Alpha channel, sets object's transparency, 0 for transparent
+	 * 		1 for opaque.
+	 */
 	public void setColor(float r, float g, float b, float alpha) {
 		mColor[0] = r;
 		mColor[1] = g;

@@ -23,10 +23,10 @@ import android.view.MotionEvent;
 import android.view.GestureDetector;
 
 /**
- * SceneGestureListener is an abstract class which performs basic scroll and zoom Operations.
- * Zoom and scroll will be interpreted on 2-fingers events
- * @author endika
- *
+ * SceneGestureDetector class  extends {@link GestureDetector}
+ * with basic multitouch scroll and zoom Operations.
+ * 
+ * Listener should implement {@link OnInputListener}.
  */
 public class SceneGestureDetector extends GestureDetector {
 	
@@ -55,6 +55,11 @@ public class SceneGestureDetector extends GestureDetector {
 		 */
 		public boolean onMultitouchScroll(MotionEvent downEvent, MotionEvent ev, float dX, float dY);
 		
+		/**
+		 * Called when a single touch action ends to start multi-touch 
+		 * action.
+		 */
+		public void onSingletouchCancel();
 	}
 	
 	/** Handler of processed gesture events */
@@ -118,8 +123,13 @@ public class SceneGestureDetector extends GestureDetector {
         	if (size > 0.0f && mLastSize > 0.0f) {
         		handled |= mListener.onMultitouchScroll(mLastDownEvent, ev, x - mLastX, y - mLastY);
         		
-        	} else if (mIsMultitouchEvent ||  (size > 0.0f && mLastSize == 0.0f))
+        	} else if (mIsMultitouchEvent) {
         		handled = true; // Skip single touch after a multitouch event
+        		
+        	} else if (size > 0.0f && mLastSize == 0.0f) {
+        		// Cancel last single touch event
+        		mListener.onSingletouchCancel();
+        	}
         	break;
         }
         
