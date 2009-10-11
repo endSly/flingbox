@@ -23,12 +23,25 @@ import java.util.Random;
 import edu.eside.flingbox.graphics.PolygonRender;
 import edu.eside.flingbox.graphics.SceneRenderer.Renderizable;
 
+/**
+ * Final interface for a polygon. Physics and Render operations
+ * are done by parents classes.
+ */
 public class Polygon extends PolygonRender implements Renderizable {
 
+	/**
+	 * Generates a polygon for passed points. 
+	 * It implements physical and graphical interfaces
+	 * @param points	Polygon's points. {x0, y0, x1, y1, x2...}
+	 * @throws IllegalArgumentException		If not points enough
+	 */
 	public Polygon(float[] points) throws IllegalArgumentException {
 		super(points);
 	}
 	
+	/**
+	 * Sets random color to polygon
+	 */
 	public void setRandomColor() {
 		Random rnd = new Random();
 		setColor(rnd.nextFloat() ,rnd.nextFloat() ,rnd.nextFloat() , 1.0f);

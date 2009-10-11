@@ -69,7 +69,9 @@ public class SceneGestureDetector extends GestureDetector {
 	private float mLastSize = 0.0f;
 	private float mLastX = 0f;
 	private float mLastY = 0f;
+	
 	private MotionEvent mLastDownEvent;
+	
 	 // Flag to skip one-touch events after Multitouch event.
 	private boolean mIsMultitouchEvent = false;
 	
@@ -133,10 +135,12 @@ public class SceneGestureDetector extends GestureDetector {
         	break;
         }
         
+        // Store current event
         mLastX = x;
 		mLastY = y;
         mLastSize = size;
         
+        // If it hasn't been handled call to GestureDetector
         return handled ? true : super.onTouchEvent(ev);
 	}
 	

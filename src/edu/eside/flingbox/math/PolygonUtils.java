@@ -20,6 +20,9 @@ package edu.eside.flingbox.math;
 
 import java.nio.FloatBuffer;
 
+/**
+ * Implements some utilities for polygon.
+ */
 public class PolygonUtils {
 	
 	/**
@@ -35,7 +38,7 @@ public class PolygonUtils {
 		if (pointsCount < 4 || epsilon <= 0.0f)
 			return points;	// No reduction possible
 		
-		// I think that FloatBuffer will be faster than ArrayList<Float>
+		// FloatBuffer will be faster than ArrayList<Float>
 		FloatBuffer reducedPolygon = FloatBuffer.allocate(points.length);
 		
 		reducedPolygon.put(points, 0, 2);	// First point will not be include
@@ -56,19 +59,26 @@ public class PolygonUtils {
 	 */
 	private static void douglasPeucker(float[] points, final float epsilon, int first, int last, 
 			FloatBuffer resultPoints) {
+		
 		float maxDistance = 0.0f;
 		int maxDistanceIndex = 0;
+		
+		// Find maximum distance point.  
 		for (int i = first + 1; i < last ; i++) {
 			float distance = distanceFromLineToPoint(
 					points[first * 2], points[first * 2 + 1], 
 					points[last * 2], points[last * 2 + 1],
 					points[i * 2], points[i * 2 + 1]);
-			if (distance > maxDistance) {
+			if (distance > maxDistance) {	// Store point
 				maxDistance = distance;
 				maxDistanceIndex = i;
 			}
 		}
 		
+		/* 
+		 * If point distance is more than epsilon then split points array in 
+		 * two parts and iterate for each. 
+		 */
 		if (maxDistance > epsilon) {
 			// Find in previous segment
 			if ((maxDistanceIndex - first) > 1)
@@ -98,6 +108,7 @@ public class PolygonUtils {
 		short[] triangules = new short[3 * (pointsCount - 2)];
 		boolean[] included = new boolean [pointsCount];
 
+		// Call to recursive function witch will calculate triangulation
 		triangulatePolygon(points, triangules, included, pointsCount, 0);
 		
 		return triangules;
@@ -144,11 +155,13 @@ public class PolygonUtils {
 				nextPoint = 0;
 		} while (included[nextPoint]);
 		
+		// Store triangle
 		indexes[trianglesCount * 3] = (short)prevPoint;	// Store into array
 		indexes[trianglesCount * 3 + 1] = (short)topPointIndex;
 		indexes[trianglesCount * 3 + 2] = (short)nextPoint;
 		trianglesCount++;
 		
+		// If there are more triangles iterate one more time
 		if (trianglesCount < (pointsCount - 2))
 			triangulatePolygon(points, indexes, included, pointsCount, trianglesCount);
 	}
