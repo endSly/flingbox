@@ -117,13 +117,14 @@ public class SceneGestureDetector extends GestureDetector {
         	// We are locking for multitouch Scroll Events
         	if (size > 0.0f && mLastSize > 0.0f) {
         		handled |= mListener.onMultitouchScroll(mLastDownEvent, ev, x - mLastX, y - mLastY);
-        		mLastX = x;
-        		mLastY = y;
-        	} else if (mIsMultitouchEvent)
+        		
+        	} else if (mIsMultitouchEvent ||  (size > 0.0f && mLastSize == 0.0f))
         		handled = true; // Skip single touch after a multitouch event
         	break;
         }
         
+        mLastX = x;
+		mLastY = y;
         mLastSize = size;
         
         return handled ? true : super.onTouchEvent(ev);

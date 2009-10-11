@@ -48,7 +48,6 @@ public abstract class PolygonRender extends PolygonBody implements Renderizable 
 		mColor[2] = 0.0f;
 		mColor[3] = 1.0f;
 		
-		
 		// Fill 2D polygon into 3D space
 		float[] points3D = new float[3 * mPointsCount];
 		for (int i = 0; i < mPointsCount; i++) {

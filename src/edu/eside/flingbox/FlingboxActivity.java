@@ -18,6 +18,7 @@
 
 package edu.eside.flingbox;
 
+import edu.eside.flingbox.scene.Scene;
 import android.app.Activity;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
