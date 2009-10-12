@@ -64,17 +64,19 @@ public abstract class PolygonRender extends PolygonPhysics implements Renderizab
 		mColor[2] = 0.0f;
 		mColor[3] = 1.0f;
 		
+		final int pointsCount = mPointsCount;
+		final Point[] points = mPoints;
 		// Fill 2D polygon into 3D space
-		float[] points3D = new float[3 * mPointsCount];
-		for (int i = 0; i < mPointsCount; i++) {
-			points3D[3 * i] = mPoints[i].x;			// x
-			points3D[3 * i + 1] = mPoints[i].y;		// y
+		float[] points3D = new float[3 * pointsCount];
+		for (int i = 0; i < pointsCount; i++) {
+			points3D[3 * i] = points[i].x;			// x
+			points3D[3 * i + 1] = points[i].y;		// y
 			points3D[3 * i + 2] = 0.0f;				// z
 		}
 
 		// Fill buffers with correspondent vertex
 		mVertexBuffer = ByteBuffer
-			.allocateDirect(4 * 3 * mPointsCount)
+			.allocateDirect(4 * 3 * pointsCount)
 			.order(ByteOrder.nativeOrder())
 			.asFloatBuffer()
 			.put(points3D);

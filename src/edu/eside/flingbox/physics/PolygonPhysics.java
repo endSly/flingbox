@@ -23,7 +23,9 @@ import edu.eside.flingbox.objects.PolygonBody;
 
 public abstract class PolygonPhysics extends PolygonBody {
 
+	// Some physical values needed
 	private float mBodyMass;
+	//private float mBodyRotacionalMoment;
 	
 	public PolygonPhysics(final Point[] points) throws IllegalArgumentException {
 		super(points);

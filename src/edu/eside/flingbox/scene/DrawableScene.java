@@ -78,16 +78,17 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 					.asShortBuffer();
 			
 				// Fit 2D points into 3D space
+				ArrayList<Point> pattern = mDrawingPattern;
 				for (short i = 0; i < (pointsCount - 1); ) {
-					vertexBuffer.put(mDrawingPattern.get(i).x);
-					vertexBuffer.put(mDrawingPattern.get(i).y);
+					vertexBuffer.put(pattern.get(i).x);
+					vertexBuffer.put(pattern.get(i).y);
 					vertexBuffer.put(0.0f);
 				
 					indexBuffer.put(i++);	// Set indexes
 					indexBuffer.put(i);
 				}
-				vertexBuffer.put(mDrawingPattern.get(pointsCount - 1).x);	// Put also 
-				vertexBuffer.put(mDrawingPattern.get(pointsCount - 1).y);	// last point.
+				vertexBuffer.put(pattern.get(pointsCount - 1).x);	// Put also 
+				vertexBuffer.put(pattern.get(pointsCount - 1).y);	// last point.
 				vertexBuffer.put(0.0f);
 
 				vertexBuffer.position(0);

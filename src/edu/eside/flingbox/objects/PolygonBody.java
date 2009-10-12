@@ -47,11 +47,12 @@ public abstract class PolygonBody extends AtomicBody implements Renderizable {
 			throw new IllegalArgumentException("Not points enough to build a polygon.");
 		
 		// Optimize points by Douglas-Peucker algorithm 
-		mPoints = PolygonUtils.douglasPeuckerReducer(points, DEFAULT_REDUCER_EPSILON);
+		Point[] polygonPoints = PolygonUtils.douglasPeuckerReducer(points, DEFAULT_REDUCER_EPSILON);
 		// Triangulate polygon. This will be needed by Physics and Render
-		mTriangulationIndexes = PolygonUtils.triangulatePolygon(mPoints);
+		mTriangulationIndexes = PolygonUtils.triangulatePolygon(polygonPoints);
 		
-		mPointsCount = (short) (mPoints.length);
+		mPoints = polygonPoints;
+		mPointsCount = (short) (polygonPoints.length);
 		mTrianglesCount = (short) (mPointsCount - 2);
 	}
 	

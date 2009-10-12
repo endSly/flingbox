@@ -18,7 +18,7 @@
 
 package edu.eside.flingbox.math;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * Implements some utilities for polygon.
@@ -43,8 +43,7 @@ public final class PolygonUtils {
 		if (pointsCount < 4 || epsilon <= 0.0f)
 			return points;	// No reduction possible
 		
-		// FloatBuffer will be faster than ArrayList<Float>
-		Vector<Point> reducedPolygon = new Vector<Point>(points.length);
+		ArrayList<Point> reducedPolygon = new ArrayList<Point>(pointsCount);
 		
 		reducedPolygon.add(points[0]);	// First point will not be include
 		// Call recursively to algorithm
@@ -59,7 +58,7 @@ public final class PolygonUtils {
 	 * Recursively Calculation of DouglasPeucker Algorithm
 	 */
 	private static void douglasPeucker(final Point[] points, final float epsilon, int first, int last, 
-			Vector<Point> resultPoints) {
+			ArrayList<Point> resultPoints) {
 		
 		float maxDistance = 0.0f;
 		int maxDistanceIndex = 0;
