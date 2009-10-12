@@ -22,6 +22,8 @@ import edu.eside.flingbox.graphics.SceneRenderer.Renderizable;
 import edu.eside.flingbox.math.PolygonUtils;
 
 public abstract class PolygonBody extends AtomicBody implements Renderizable {
+	private final static float DEFAULT_REDUCER_EPSILON = 5.0f;
+	
 	protected final Point[] mPoints;
 	protected final short mPointsCount;
 	
@@ -42,7 +44,7 @@ public abstract class PolygonBody extends AtomicBody implements Renderizable {
 			throw new IllegalArgumentException("Not points enough to build a polygon.");
 		
 		// Optimize points by Douglas-Peucker algorithm 
-		float[] finalPoints = PolygonUtils.douglasPeuckerReducer(points, 4.0f);
+		float[] finalPoints = PolygonUtils.douglasPeuckerReducer(points, DEFAULT_REDUCER_EPSILON);
 		// Triangulate polygon. This will be needed by Physics and Render
 		mTriangulationIndexes = PolygonUtils.triangulatePolygon(finalPoints);
 		
@@ -50,10 +52,8 @@ public abstract class PolygonBody extends AtomicBody implements Renderizable {
 		mPoints = new Point[mPointsCount];
 		
 		// store points
-		for (int i = 0; i < mPointsCount; i++) {
-			mPoints[i].x = finalPoints[i * 2];
-			mPoints[i].y = finalPoints[i * 2 + 1];
-		}
+		for (int i = 0; i < mPointsCount; i++)
+			mPoints[i] = new Point(finalPoints[i * 2], finalPoints[i * 2 + 1]);
 		
 		mTrianglesCount = (short) (mPointsCount - 2);
 	}

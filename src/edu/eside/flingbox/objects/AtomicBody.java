@@ -36,7 +36,7 @@ public abstract class AtomicBody implements Renderizable {
 	 * basic functions.
 	 */
 	public final class Point {
-		public float x = 0f, y = 0f;
+		public float x, y;
 		
 		/**
 		 * Dafult constructor for a point
@@ -48,6 +48,14 @@ public abstract class AtomicBody implements Renderizable {
 			this.y = y;
 		}
 		
+		/**
+		 * Constructor for zero point
+		 */
+		public Point() {
+			this.x = 0f;
+			this.y = 0f;
+		}
+
 		/**
 		 * Computes distance to p
 		 * @param p		Point
@@ -62,7 +70,7 @@ public abstract class AtomicBody implements Renderizable {
 	}
 	
 	// Position of the object on scene
-	protected float mPositionX, mPositionY;
+	protected Point mPosition;
 	protected float mAngle;
 
 }

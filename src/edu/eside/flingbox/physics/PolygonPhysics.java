@@ -22,14 +22,57 @@ import edu.eside.flingbox.objects.PolygonBody;
 
 public abstract class PolygonPhysics extends PolygonBody {
 
-	//private float mBodyMass;
+	private float mBodyMass;
 	
 	public PolygonPhysics(float[] points) throws IllegalArgumentException {
 		super(points);
-		// TODO Auto-generated constructor stub
+
+		mBodyMass = 0.0f;
+		
+		Point massCenter = new Point();
+		
+		/* 
+		 * We have to set Center of mass of the polygon to point (0, 0).
+		 * For this, we need to compute center of mass and mass for each
+		 * sub-triangle. 
+		 */
+		
+		for (int i = 0; i < mTrianglesCount; i++) {
+			final Point p0 = mPoints[mTriangulationIndexes[i * 3]];
+			final Point p1 = mPoints[mTriangulationIndexes[i * 3 + 1]];
+			final Point p2 = mPoints[mTriangulationIndexes[i * 3 + 2]];
+			
+			Point centerOfTriangle = triangleCenterOfMass(p0, p1, p2);
+			float massOfTriangle = trinagleArea(p0, p1, p2);
+			
+			massCenter.x = ((massCenter.x * mBodyMass) + (centerOfTriangle.x * massOfTriangle))
+				/ (mBodyMass + massOfTriangle);
+			massCenter.y = ((massCenter.y * mBodyMass) + (centerOfTriangle.y * massOfTriangle))
+				/ (mBodyMass + massOfTriangle);
+			mBodyMass += massOfTriangle;
+		}
+		
+		for (Point p : mPoints) {
+			p.x -= massCenter.x;
+			p.y -= massCenter.y;
+		}
+		
+		mPosition = massCenter;
+
 	}
 	
+	public float getBodyMass() {
+		return mBodyMass;
+	}
 	
+	private Point triangleCenterOfMass(Point p0, Point p1, Point p2) {
+		return new Point((p0.x + p1.x + p2.x) / 3f, (p0.y + p1.y + p2.y) / 3f);
+	}
+	
+	private float trinagleArea(Point p0, Point p1, Point p2) {
+		return (p0.x * p1.y + p1.x * p2.y + p2.x * p0.y 
+				- p1.x * p0.y - p2.x * p1.y - p0.x * p2.y) / 2f;
+	}
 	
 
 }
