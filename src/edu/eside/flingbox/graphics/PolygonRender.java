@@ -66,9 +66,9 @@ public abstract class PolygonRender extends PolygonPhysics implements Renderizab
 		// Fill 2D polygon into 3D space
 		float[] points3D = new float[3 * mPointsCount];
 		for (int i = 0; i < mPointsCount; i++) {
-			points3D[3 * i] = mPoints[2 * i];			// x
-			points3D[3 * i + 1] = mPoints[2 * i + 1];	// y
-			points3D[3 * i + 2] = 0.0f;					// z
+			points3D[3 * i] = mPoints[i].x;			// x
+			points3D[3 * i + 1] = mPoints[i].y;		// y
+			points3D[3 * i + 2] = 0.0f;				// z
 		}
 
 		// Fill buffers with correspondent vertex

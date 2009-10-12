@@ -77,6 +77,19 @@ public abstract class StaticScene implements OnInputListener {
 	public boolean onTouchEvent(MotionEvent ev) {
 		return mGestureDetector.onTouchEvent(ev);
 	}
+	
+	public boolean onTrackballEvent(MotionEvent ev) {
+		final float width = mCamera.getWidth();
+		float newX = mCamera.getX() - (ev.getX() * width / mDisplayWidth * 16);
+		float newY = mCamera.getY() + (ev.getY() * width / mDisplayWidth * 16); 	// Maintain aspect radio
+		
+		// Set positions
+		mCamera.setPosition(newX, newY, width);
+		
+		fitCameraToScene();
+		
+		return true;
+	}
 
 	@Override
 	public boolean onMultitouchScroll(MotionEvent downEvent, MotionEvent ev,
@@ -89,31 +102,11 @@ public abstract class StaticScene implements OnInputListener {
 		// Set positions
 		mCamera.setPosition(newX, newY, width);
 		
-		boolean doSceneFit = false; 
-		// Now check borders. Correct if goes out of range
-		if (mCamera.left < SCENE_LEFT_BORDER) {
-			newX += SCENE_LEFT_BORDER - mCamera.left;
-			doSceneFit = true;
-		} else if (mCamera.rigth > SCENE_RIGTH_BORDER) {
-			newX -= mCamera.rigth - SCENE_RIGTH_BORDER;
-			doSceneFit = true;
-		}
-		if (mCamera.bottom < SCENE_BOTTOM_BORDER) {
-			newY += SCENE_BOTTOM_BORDER - mCamera.bottom;
-			doSceneFit = true;
-		} else if (mCamera.top > SCENE_TOP_BORDER) {
-			newY -= mCamera.top - SCENE_TOP_BORDER;
-			doSceneFit = true;
-		}
-		
-		// Set new corrected position
-		if (doSceneFit)
-			mCamera.setPosition(newX, newY, width);
+		fitCameraToScene();
 		
 		return true;
 	}
 
-	// TODO Improve this!!!!!
 	/**
 	 * Called when multitouch zoom occurs.
 	 * Also corrects to fit camera to scene.
@@ -135,6 +128,16 @@ public abstract class StaticScene implements OnInputListener {
 		// Set new position
 		mCamera.setPosition(newX, newY, newWidth);
 		
+		fitCameraToScene();
+
+		return true;
+	}
+	
+	private void fitCameraToScene() {
+		float newX = mCamera.getX();
+		float newY = mCamera.getY();
+		float width = mCamera.getWidth();
+		
 		boolean doSceneFit = false; 
 		// Now check borders. Correct if goes out of range
 		if (mCamera.left < SCENE_LEFT_BORDER) {
@@ -144,23 +147,21 @@ public abstract class StaticScene implements OnInputListener {
 			newX -= mCamera.rigth - SCENE_RIGTH_BORDER;
 			doSceneFit = true;
 		}
-		
-		if (mCamera.bottom < SCENE_BOTTOM_BORDER && mCamera.top > SCENE_TOP_BORDER) {
-			newY = 0f;
-			doSceneFit = true;
-		} else if (mCamera.bottom < SCENE_BOTTOM_BORDER) {
+		if ((mCamera.bottom < SCENE_BOTTOM_BORDER) 
+				&& (mCamera.top < SCENE_TOP_BORDER)) {
 			newY += SCENE_BOTTOM_BORDER - mCamera.bottom;
+			
 			doSceneFit = true;
-		} else if (mCamera.top > SCENE_TOP_BORDER) {
+		} else if ((mCamera.bottom > SCENE_BOTTOM_BORDER) 
+				&& (mCamera.top > SCENE_TOP_BORDER)) {
 			newY -= mCamera.top - SCENE_TOP_BORDER;
 			doSceneFit = true;
 		}
 		
 		// Set new corrected position
 		if (doSceneFit)
-			mCamera.setPosition(newX, newY, newWidth);
+			mCamera.setPosition(newX, newY, width);
 		
-		return true;
 	}
 
 

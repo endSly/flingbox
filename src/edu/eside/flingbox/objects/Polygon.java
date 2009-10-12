@@ -27,7 +27,7 @@ import edu.eside.flingbox.graphics.SceneRenderer.Renderizable;
  * Final interface for a polygon. Physics and Render operations
  * are done by parents classes.
  */
-public class Polygon extends PolygonRender implements Renderizable {
+public final class Polygon extends PolygonRender implements Renderizable {
 
 	/**
 	 * Generates a polygon for passed points. 

@@ -30,6 +30,37 @@ import edu.eside.flingbox.graphics.SceneRenderer.Renderizable;
  * AtomicBody
  */
 public abstract class AtomicBody implements Renderizable {
+	
+	/**
+	 * Defines generic class of 2D Point and some
+	 * basic functions.
+	 */
+	public final class Point {
+		public float x = 0f, y = 0f;
+		
+		/**
+		 * Dafult constructor for a point
+		 * @param x		X
+		 * @param y		Y
+		 */
+		public Point(float x, float y) {
+			this.x = x;
+			this.y = y;
+		}
+		
+		/**
+		 * Computes distance to p
+		 * @param p		Point
+		 * @return		Distance
+		 */
+		public float distanceToPoint(final Point p) {
+			return (float) Math.abs(Math.sqrt(
+					(this.x - p.x) * (this.x - p.x) +
+					(this.y - p.y) * (this.y - p.y)));
+		}
+		
+	}
+	
 	// Position of the object on scene
 	protected float mPositionX, mPositionY;
 	protected float mAngle;

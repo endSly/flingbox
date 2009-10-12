@@ -63,7 +63,7 @@ public class SceneRenderer implements Renderer {
 		boolean isChanged;	// Flag
 		
 		// This will store camera position;
-		private float mX = 0f, mY = 0f, mWidth = 1000f, mHeight = 1000f;
+		private float mX = 0f, mY = 0f, mWidth = 256f, mHeight = 256f;
 		private int mSurfaceWidth = 100, mSurfaceHeight = 100;
 		
 		/**
@@ -197,7 +197,7 @@ public class SceneRenderer implements Renderer {
 			gl.glLoadIdentity();
 
 			// Set background color
-			gl.glClearColor(0.7f, 0.7f, 1.0f, 1.0f);
+			gl.glClearColor(0.6f, 0.6f, 1.0f, 1.0f);
 
 			// Render All objects
 			for (Renderizable r : mGraphicsToRender) {
