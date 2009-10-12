@@ -29,6 +29,7 @@ public abstract class PolygonPhysics extends PolygonBody {
 
 		mBodyMass = 0.0f;
 		
+		// Overal polygon mass center
 		Point massCenter = new Point();
 		
 		/* 
@@ -36,14 +37,13 @@ public abstract class PolygonPhysics extends PolygonBody {
 		 * For this, we need to compute center of mass and mass for each
 		 * sub-triangle. 
 		 */
-		
 		for (int i = 0; i < mTrianglesCount; i++) {
 			final Point p0 = mPoints[mTriangulationIndexes[i * 3]];
 			final Point p1 = mPoints[mTriangulationIndexes[i * 3 + 1]];
 			final Point p2 = mPoints[mTriangulationIndexes[i * 3 + 2]];
 			
-			Point centerOfTriangle = triangleCenterOfMass(p0, p1, p2);
-			float massOfTriangle = trinagleArea(p0, p1, p2);
+			final Point centerOfTriangle = triangleCenterOfMass(p0, p1, p2);
+			final float massOfTriangle = trinagleArea(p0, p1, p2);
 			
 			massCenter.x = ((massCenter.x * mBodyMass) + (centerOfTriangle.x * massOfTriangle))
 				/ (mBodyMass + massOfTriangle);
@@ -52,11 +52,13 @@ public abstract class PolygonPhysics extends PolygonBody {
 			mBodyMass += massOfTriangle;
 		}
 		
+		// Set mass center to point (0, 0) by moving all points
 		for (Point p : mPoints) {
 			p.x -= massCenter.x;
 			p.y -= massCenter.y;
 		}
 		
+		// Set position to old mass center
 		mPosition = massCenter;
 
 	}

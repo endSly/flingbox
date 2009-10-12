@@ -18,9 +18,13 @@
 
 package edu.eside.flingbox.scene;
 
+import java.io.File;
+import java.io.IOException;
+
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 
 import android.content.Context;
+import android.os.Environment;
 import android.view.MotionEvent;
 
 
@@ -36,10 +40,21 @@ public class Scene extends DrawableScene implements OnInputListener {
 		return false;
 	}
 
-	@Override
 	public boolean onDown(MotionEvent e) {
 		// TODO Auto-generated method stub
 		return super.onDown(e);
+	}
+	
+	public boolean onSaveScene() {
+		File savedFile = new File(Environment.getExternalStorageDirectory() 
+				+ "flingbox/saved.xml");
+		try{
+			savedFile.createNewFile(); 
+		} catch (IOException ex) {
+				
+		}
+		
+		return false;
 	}
 	
 }

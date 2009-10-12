@@ -127,10 +127,14 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 	}
 
 	public void onLongPress(MotionEvent e) {
-		// TODO Auto-generated method stub
+	
 		
 	}
 	
+	/**
+	 * Called when touch event ends correctly.
+	 * Drawable scene creates the polygon for drawing pattern.
+	 */
 	public boolean onUp(MotionEvent ev) {
 		if (!mIsDrawing) 
 			return false;
@@ -157,11 +161,11 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 				drawedPolygon.setRandomColor();
 				mOnSceneBodys.add(drawedPolygon);
 			} catch (IllegalArgumentException ex) {
-				// Nothing. Just do not draw
-			} catch (Exception ex) {
-				mOnSceneBodys.remove(drawedPolygon);
-			}
-			
+				/* Nothing. Just do not draw
+				 * This should never happen!!!
+				 */
+				
+			} 
 			// Vibrate as haptic feedback
 			//mVibrator.vibrate(150);
 		}

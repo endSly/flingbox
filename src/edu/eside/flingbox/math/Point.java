@@ -16,24 +16,42 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.eside.flingbox.objects;
-
-import edu.eside.flingbox.graphics.SceneRenderer.Renderizable;
-import edu.eside.flingbox.math.Point;
+package edu.eside.flingbox.math;
 
 /**
- * An AtomicBody is a general abstraction witch handles 
- * basic data that any object should have.
- * Any physical object on scene should inherit from
- * {@link AtomicBody}.
- * 
- * Also Bodys witch will be rendered should inherit from
- * AtomicBody
+ * Defines generic class of 2D Point and some
+ * basic functions.
  */
-public abstract class AtomicBody implements Renderizable {
+public final class Point {
+	public float x, y;
 	
-	// Position of the object on scene
-	protected Point mPosition;
-	protected float mAngle;
+	/**
+	 * Dafult constructor for a point
+	 * @param x		X
+	 * @param y		Y
+	 */
+	public Point(float x, float y) {
+		this.x = x;
+		this.y = y;
+	}
+	
+	/**
+	 * Constructor for zero point
+	 */
+	public Point() {
+		this.x = 0f;
+		this.y = 0f;
+	}
 
+	/**
+	 * Computes distance to p
+	 * @param p		Point
+	 * @return		Distance
+	 */
+	public float distanceToPoint(final Point p) {
+		return (float) Math.abs(Math.sqrt(
+				(this.x - p.x) * (this.x - p.x) +
+				(this.y - p.y) * (this.y - p.y)));
+	}
+	
 }

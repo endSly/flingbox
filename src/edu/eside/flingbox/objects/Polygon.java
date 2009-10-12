@@ -22,6 +22,7 @@ import java.util.Random;
 
 import edu.eside.flingbox.graphics.PolygonRender;
 import edu.eside.flingbox.graphics.SceneRenderer.Renderizable;
+import edu.eside.flingbox.math.Point;
 
 /**
  * Final interface for a polygon. Physics and Render operations
@@ -37,6 +38,7 @@ public final class Polygon extends PolygonRender implements Renderizable {
 	 */
 	public Polygon(float[] points) throws IllegalArgumentException {
 		super(points);
+		
 	}
 	
 	/**
@@ -45,6 +47,16 @@ public final class Polygon extends PolygonRender implements Renderizable {
 	public void setRandomColor() {
 		Random rnd = new Random();
 		setColor(rnd.nextFloat() ,rnd.nextFloat() ,rnd.nextFloat() , 1.0f);
+	}
+	
+	/**
+	 * Estimates if point is inside polygon by bounding box
+	 * @param p		Point to check
+	 * @return		true if point is inside, else false.
+	 */
+	public boolean isPointInside(Point p) {
+		
+		return false;
 	}
 
 }

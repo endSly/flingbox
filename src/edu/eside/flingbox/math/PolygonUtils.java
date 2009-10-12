@@ -23,12 +23,17 @@ import java.nio.FloatBuffer;
 /**
  * Implements some utilities for polygon.
  */
-public class PolygonUtils {
+public final class PolygonUtils {
+	/**
+	 * Prevent instance creation
+	 */
+	private PolygonUtils() { }
 	
 	/**
 	 * The Douglas-Peucker algorithm is an algorithm for reducing the number 
 	 * of points in a curve that is approximated by a series of points.
 	 * At the end of this function is a good moment for call to GarbageCollector
+	 * 
 	 * @param points	Array of polygon's points (x0, y0, x1, y1, x2...) 
 	 * @param epsilon	Max distance to ignore a point
 	 * @return			New array with optimized points

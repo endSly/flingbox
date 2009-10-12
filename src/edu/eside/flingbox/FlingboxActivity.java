@@ -34,7 +34,9 @@ public class FlingboxActivity extends Activity {
 	private GLSurfaceView mSurface;
 	private Scene mScene; 
 	
-    /** Called when the activity is first created. */
+    /** 
+     * Called when the activity is first created. 
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +52,14 @@ public class FlingboxActivity extends Activity {
 
         // Set OpenGL's surface
         setContentView(mSurface);
+        
+    }
+    
+    /**
+     * Called when activity Pause
+     */
+    public void onPause() {
+    	super.onPause();
     }
     
     /** 
