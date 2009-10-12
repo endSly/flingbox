@@ -36,7 +36,7 @@ public final class Polygon extends PolygonRender implements Renderizable {
 	 * @param points	Polygon's points. {x0, y0, x1, y1, x2...}
 	 * @throws IllegalArgumentException		If not points enough
 	 */
-	public Polygon(float[] points) throws IllegalArgumentException {
+	public Polygon(final Point[] points) throws IllegalArgumentException {
 		super(points);
 		
 	}

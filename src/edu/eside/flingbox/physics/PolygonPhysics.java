@@ -25,7 +25,7 @@ public abstract class PolygonPhysics extends PolygonBody {
 
 	private float mBodyMass;
 	
-	public PolygonPhysics(float[] points) throws IllegalArgumentException {
+	public PolygonPhysics(final Point[] points) throws IllegalArgumentException {
 		super(points);
 
 		mBodyMass = 0.0f;

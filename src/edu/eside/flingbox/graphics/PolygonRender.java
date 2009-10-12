@@ -26,6 +26,7 @@ import java.nio.ShortBuffer;
 import javax.microedition.khronos.opengles.GL10;
 
 import edu.eside.flingbox.graphics.SceneRenderer.Renderizable;
+import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.physics.PolygonPhysics;
 
 /**
@@ -47,7 +48,7 @@ public abstract class PolygonRender extends PolygonPhysics implements Renderizab
 	 * initializes values needed by OpenGL.
 	 * @param points	Polygon's points
 	 */
-	public PolygonRender(float[] points) {
+	public PolygonRender(final Point[] points) {
 		super(points);
 		mColor = new float[4];
 		initialize();	// initialize values needed by OpenGL.

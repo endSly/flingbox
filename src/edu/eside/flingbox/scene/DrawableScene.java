@@ -27,11 +27,12 @@ import java.util.ArrayList;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
-import android.graphics.PointF;
 import android.opengl.GLException;
 import android.view.MotionEvent;
+
 import edu.eside.flingbox.graphics.SceneRenderer.Renderizable;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
+import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.objects.Polygon;
 
 /**
@@ -45,22 +46,20 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 	 */
 	private class DrawingRender implements Renderizable {
 
-		private final ArrayList<PointF> mDrawingPattern;
+		private final ArrayList<Point> mDrawingPattern;
 		
 		/**
 		 * Default constructor.
 		 * @param drawingPattern	Actual drawing patter.
 		 */
-		public DrawingRender(ArrayList<PointF> drawingPattern) {
+		public DrawingRender(final ArrayList<Point> drawingPattern) {
 			mDrawingPattern = drawingPattern;
 		}
 		
 		/**
-		 * Renderizes patter to {@link GL10}.
+		 * Renderizes pattern to {@link GL10}.
 		 */
 		public boolean onRender(GL10 gl) {
-			assert (mDrawingPattern != null);
-			
 			// We need two or more points to render
 			final int pointsCount = mDrawingPattern.size();
 			if (pointsCount < 2)
@@ -113,7 +112,7 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 	}
 	
 	private DrawingRender mDrawingRender;
-	private ArrayList<PointF> mDrawingPattern;
+	private ArrayList<Point> mDrawingPattern;
 	
 	private boolean mIsDrawing = false;
 	private boolean mIsDrawingLocked = false;	// Drawing can be locked
@@ -150,22 +149,11 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 		final int pointsCount = mDrawingPattern.size();
 		// if we had points enough
 		if (pointsCount >= 3) {
-			float[] points = new float[pointsCount * 2];
-			for (int i = 0; i < pointsCount; i++) {
-				points[2 * i] = mDrawingPattern.get(i).x;
-				points[2 * i + 1] = mDrawingPattern.get(i).y;
-			}
-			Polygon drawedPolygon = null;
-			try {
-				drawedPolygon = new Polygon(points);
-				drawedPolygon.setRandomColor();
-				mOnSceneBodys.add(drawedPolygon);
-			} catch (IllegalArgumentException ex) {
-				/* Nothing. Just do not draw
-				 * This should never happen!!!
-				 */
-				
-			} 
+			mDrawingPattern.trimToSize();
+			Polygon drawedPolygon = new Polygon((Point[]) mDrawingPattern.toArray(new Point[0]));
+			drawedPolygon.setRandomColor();
+			mOnSceneBodys.add(drawedPolygon);
+
 			// Vibrate as haptic feedback
 			//mVibrator.vibrate(150);
 		}
@@ -210,18 +198,18 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 			// Start drawing
 			mIsDrawing = true;
 			
-			mDrawingPattern = new ArrayList<PointF>();
+			mDrawingPattern = new ArrayList<Point>(40);
 			mDrawingRender = new DrawingRender(mDrawingPattern);
 			
 			final float onDownX = mCamera.left + (downEv.getX() * mCamera.getWidth() / mDisplayWidth);
 			final float onDownY = mCamera.top - (downEv.getY() * mCamera.getHeight() / mDisplayHeight);
 
-			mDrawingPattern.add(new PointF(onDownX, onDownY));
+			mDrawingPattern.add(new Point(onDownX, onDownY));
 
 			mOnSceneBodys.add(mDrawingRender);
 		}
 		
-		mDrawingPattern.add(new PointF(x, y));
+		mDrawingPattern.add(new Point(x, y));
 		return true;
 	}
 

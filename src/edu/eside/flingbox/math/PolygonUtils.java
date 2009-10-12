@@ -18,7 +18,7 @@
 
 package edu.eside.flingbox.math;
 
-import java.nio.FloatBuffer;
+import java.util.Vector;
 
 /**
  * Implements some utilities for polygon.
@@ -34,46 +34,39 @@ public final class PolygonUtils {
 	 * of points in a curve that is approximated by a series of points.
 	 * At the end of this function is a good moment for call to GarbageCollector
 	 * 
-	 * @param points	Array of polygon's points (x0, y0, x1, y1, x2...) 
+	 * @param points	Array of polygon's points 
 	 * @param epsilon	Max distance to ignore a point
 	 * @return			New array with optimized points
 	 */
-	public static float[] douglasPeuckerReducer(float[] points, float epsilon) {
-		final int pointsCount = points.length / 2;
+	public static Point[] douglasPeuckerReducer(Point[] points, float epsilon) {
+		final int pointsCount = points.length;
 		if (pointsCount < 4 || epsilon <= 0.0f)
 			return points;	// No reduction possible
 		
 		// FloatBuffer will be faster than ArrayList<Float>
-		FloatBuffer reducedPolygon = FloatBuffer.allocate(points.length);
+		Vector<Point> reducedPolygon = new Vector<Point>(points.length);
 		
-		reducedPolygon.put(points, 0, 2);	// First point will not be include
+		reducedPolygon.add(points[0]);	// First point will not be include
 		// Call recursively to algorithm
 		douglasPeucker(points, epsilon, 0, pointsCount - 1, reducedPolygon);
-		reducedPolygon.put(points, points.length - 2, 2); // Last point neither
-		
-		// Put buffer into float array
-		float[] reducedPoints = new float[reducedPolygon.position()];
-		reducedPolygon.position(0);
-		reducedPolygon.get(reducedPoints);
+		if (points[0].distanceToPoint(points[pointsCount - 1]) > epsilon)
+			reducedPolygon.add(points[pointsCount - 1]); // Last point neither
 
-		return reducedPoints;
+		return (Point[]) reducedPolygon.toArray(new Point[0]);
 	}
 	
 	/**
 	 * Recursively Calculation of DouglasPeucker Algorithm
 	 */
-	private static void douglasPeucker(float[] points, final float epsilon, int first, int last, 
-			FloatBuffer resultPoints) {
+	private static void douglasPeucker(final Point[] points, final float epsilon, int first, int last, 
+			Vector<Point> resultPoints) {
 		
 		float maxDistance = 0.0f;
 		int maxDistanceIndex = 0;
 		
 		// Find maximum distance point.  
 		for (int i = first + 1; i < last ; i++) {
-			float distance = distanceFromLineToPoint(
-					points[first * 2], points[first * 2 + 1], 
-					points[last * 2], points[last * 2 + 1],
-					points[i * 2], points[i * 2 + 1]);
+			float distance = distanceFromLineToPoint(points[first], points[last], points[i]);
 			if (distance > maxDistance) {	// Store point
 				maxDistance = distance;
 				maxDistanceIndex = i;
@@ -89,7 +82,7 @@ public final class PolygonUtils {
 			if ((maxDistanceIndex - first) > 1)
 				douglasPeucker(points, epsilon, first, maxDistanceIndex, resultPoints);
 			// Put point in buffer(2 coords)
-			resultPoints.put(points, maxDistanceIndex * 2, 2);	
+			resultPoints.add(points[maxDistanceIndex]);	
 			// Continue searching important points
 			if ((last - maxDistanceIndex) > 1)
 				douglasPeucker(points, epsilon, maxDistanceIndex, last, resultPoints);
@@ -104,8 +97,8 @@ public final class PolygonUtils {
 	 * @return			Will return n-2 group of 3 points, for n sides polygon
 	 * 					or null if not enough points
 	 */
-	public static short[] triangulatePolygon(float[] points) {
-		final int pointsCount = points.length / 2;
+	public static short[] triangulatePolygon(Point[] points) {
+		final int pointsCount = points.length;
 		if (pointsCount < 3)
 			return null;
 		
@@ -122,27 +115,19 @@ public final class PolygonUtils {
 	/**
 	 * Recursively compute triangulation
 	 */
-	private static void triangulatePolygon(final float[] points, short[] indexes, 
+	private static void triangulatePolygon(final Point[] points, short[] indexes, 
 			boolean[] included, final int pointsCount, int trianglesCount) {
 		int topPointIndex = 0;
-		float topPoint = -0.0f;
-		boolean didFoundPoint = false;
+		float topPoint = Float.NEGATIVE_INFINITY;
 		
 		// Find top point to find triangle
 		for (int i = 0; i < pointsCount; i++) {
-			// initialize topPoint
-			if (!didFoundPoint && !included[i]) {
-				topPoint = points[i * 2];
-				topPointIndex = i;
-				didFoundPoint = true;
-			}
 			// Find top point
-			if (!included[i] && (points[i * 2] > topPoint)) {
-				topPoint = points[i * 2];
+			if (!included[i] && (points[i].x > topPoint)) {
+				topPoint = points[i].x;
 				topPointIndex = i;
 			}
 		}
-		assert (didFoundPoint);
 		
 		// Exclude point for next iteration
 		included[topPointIndex] = true;
@@ -174,12 +159,12 @@ public final class PolygonUtils {
 	/**
 	 * Computes minimum distance from line to point
 	 */
-	private static float distanceFromLineToPoint(
-			float x0, float y0, float x1, float y1, 
-			float xp, float yp) {
-		float area = (x0 * y1 + x1 * yp + xp * y0 - x1 * y0 - xp * y1 - x0 * yp) / 2f;
-		float base = (float)Math.sqrt(Math.pow(x1 - x0, 2) + Math.pow(y1 - y0, 2));
-		return (float)Math.abs(2f * area / base);
+	private static float distanceFromLineToPoint(Point p0, Point p1, Point p) {
+		float area = (p0.x * p1.y + p1.x * p.y + p.x * p0.y 
+				- p1.x * p0.y - p.x * p1.y - p0.x * p.y) / 2f;
+		float base = (float) Math.sqrt((p1.x - p0.x) * (p1.x - p0.x) 
+				+ (p1.y - p0.y) * (p1.y - p0.y));
+		return (float) Math.abs(2f * area / base);
 	}
 	
 }
