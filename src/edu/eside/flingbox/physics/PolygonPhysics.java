@@ -18,6 +18,7 @@
 
 package edu.eside.flingbox.physics;
 
+import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.objects.PolygonBody;
 
 public abstract class PolygonPhysics extends PolygonBody {
