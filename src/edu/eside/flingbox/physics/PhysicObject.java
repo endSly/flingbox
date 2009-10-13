@@ -16,42 +16,26 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.eside.flingbox.math;
+package edu.eside.flingbox.physics;
 
-/**
- * Defines generic class of 2D Point and some
- * basic functions.
- */
-public final class Point {
-	public float x, y;
+import edu.eside.flingbox.math.Point;
+
+public abstract class PhysicObject {
+	protected final static float MAX_MASS = Float.MAX_VALUE;
 	
-	/**
-	 * Dafult constructor for a point
-	 * @param x		X
-	 * @param y		Y
-	 */
-	public Point(float x, float y) {
-		this.x = x;
-		this.y = y;
+	protected final float mBodyMass;
+	protected final Point mPosition;
+	
+	public PhysicObject(final float bodyMass, final Point position) {
+		mBodyMass = bodyMass;
+		mPosition = position;
 	}
 	
-	/**
-	 * Constructor for zero point
-	 */
-	public Point() {
-		this.x = 0f;
-		this.y = 0f;
+	public float getBodyMass() {
+		return mBodyMass;
 	}
 	
-	/**
-	 * Computes distance to p
-	 * @param p		Point
-	 * @return		Distance
-	 */
-	public float distanceToPoint(final Point p) {
-		return (float) Math.abs(Math.sqrt(
-				(this.x - p.x) * (this.x - p.x) +
-				(this.y - p.y) * (this.y - p.y)));
+	public Point getPosition() {
+		return mPosition;
 	}
-	
 }

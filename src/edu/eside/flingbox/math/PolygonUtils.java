@@ -155,6 +155,65 @@ public final class PolygonUtils {
 	}
 	
 	/**
+	 * Normalizes polygon. centroide is set to point (0, 0)
+	 * 
+	 * @param points		Polygon points. are modified to fit centroide
+	 * @param triangulationIndexes	Polygon triangulation
+	 * @param oldCentroide	stores result of old centroide
+	 * @return		Polygon's area
+	 */
+	public static float normalizePolygon(Point[] points, final short[] triangulationIndexes, 
+			Point oldCentroide) {
+		
+		float polygonArea = 0f;
+		Point centroide = new Point(); // Overal polygon mass center
+		final int trianglesCount = triangulationIndexes.length / 3;
+		/* 
+		 * We have to set Center of mass of the polygon to point (0, 0).
+		 * For this, we need to compute center of mass and mass for each
+		 * sub-triangle. 
+		 */
+		for (int i = 0; i < trianglesCount; i++) {
+			final Point p0 = points[triangulationIndexes[i * 3]];
+			final Point p1 = points[triangulationIndexes[i * 3 + 1]];
+			final Point p2 = points[triangulationIndexes[i * 3 + 2]];
+			
+			final Point centerOfTriangle = triangleCenterOfMass(p0, p1, p2);
+			final float triangleArea = trinagleArea(p0, p1, p2);
+			
+			centroide.x = ((centroide.x * polygonArea) + (centerOfTriangle.x * triangleArea))
+				/ (polygonArea + triangleArea);
+			centroide.y = ((centroide.y * polygonArea) + (centerOfTriangle.y * triangleArea))
+				/ (polygonArea + triangleArea);
+			polygonArea += triangleArea;
+		}
+
+		// Set mass center to point (0, 0) by moving all points
+		for (Point p : points) {
+			p.x -= centroide.x;
+			p.y -= centroide.y;
+		}
+		
+		if (oldCentroide != null) {
+			oldCentroide.x = centroide.x;
+			oldCentroide.y = centroide.y;
+		}
+		
+		return polygonArea;
+	}
+	
+	private static Point triangleCenterOfMass(Point p0, Point p1, Point p2) {
+		return new Point((p0.x + p1.x + p2.x) / 3f, (p0.y + p1.y + p2.y) / 3f);
+	}
+	
+	private static float trinagleArea(Point p0, Point p1, Point p2) {
+		return (p0.x * p1.y + p1.x * p2.y + p2.x * p0.y 
+				- p1.x * p0.y - p2.x * p1.y - p0.x * p2.y) / 2f;
+	}
+	
+
+	
+	/**
 	 * Computes minimum distance from line to point
 	 */
 	private static float distanceFromLineToPoint(final Point p0, final Point p1, final Point p) {

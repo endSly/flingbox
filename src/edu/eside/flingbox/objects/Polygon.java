@@ -20,26 +20,21 @@ package edu.eside.flingbox.objects;
 
 import java.util.Random;
 
-import javax.microedition.khronos.opengles.GL10;
-
 import edu.eside.flingbox.graphics.PolygonRender;
 import edu.eside.flingbox.graphics.Render;
 import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.math.PolygonUtils;
-import edu.eside.flingbox.physics.Physics;
-import edu.eside.flingbox.physics.PolygonPhysics;
+import edu.eside.flingbox.physics.PhysicObject;
+import edu.eside.flingbox.physics.PhysicPolygon;
 
 public final class Polygon extends AtomicBody {
 	private final static float DEFAULT_REDUCER_EPSILON = 5.0f;
 	
 	private final Point[] mPoints;
 	private final short mPointsCount;
-	
-	private final short[] mTriangulationIndexes;
-	private final short mTrianglesCount;
-	
+
 	private final PolygonRender mPolygonRender;
-	private final PolygonPhysics mPolygonPhysics;
+	private final PhysicPolygon mPolygonPhysics;
 	
 	/**
 	 * Default Constructor for a Polygon
@@ -50,7 +45,7 @@ public final class Polygon extends AtomicBody {
 		super();
 		
 		// Get passed points count
-		final short pointsCount = (short) points.length;
+		final int pointsCount = points.length;
 		
 		// If not points enough to build a polygon.
 		if (pointsCount < 3)
@@ -59,14 +54,17 @@ public final class Polygon extends AtomicBody {
 		// Optimize points by Douglas-Peucker algorithm 
 		Point[] polygonPoints = PolygonUtils.douglasPeuckerReducer(points, DEFAULT_REDUCER_EPSILON);
 		// Triangulate polygon. This will be needed by Physics and Render
-		mTriangulationIndexes = PolygonUtils.triangulatePolygon(polygonPoints);
+		short[] triangulationIndexes = PolygonUtils.triangulatePolygon(polygonPoints);
+		
+		Point centroid = new Point();
+		
+		float polygonArea = PolygonUtils.normalizePolygon(polygonPoints, triangulationIndexes, centroid);
 		
 		mPoints = polygonPoints;
 		mPointsCount = (short) (polygonPoints.length);
-		mTrianglesCount = (short) (mPointsCount - 2);
 		
-		mPolygonRender = new PolygonRender(mPoints, mTriangulationIndexes);
-		mPolygonPhysics = new PolygonPhysics(mPoints, mTriangulationIndexes);
+		mPolygonRender = new PolygonRender(mPoints, triangulationIndexes);
+		mPolygonPhysics = new PhysicPolygon(mPoints, polygonArea, centroid);
 	}
 	
 	/**
@@ -81,7 +79,7 @@ public final class Polygon extends AtomicBody {
 		return mPolygonRender;
 	}
 	
-	public Physics getPhysics() {
+	public PhysicObject getPhysics() {
 		return mPolygonPhysics;
 	}
 	

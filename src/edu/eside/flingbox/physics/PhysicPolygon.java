@@ -16,42 +16,33 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.eside.flingbox.math;
+package edu.eside.flingbox.physics;
 
-/**
- * Defines generic class of 2D Point and some
- * basic functions.
- */
-public final class Point {
-	public float x, y;
+import edu.eside.flingbox.math.Point;
+import edu.eside.flingbox.math.Vector2D;
+
+public class PhysicPolygon extends PhysicObject {
+
+	// Some physical values needed
 	
-	/**
-	 * Dafult constructor for a point
-	 * @param x		X
-	 * @param y		Y
-	 */
-	public Point(float x, float y) {
-		this.x = x;
-		this.y = y;
+	private final Vector2D[] mPolygonVectors;
+	
+	public PhysicPolygon(final Point[] points, final float bodyMass, final Point position) 
+	throws IllegalArgumentException {
+		super(bodyMass, position);
+		
+		final int pointsCount = points.length;
+		final Vector2D[] polygonVectors = new Vector2D[pointsCount];
+		
+		// Stroes points into Vector array.
+		for (int i = 0; i < pointsCount; i++) 
+			polygonVectors[i] = new Vector2D(points[i].x, points[i].y);
+		
+		mPolygonVectors = polygonVectors;
 	}
 	
-	/**
-	 * Constructor for zero point
-	 */
-	public Point() {
-		this.x = 0f;
-		this.y = 0f;
+	Vector2D[] getPolygon() {
+		return mPolygonVectors;
 	}
-	
-	/**
-	 * Computes distance to p
-	 * @param p		Point
-	 * @return		Distance
-	 */
-	public float distanceToPoint(final Point p) {
-		return (float) Math.abs(Math.sqrt(
-				(this.x - p.x) * (this.x - p.x) +
-				(this.y - p.y) * (this.y - p.y)));
-	}
-	
+
 }
