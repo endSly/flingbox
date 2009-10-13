@@ -38,12 +38,12 @@ public final class PolygonUtils {
 	 * @param epsilon	Max distance to ignore a point
 	 * @return			New array with optimized points
 	 */
-	public static Point[] douglasPeuckerReducer(Point[] points, float epsilon) {
+	public static Point[] douglasPeuckerReducer(final Point[] points, final float epsilon) {
 		final int pointsCount = points.length;
 		if (pointsCount < 4 || epsilon <= 0.0f)
 			return points;	// No reduction possible
 		
-		ArrayList<Point> reducedPolygon = new ArrayList<Point>(pointsCount);
+		final ArrayList<Point> reducedPolygon = new ArrayList<Point>(pointsCount);
 		
 		reducedPolygon.add(points[0]);	// First point will not be include
 		// Call recursively to algorithm
@@ -57,8 +57,8 @@ public final class PolygonUtils {
 	/**
 	 * Recursively Calculation of DouglasPeucker Algorithm
 	 */
-	private static void douglasPeucker(final Point[] points, final float epsilon, int first, int last, 
-			ArrayList<Point> resultPoints) {
+	private static void douglasPeucker(final Point[] points, final float epsilon, 
+			final int first, final int last, final ArrayList<Point> resultPoints) {
 		
 		float maxDistance = 0.0f;
 		int maxDistanceIndex = 0;
@@ -96,7 +96,7 @@ public final class PolygonUtils {
 	 * @return			Will return n-2 group of 3 points, for n sides polygon
 	 * 					or null if not enough points
 	 */
-	public static short[] triangulatePolygon(Point[] points) {
+	public static short[] triangulatePolygon(final Point[] points) {
 		final int pointsCount = points.length;
 		if (pointsCount < 3)
 			return null;
@@ -115,7 +115,7 @@ public final class PolygonUtils {
 	 * Recursively compute triangulation
 	 */
 	private static void triangulatePolygon(final Point[] points, short[] indexes, 
-			boolean[] included, final int pointsCount, int trianglesCount) {
+			boolean[] included, final int pointsCount, final int trianglesCount) {
 		int topPointIndex = 0;
 		float topPoint = Float.NEGATIVE_INFINITY;
 		
@@ -148,17 +148,16 @@ public final class PolygonUtils {
 		indexes[trianglesCount * 3] = (short)prevPoint;	// Store into array
 		indexes[trianglesCount * 3 + 1] = (short)topPointIndex;
 		indexes[trianglesCount * 3 + 2] = (short)nextPoint;
-		trianglesCount++;
-		
+
 		// If there are more triangles iterate one more time
-		if (trianglesCount < (pointsCount - 2))
-			triangulatePolygon(points, indexes, included, pointsCount, trianglesCount);
+		if (trianglesCount < (pointsCount - 3))
+			triangulatePolygon(points, indexes, included, pointsCount, trianglesCount + 1);
 	}
 	
 	/**
 	 * Computes minimum distance from line to point
 	 */
-	private static float distanceFromLineToPoint(Point p0, Point p1, Point p) {
+	private static float distanceFromLineToPoint(final Point p0, final Point p1, final Point p) {
 		float area = (p0.x * p1.y + p1.x * p.y + p.x * p0.y 
 				- p1.x * p0.y - p.x * p1.y - p0.x * p.y) / 2f;
 		float base = (float) Math.sqrt((p1.x - p0.x) * (p1.x - p0.x) 

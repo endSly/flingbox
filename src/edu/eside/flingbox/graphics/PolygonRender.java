@@ -25,9 +25,8 @@ import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import edu.eside.flingbox.graphics.SceneRenderer.Renderizable;
+import edu.eside.flingbox.graphics.Render;
 import edu.eside.flingbox.math.Point;
-import edu.eside.flingbox.physics.PolygonPhysics;
 
 /**
  * {@link PolygonRender} handles functions to render {@link Polygon}
@@ -35,10 +34,11 @@ import edu.eside.flingbox.physics.PolygonPhysics;
  * Translation and rotation values should be set in {@link AtomicBody}
  * and calculated by physic engine.
  */
-public abstract class PolygonRender extends PolygonPhysics implements Renderizable {
+public class PolygonRender extends Render {
 	// Buffers needed to allocate graphical polygon
-	private FloatBuffer mVertexBuffer;
-	private ShortBuffer mIndexBuffer;
+	private final FloatBuffer mVertexBuffer;
+	private final ShortBuffer mIndexBuffer;
+	private final short mTrianglesCount;
 	
 	// Stores polygon's color
 	private float[] mColor;
@@ -48,24 +48,14 @@ public abstract class PolygonRender extends PolygonPhysics implements Renderizab
 	 * initializes values needed by OpenGL.
 	 * @param points	Polygon's points
 	 */
-	public PolygonRender(final Point[] points) {
-		super(points);
-		mColor = new float[4];
-		initialize();	// initialize values needed by OpenGL.
-	}
-
-	/**
-	 * Initializes values needed by OpenGL.
-	 */
-	private void initialize() {
-		// Set color for the object
-		mColor[0] = 0.0f;
-		mColor[1] = 0.0f;
-		mColor[2] = 0.0f;
-		mColor[3] = 1.0f;
+	public PolygonRender(final Point[] points, final short[] triangulationIndexes) {
+		// Set object's color
+		mColor = new float[] {
+			0f, 0f, 0f, 1f
+		};
+	
+		final int pointsCount = points.length;
 		
-		final int pointsCount = mPointsCount;
-		final Point[] points = mPoints;
 		// Fill 2D polygon into 3D space
 		float[] points3D = new float[3 * pointsCount];
 		for (int i = 0; i < pointsCount; i++) {
@@ -83,12 +73,18 @@ public abstract class PolygonRender extends PolygonPhysics implements Renderizab
 		mVertexBuffer.position(0);
 		
 		mIndexBuffer = ByteBuffer
-			.allocateDirect(2 * mTriangulationIndexes.length)
+			.allocateDirect(2 * triangulationIndexes.length)
 			.order(ByteOrder.nativeOrder())
 			.asShortBuffer()
-			.put(mTriangulationIndexes);
+			.put(triangulationIndexes);
 		mIndexBuffer.position(0);
+		
+		mTrianglesCount = (short) (triangulationIndexes.length / 3);
 	}
+
+	/**
+	 * Initializes values needed by OpenGL.
+	 */
 	
 	/**
 	 * Sets color of the polygon
@@ -113,9 +109,9 @@ public abstract class PolygonRender extends PolygonPhysics implements Renderizab
 		gl.glColor4f(mColor[0], mColor[1], mColor[2], mColor[3]);
 		
 		// First translate object for it's position
-		gl.glTranslatef(mPosition.x, mPosition.y, 0f);
+		//gl.glTranslatef(mPosition.x, mPosition.y, 0f);
 		// Then rotate it
-		gl.glRotatef(mAngle, 0f, 0f, 1.0f);
+		//gl.glRotatef(mAngle, 0f, 0f, 1.0f);
 		
 		// Draw it
     	gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);

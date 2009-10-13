@@ -16,23 +16,23 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.eside.flingbox.objects;
+package edu.eside.flingbox.graphics;
 
-import edu.eside.flingbox.math.Point;
+import javax.microedition.khronos.opengles.GL10;
 
 /**
- * An AtomicBody is a general abstraction witch handles 
- * basic data that any object should have.
- * Any physical object on scene should inherit from
- * {@link AtomicBody}.
- * 
- * Also Bodys witch will be rendered should inherit from
- * AtomicBody
+ * {@link Renderizable} interface witch should be 
+ * implemented by on scene bodys to be rendered.
  */
-public abstract class AtomicBody {
-	
-	// Position of the object on scene
-	protected Point mPosition;
-	protected float mAngle;
-
+public abstract class Render {
+	/**
+	 * Called when object has to be rendered.
+	 * When {link onRender} called a new OpenGL's matrix has
+	 * been pushed to stack, so do not use gl.glPushMatrix() or
+	 * gl.glPopMatrix().
+	 * 
+	 * @param gl	OpenGL's space
+	 * @return		true if render consumed
+	 */
+	public abstract boolean onRender(GL10 gl);
 }

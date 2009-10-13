@@ -24,7 +24,7 @@ import android.content.Context;
 import android.opengl.GLSurfaceView.Renderer;
 import android.view.MotionEvent;
 
-import edu.eside.flingbox.graphics.SceneRenderer.Renderizable;
+import edu.eside.flingbox.graphics.Render;
 import edu.eside.flingbox.graphics.SceneRenderer;
 import edu.eside.flingbox.graphics.SceneRenderer.Camera;
 import edu.eside.flingbox.input.SceneGestureDetector;
@@ -54,13 +54,13 @@ public abstract class StaticScene implements OnInputListener {
 	protected SceneRenderer mSceneRenderer;
 	protected SceneGestureDetector mGestureDetector;
 	
-	protected ArrayList<Renderizable> mOnSceneBodys;
+	protected ArrayList<Render> mOnSceneBodys;
 	
 	public StaticScene(Context c) {
 		//mVibrator = (Vibrator)c.getSystemService(Context.VIBRATOR_SERVICE);
 		
 		// Create list of objects.
-		mOnSceneBodys = new ArrayList<Renderizable>();
+		mOnSceneBodys = new ArrayList<Render>();
 		mSceneRenderer = new SceneRenderer(mOnSceneBodys);
 		
 		mGestureDetector = new SceneGestureDetector(c, this);

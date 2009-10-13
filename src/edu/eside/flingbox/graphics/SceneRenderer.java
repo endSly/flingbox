@@ -36,23 +36,6 @@ import android.opengl.GLSurfaceView.Renderer;
 public class SceneRenderer implements Renderer {
 	
 	/**
-	 * {@link Renderizable} interface witch should be 
-	 * implemented by on scene bodys to be rendered.
-	 */
-	public interface Renderizable {
-		/**
-		 * Called when object has to be rendered.
-		 * When {link onRender} called a new OpenGL's matrix has
-		 * been pushed to stack, so do not use gl.glPushMatrix() or
-		 * gl.glPopMatrix().
-		 * 
-		 * @param gl	OpenGL's space
-		 * @return		true if render consumed
-		 */
-		public boolean onRender(GL10 gl);
-	}
-	
-	/**
 	 * Specifies OpenGL camera interface.
 	 * By setting camera's position and width camera could 
 	 * be moved.
@@ -150,7 +133,7 @@ public class SceneRenderer implements Renderer {
 	}
 	
 	// Stores objects that will be renderized
-	private final ArrayList<Renderizable> mGraphicsToRender;
+	private final ArrayList<Render> mGraphicsToRender;
 	
 	// Stores camera for this scene
 	private final Camera mCamera;
@@ -159,7 +142,7 @@ public class SceneRenderer implements Renderer {
 	 * Default Constructor
 	 * @param graphicsToRender	Delegate with ArrayList of Renderizable
 	 */
-	public SceneRenderer(ArrayList<Renderizable> graphicsToRender) {
+	public SceneRenderer(ArrayList<Render> graphicsToRender) {
 		mGraphicsToRender = graphicsToRender;
 		mCamera = new Camera();
 	}
@@ -200,7 +183,7 @@ public class SceneRenderer implements Renderer {
 			gl.glClearColor(0.6f, 0.6f, 1.0f, 1.0f);
 
 			// Render All objects
-			for (Renderizable r : mGraphicsToRender) {
+			for (Render r : mGraphicsToRender) {
 				// Work with new stacked matrix
 				gl.glPushMatrix();
 				gl.glLoadIdentity();

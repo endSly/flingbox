@@ -19,50 +19,57 @@
 package edu.eside.flingbox.physics;
 
 import edu.eside.flingbox.math.Point;
-import edu.eside.flingbox.objects.PolygonBody;
+import edu.eside.flingbox.math.Vector2D;
 
-public abstract class PolygonPhysics extends PolygonBody {
+public abstract class PolygonPhysics extends Physics {
 
 	// Some physical values needed
-	private float mBodyMass;
-	//private float mBodyRotacionalMoment;
+	private final float mBodyMass;
+	private final Vector2D[] mPolygonVectors;
+	private final Point mPosition;
 	
-	public PolygonPhysics(final Point[] points) throws IllegalArgumentException {
-		super(points);
+	public PolygonPhysics(final Point[] points, final short[] triangulationIndexes) 
+	throws IllegalArgumentException {
+		super();
 
-		mBodyMass = 0.0f;
+		float bodyMass = 0.0f;
 		
 		// Overal polygon mass center
 		Point massCenter = new Point();
-		
+		final int trianglesCount = triangulationIndexes.length / 3;
 		/* 
 		 * We have to set Center of mass of the polygon to point (0, 0).
 		 * For this, we need to compute center of mass and mass for each
 		 * sub-triangle. 
 		 */
-		for (int i = 0; i < mTrianglesCount; i++) {
-			final Point p0 = mPoints[mTriangulationIndexes[i * 3]];
-			final Point p1 = mPoints[mTriangulationIndexes[i * 3 + 1]];
-			final Point p2 = mPoints[mTriangulationIndexes[i * 3 + 2]];
+		for (int i = 0; i < trianglesCount; i++) {
+			final Point p0 = points[triangulationIndexes[i * 3]];
+			final Point p1 = points[triangulationIndexes[i * 3 + 1]];
+			final Point p2 = points[triangulationIndexes[i * 3 + 2]];
 			
 			final Point centerOfTriangle = triangleCenterOfMass(p0, p1, p2);
 			final float massOfTriangle = trinagleArea(p0, p1, p2);
 			
-			massCenter.x = ((massCenter.x * mBodyMass) + (centerOfTriangle.x * massOfTriangle))
-				/ (mBodyMass + massOfTriangle);
-			massCenter.y = ((massCenter.y * mBodyMass) + (centerOfTriangle.y * massOfTriangle))
-				/ (mBodyMass + massOfTriangle);
-			mBodyMass += massOfTriangle;
+			massCenter.x = ((massCenter.x * bodyMass) + (centerOfTriangle.x * massOfTriangle))
+				/ (bodyMass + massOfTriangle);
+			massCenter.y = ((massCenter.y * bodyMass) + (centerOfTriangle.y * massOfTriangle))
+				/ (bodyMass + massOfTriangle);
+			bodyMass += massOfTriangle;
 		}
+		
+		mBodyMass = bodyMass;
+		
+		final int pointsCount = points.length;
+		Vector2D[] polygonVectors = new Vector2D[pointsCount];
 		
 		// Set mass center to point (0, 0) by moving all points
-		for (Point p : mPoints) {
-			p.x -= massCenter.x;
-			p.y -= massCenter.y;
-		}
+		for (int i = 0; i < pointsCount; i++) 
+			polygonVectors[i] = new Vector2D(points[i].x - massCenter.x, points[i].y - massCenter.y);
 		
-		// Set position to old mass center
 		mPosition = massCenter;
+		mPolygonVectors = polygonVectors;
+		// Set position to old mass center
+		//mPosition = massCenter;
 
 	}
 	

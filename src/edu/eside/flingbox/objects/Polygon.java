@@ -20,25 +20,69 @@ package edu.eside.flingbox.objects;
 
 import java.util.Random;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import edu.eside.flingbox.graphics.PolygonRender;
-import edu.eside.flingbox.graphics.SceneRenderer.Renderizable;
+import edu.eside.flingbox.graphics.Render;
 import edu.eside.flingbox.math.Point;
+import edu.eside.flingbox.math.PolygonUtils;
+import edu.eside.flingbox.physics.Physics;
+import edu.eside.flingbox.physics.PolygonPhysics;
 
-/**
- * Final interface for a polygon. Physics and Render operations
- * are done by parents classes.
- */
-public final class Polygon extends PolygonRender implements Renderizable {
-
+public final class Polygon extends AtomicBody {
+	private final static float DEFAULT_REDUCER_EPSILON = 5.0f;
+	
+	private final Point[] mPoints;
+	private final short mPointsCount;
+	
+	private final short[] mTriangulationIndexes;
+	private final short mTrianglesCount;
+	
+	private final PolygonRender mPolygonRender;
+	private final PolygonPhysics mPolygonPhysics;
+	
 	/**
-	 * Generates a polygon for passed points. 
-	 * It implements physical and graphical interfaces
-	 * @param points	Polygon's points. {x0, y0, x1, y1, x2...}
-	 * @throws IllegalArgumentException		If not points enough
+	 * Default Constructor for a Polygon
+	 * @param points	Array of Polygon's point
+	 * @throws IllegalArgumentException		If not enough points
 	 */
 	public Polygon(final Point[] points) throws IllegalArgumentException {
-		super(points);
+		super();
 		
+		// Get passed points count
+		final short pointsCount = (short) points.length;
+		
+		// If not points enough to build a polygon.
+		if (pointsCount < 3)
+			throw new IllegalArgumentException("Not points enough to build a polygon.");
+		
+		// Optimize points by Douglas-Peucker algorithm 
+		Point[] polygonPoints = PolygonUtils.douglasPeuckerReducer(points, DEFAULT_REDUCER_EPSILON);
+		// Triangulate polygon. This will be needed by Physics and Render
+		mTriangulationIndexes = PolygonUtils.triangulatePolygon(polygonPoints);
+		
+		mPoints = polygonPoints;
+		mPointsCount = (short) (polygonPoints.length);
+		mTrianglesCount = (short) (mPointsCount - 2);
+		
+		mPolygonRender = new PolygonRender(mPoints, mTriangulationIndexes);
+		mPolygonPhysics = new PolygonPhysics(mPoints, mTriangulationIndexes);
+	}
+	
+	/**
+	 * @return Polygons total points. 
+	 * 		@warning THIS COULD NOT MATCH WITH points IN CONSTRUCTOR!!
+	 */
+	public int getPointsCount() {
+		return mPointsCount;
+	}
+	
+	public Render getRender() {
+		return mPolygonRender;
+	}
+	
+	public Physics getPhysics() {
+		return mPolygonPhysics;
 	}
 	
 	/**
@@ -46,7 +90,7 @@ public final class Polygon extends PolygonRender implements Renderizable {
 	 */
 	public void setRandomColor() {
 		Random rnd = new Random();
-		setColor(rnd.nextFloat() ,rnd.nextFloat() ,rnd.nextFloat() , 1.0f);
+		mPolygonRender.setColor(rnd.nextFloat() ,rnd.nextFloat() ,rnd.nextFloat() , 1.0f);
 	}
 	
 	/**

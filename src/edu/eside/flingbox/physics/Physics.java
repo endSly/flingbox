@@ -16,23 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.eside.flingbox.objects;
+package edu.eside.flingbox.physics;
 
-import edu.eside.flingbox.math.Point;
-
-/**
- * An AtomicBody is a general abstraction witch handles 
- * basic data that any object should have.
- * Any physical object on scene should inherit from
- * {@link AtomicBody}.
- * 
- * Also Bodys witch will be rendered should inherit from
- * AtomicBody
- */
-public abstract class AtomicBody {
-	
-	// Position of the object on scene
-	protected Point mPosition;
-	protected float mAngle;
+public abstract class Physics {
 
 }

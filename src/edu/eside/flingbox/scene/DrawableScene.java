@@ -30,7 +30,7 @@ import android.content.Context;
 import android.opengl.GLException;
 import android.view.MotionEvent;
 
-import edu.eside.flingbox.graphics.SceneRenderer.Renderizable;
+import edu.eside.flingbox.graphics.Render;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.objects.Polygon;
@@ -44,7 +44,7 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 	 * {@link Renderizable} Object witch handles drawing pattern
 	 * and show it to OpenGL's space.
 	 */
-	private class DrawingRender implements Renderizable {
+	private class DrawingRender extends Render {
 
 		private final ArrayList<Point> mDrawingPattern;
 		
@@ -153,7 +153,7 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 			mDrawingPattern.trimToSize();
 			Polygon drawedPolygon = new Polygon((Point[]) mDrawingPattern.toArray(new Point[0]));
 			drawedPolygon.setRandomColor();
-			mOnSceneBodys.add(drawedPolygon);
+			mOnSceneBodys.add(drawedPolygon.getRender());
 
 			// Vibrate as haptic feedback
 			//mVibrator.vibrate(150);
