@@ -19,6 +19,7 @@
 package edu.eside.flingbox.graphics;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -180,7 +181,7 @@ public class SceneRenderer implements Renderer {
 			gl.glLoadIdentity();
 
 			// Set background color
-			gl.glClearColor(0.6f, 0.6f, 1.0f, 1.0f);
+			gl.glClearColor(0f, 0f, 0.5f, 1.0f);
 
 			// Render All objects
 			for (Render r : mGraphicsToRender) {
@@ -193,10 +194,11 @@ public class SceneRenderer implements Renderer {
 			// End drawing
 			gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 		
-		} catch (Exception ex) {
+		} catch (ConcurrentModificationException ex) {
 			/* Do Nothing.
 			 * Just skip drawing until next frame.
-			 * This will origin image blink.	 * 
+			 * This will origin image blink.
+			 * TODO Add semaphore
 			 */
 		}
 		

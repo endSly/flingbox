@@ -40,6 +40,9 @@ public class PolygonRender extends Render {
 	private final ShortBuffer mIndexBuffer;
 	private final short mTrianglesCount;
 	
+	private final Point mPosition;
+	private float mAngle;
+	
 	// Stores polygon's color
 	private float[] mColor;
 
@@ -53,6 +56,8 @@ public class PolygonRender extends Render {
 		mColor = new float[] {
 			0f, 0f, 0f, 1f
 		};
+		
+		mPosition = new Point();
 	
 		final int pointsCount = points.length;
 		
@@ -102,6 +107,20 @@ public class PolygonRender extends Render {
 	}
 	
 	/**
+	 * Sets object's position to render 
+	 * @param position	Point to current position
+	 * @param rotation	Rotation angle in Radians
+	 */
+	public void setPosition(final Point position, final float rotation) {
+		// Copy point. Avoid objects creation
+		mPosition.x = position.x;
+		mPosition.y = position.y;
+		
+		// Set angle into degrees
+		mAngle = rotation * 360.0f / (2f * (float) Math.PI);
+	}
+	
+	/**
 	 * Renderizes Polygon into gl
 	 */
 	public boolean onRender(GL10 gl) {
@@ -109,9 +128,9 @@ public class PolygonRender extends Render {
 		gl.glColor4f(mColor[0], mColor[1], mColor[2], mColor[3]);
 		
 		// First translate object for it's position
-		//gl.glTranslatef(mPosition.x, mPosition.y, 0f);
+		gl.glTranslatef(mPosition.x, mPosition.y, 0f);
 		// Then rotate it
-		//gl.glRotatef(mAngle, 0f, 0f, 1.0f);
+		gl.glRotatef(mAngle, 0f, 0f, 1.0f);
 		
 		// Draw it
     	gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);

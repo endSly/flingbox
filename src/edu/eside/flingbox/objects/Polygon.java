@@ -26,8 +26,9 @@ import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.math.PolygonUtils;
 import edu.eside.flingbox.physics.PhysicObject;
 import edu.eside.flingbox.physics.PhysicPolygon;
+import edu.eside.flingbox.physics.PhysicObject.OnMovementListener;
 
-public final class Polygon extends AtomicBody {
+public final class Polygon extends AtomicBody implements OnMovementListener {
 	private final static float DEFAULT_REDUCER_EPSILON = 5.0f;
 	
 	private final Point[] mPoints;
@@ -64,7 +65,7 @@ public final class Polygon extends AtomicBody {
 		mPointsCount = (short) (polygonPoints.length);
 		
 		mPolygonRender = new PolygonRender(mPoints, triangulationIndexes);
-		mPolygonPhysics = new PhysicPolygon(mPoints, polygonArea, centroid);
+		mPolygonPhysics = new PhysicPolygon(mPoints, polygonArea, centroid, this);
 	}
 	
 	/**
@@ -99,6 +100,15 @@ public final class Polygon extends AtomicBody {
 	public boolean isPointInside(Point p) {
 		
 		return false;
+	}
+
+	/**
+	 * Called when movement occurs.
+	 */
+	@Override
+	public void onMovement(Point deplazament, float rotation) {
+		if (mPolygonRender != null)
+			mPolygonRender.setPosition(deplazament, rotation);
 	}
 
 }

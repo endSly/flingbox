@@ -21,6 +21,10 @@ package edu.eside.flingbox.physics;
 import edu.eside.flingbox.math.Point;
 
 public abstract class PhysicObject {
+	
+	public interface OnMovementListener {
+		public void onMovement(Point deplazament, float rotation);
+	}
 	protected final static float MAX_MASS = Float.MAX_VALUE;
 	
 	protected final float mBodyMass;
@@ -38,4 +42,7 @@ public abstract class PhysicObject {
 	public Point getPosition() {
 		return mPosition;
 	}
+	
+
+
 }

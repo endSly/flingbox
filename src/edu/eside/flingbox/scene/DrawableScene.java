@@ -139,29 +139,34 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 		if (!mIsDrawing) 
 			return false;
 		
-		// Drawing ends
-		mIsDrawing = false;
-		mIsDrawingLocked = false;
-		
-		// Remove drawing line
-		mOnSceneBodys.remove(mDrawingRender);
-		mDrawingRender = null;
-			
-		final int pointsCount = mDrawingPattern.size();
-		// if we had points enough
-		if (pointsCount >= 3) {
-			mDrawingPattern.trimToSize();
-			Polygon drawedPolygon = new Polygon((Point[]) mDrawingPattern.toArray(new Point[0]));
-			drawedPolygon.setRandomColor();
-			mOnSceneBodys.add(drawedPolygon.getRender());
+		new Thread(new Runnable() { 
+			public void run() {
+				// Drawing ends
+				mIsDrawing = false;
+				mIsDrawingLocked = false;
+				
+				// Remove drawing line
+				mOnSceneBodys.remove(mDrawingRender);
+				mDrawingRender = null;
+					
+				final int pointsCount = mDrawingPattern.size();
+				// if we had points enough
+				if (pointsCount >= 3) {
+					mDrawingPattern.trimToSize();
+					Polygon drawedPolygon = new Polygon((Point[]) mDrawingPattern.toArray(new Point[0]));
+					drawedPolygon.setRandomColor();
+					mOnSceneBodys.add(drawedPolygon.getRender());
 
-			// Vibrate as haptic feedback
-			//mVibrator.vibrate(150);
-		}
-		mDrawingPattern = null;
+					// Vibrate as haptic feedback
+					//mVibrator.vibrate(150);
+				}
+				mDrawingPattern = null;
 
-		// Good moment to call garbage collector
-		System.gc();
+				// Good moment to call garbage collector
+				System.gc();
+			} 
+		}).start(); 
+
 		return true;
 	}
 	

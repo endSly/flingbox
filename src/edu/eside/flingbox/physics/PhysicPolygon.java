@@ -24,10 +24,12 @@ import edu.eside.flingbox.math.Vector2D;
 public class PhysicPolygon extends PhysicObject {
 
 	// Some physical values needed
-	
 	private final Vector2D[] mPolygonVectors;
 	
-	public PhysicPolygon(final Point[] points, final float bodyMass, final Point position) 
+	private OnMovementListener mListener;
+	
+	public PhysicPolygon(final Point[] points, final float bodyMass, 
+			final Point position, final OnMovementListener listener) 
 	throws IllegalArgumentException {
 		super(bodyMass, position);
 		
@@ -39,6 +41,9 @@ public class PhysicPolygon extends PhysicObject {
 			polygonVectors[i] = new Vector2D(points[i].x, points[i].y);
 		
 		mPolygonVectors = polygonVectors;
+		
+		mListener = listener;
+		listener.onMovement(mPosition, 0f);
 	}
 	
 	Vector2D[] getPolygon() {

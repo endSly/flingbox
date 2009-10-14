@@ -18,28 +18,55 @@
 
 package edu.eside.flingbox.scene;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
 import java.util.ArrayList;
+
+import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView.Renderer;
 import android.view.MotionEvent;
 
+import edu.eside.flingbox.graphics.PolygonRender;
 import edu.eside.flingbox.graphics.Render;
 import edu.eside.flingbox.graphics.SceneRenderer;
 import edu.eside.flingbox.graphics.SceneRenderer.Camera;
 import edu.eside.flingbox.input.SceneGestureDetector;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
+import edu.eside.flingbox.math.Point;
 
 public abstract class StaticScene implements OnInputListener {
 	
+	public final class BackgroundRender extends PolygonRender {
+		
+		public BackgroundRender(float left, float right, float top, float bottom) {
+			super(new Point[] {
+					new Point(left, top), 
+					new Point(left, bottom),
+					new Point(right, top),
+					new Point(right, bottom)
+					
+			}, new short[] {
+					0, 1, 2, 
+					1, 2, 3
+			});
+			setColor(0.6f, 0.6f, 1.0f, 1.0f);
+		}
+
+		
+	}
+	
 	// Constant limits for the Scene borders
 	final static float SCENE_LEFT_BORDER = -1024f;
-	final static float SCENE_RIGTH_BORDER = 1024f;
+	final static float SCENE_RIGHT_BORDER = 1024f;
 	final static float SCENE_BOTTOM_BORDER = -1024f;
 	final static float SCENE_TOP_BORDER = 1024f;
 	
 	// Constants to Zoom
-	final static float SCENE_MAX_WIDTH = SCENE_RIGTH_BORDER - SCENE_LEFT_BORDER;
+	final static float SCENE_MAX_WIDTH = SCENE_RIGHT_BORDER - SCENE_LEFT_BORDER;
 	final static float SCENE_MIN_WIDTH = 128f;
 	
 	// TODO Support for all screen sizes
@@ -62,6 +89,10 @@ public abstract class StaticScene implements OnInputListener {
 		// Create list of objects.
 		mOnSceneBodys = new ArrayList<Render>();
 		mSceneRenderer = new SceneRenderer(mOnSceneBodys);
+		
+		mOnSceneBodys.add(new BackgroundRender(
+				SCENE_LEFT_BORDER, SCENE_RIGHT_BORDER,
+				SCENE_TOP_BORDER, SCENE_BOTTOM_BORDER));
 		
 		mGestureDetector = new SceneGestureDetector(c, this);
 		
@@ -143,8 +174,8 @@ public abstract class StaticScene implements OnInputListener {
 		if (mCamera.left < SCENE_LEFT_BORDER) {
 			newX += SCENE_LEFT_BORDER - mCamera.left;
 			doSceneFit = true;
-		} else if (mCamera.rigth > SCENE_RIGTH_BORDER) {
-			newX -= mCamera.rigth - SCENE_RIGTH_BORDER;
+		} else if (mCamera.rigth > SCENE_RIGHT_BORDER) {
+			newX -= mCamera.rigth - SCENE_RIGHT_BORDER;
 			doSceneFit = true;
 		}
 		if ((mCamera.bottom < SCENE_BOTTOM_BORDER) 
