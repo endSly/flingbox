@@ -44,6 +44,15 @@ public final class Point {
 	}
 	
 	/**
+	 * Cpy constructor
+	 * @param p Point to copy
+	 */
+	public Point(Point p) {
+		this.x = p.x;
+		this.y = p.y;
+	}
+	
+	/**
 	 * Computes distance to p
 	 * @param p		Point
 	 * @return		Distance
@@ -52,6 +61,16 @@ public final class Point {
 		return (float) Math.abs(Math.sqrt(
 				(this.x - p.x) * (this.x - p.x) +
 				(this.y - p.y) * (this.y - p.y)));
+	}
+
+	/**
+	 * Sets point values
+	 * @param x Point's X
+	 * @param y Point's Y
+	 */
+	public void set(float x, float y) {
+		this.x = x;
+		this.y = y;
 	}
 	
 }

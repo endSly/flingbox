@@ -16,39 +16,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.eside.flingbox.math;
+package edu.eside.flingbox.physics.collisions;
 
-/**
- * Class for a basic Box.
- *
- */
-public final class Box2D {
-	// Box coordinates
-	public final Point topLeft;
-	public final Point bottomRight;
-	
-	public Box2D() {
-		this.topLeft = new Point();
-		this.bottomRight = new Point();
+public abstract class Collider {
+	public interface OnCollideListener {
+		
+		public void onCollide(Collider collide);
 	}
-
-	/**
-	 * Default Constructor for a Box
-	 * @param topLeft
-	 * @param bottomRight
-	 */
-	public Box2D(Point topLeft, Point bottomRight) {
-		this.topLeft = new Point(topLeft);
-		this.bottomRight = new Point(bottomRight);
-	}
-	
-	/**
-	 * Copy constructor
-	 * @param box box to me copied
-	 */
-	public Box2D(Box2D box) {
-		this.topLeft = new Point(box.topLeft);
-		this.bottomRight = new Point(box.bottomRight);
-	}
-	
 }

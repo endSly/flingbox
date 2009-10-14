@@ -18,16 +18,21 @@
 
 package edu.eside.flingbox.physics;
 
+import edu.eside.flingbox.math.Box2D;
 import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.math.Vector2D;
+import edu.eside.flingbox.physics.collisions.ColliderPolygon;
 
 public class PhysicPolygon extends PhysicObject {
 
 	// Some physical values needed
-	private final Vector2D[] mPolygonVectors;
-	private final Vector2D[] mPolygonNormals;
+	private final Vector2D[] mPolygonContour;
 	
 	private OnMovementListener mListener;
+	
+	private ColliderPolygon mCollider;
+	
+	private final Box2D mBoundingBox;
 	
 	public PhysicPolygon(final Point[] points, final float bodyMass, 
 			final Point position, final OnMovementListener listener) {
@@ -41,15 +46,42 @@ public class PhysicPolygon extends PhysicObject {
 		for (int i = 0; i < pointsCount; i++) 
 			polygonVectors[i] = new Vector2D(points[i].x, points[i].y);
 		
-		mPolygonVectors = polygonVectors;
-		mPolygonNormals = new Vector2D[pointsCount];
+		mPolygonContour = polygonVectors;
 		
 		mListener = listener;
 		mListener.onMovement(mPosition, 0f);
+		
+		mBoundingBox = new Box2D();
+		computeBoundingBox();
+		
+		mCollider = new ColliderPolygon(mPolygonContour);
+
 	}
 	
-	Vector2D[] getPolygon() {
-		return mPolygonVectors;
+	private void computeBoundingBox() {
+		final Vector2D[] contour = mPolygonContour;
+		float leftBound = contour[0].i;
+		float rightBound = leftBound;
+		float topBound = contour[0].j;
+		float bottomBound = topBound;
+		
+		for (int i = contour.length; i > 0; i--) {
+			final float x = contour[i].i;
+			final float y = contour[i].j;
+			if (x < leftBound)
+				leftBound = x;
+			else if (x > rightBound)
+				rightBound = x;
+			if (y < bottomBound)
+				bottomBound = y;
+			else if (y > topBound)
+				topBound = y;
+		}
+		
+		mBoundingBox.topLeft.set(leftBound, topBound);
+		mBoundingBox.bottomRight.set(rightBound, bottomBound);
+		
+		
 	}
 
 }
