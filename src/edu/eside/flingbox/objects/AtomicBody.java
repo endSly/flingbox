@@ -18,8 +18,6 @@
 
 package edu.eside.flingbox.objects;
 
-import edu.eside.flingbox.math.Point;
-
 /**
  * An AtomicBody is a general abstraction witch handles 
  * basic data that any object should have.
@@ -31,8 +29,5 @@ import edu.eside.flingbox.math.Point;
  */
 public abstract class AtomicBody {
 	
-	// Position of the object on scene
-	protected Point mPosition;
-	protected float mAngle;
 
 }

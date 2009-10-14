@@ -155,63 +155,40 @@ public final class PolygonUtils {
 	}
 	
 	/**
-	 * Normalizes polygon. centroide is set to point (0, 0)
-	 * 
-	 * @param points		Polygon points. are modified to fit centroide
-	 * @param triangulationIndexes	Polygon triangulation
-	 * @param oldCentroide	stores result of old centroide
-	 * @return		Polygon's area
+	 * Computes area of polygon.
+	 * @param points Polygon's points
+	 * @return Polygon's area. if points are counter-clockwise the 
+	 * result will be positive, else it'll be negative
 	 */
-	public static float normalizePolygon(Point[] points, final short[] triangulationIndexes, 
-			Point oldCentroide) {
+	public static float polygonArea(final Point[] points) {
+		final int lastPoint = points.length - 1;
 		
-		float polygonArea = 0f;
-		Point centroide = new Point(); // Overal polygon mass center
-		final int trianglesCount = triangulationIndexes.length / 3;
-		/* 
-		 * We have to set Center of mass of the polygon to point (0, 0).
-		 * For this, we need to compute center of mass and mass for each
-		 * sub-triangle. 
-		 */
-		for (int i = 0; i < trianglesCount; i++) {
-			final Point p0 = points[triangulationIndexes[i * 3]];
-			final Point p1 = points[triangulationIndexes[i * 3 + 1]];
-			final Point p2 = points[triangulationIndexes[i * 3 + 2]];
-			
-			final Point centerOfTriangle = triangleCenterOfMass(p0, p1, p2);
-			final float triangleArea = trinagleArea(p0, p1, p2);
-			
-			centroide.x = ((centroide.x * polygonArea) + (centerOfTriangle.x * triangleArea))
-				/ (polygonArea + triangleArea);
-			centroide.y = ((centroide.y * polygonArea) + (centerOfTriangle.y * triangleArea))
-				/ (polygonArea + triangleArea);
-			polygonArea += triangleArea;
+		float area = points[lastPoint].x * points[0].y 
+			- points[0].x * points[lastPoint].y;
+		
+		for (int i = 0; i < lastPoint; i++) {
+			Point point = points[i];
+			Point nextPoint = points[i + 1];
+			area += point.x * nextPoint.y - nextPoint.x * point.y;
 		}
-
-		// Set mass center to point (0, 0) by moving all points
+		return area / 2f;
+	}
+	
+	/**
+	 * Computes polygon centroid
+	 * @param points Polygon's points
+	 * @return centroid point
+	 */
+	public static Point polygonCentroid(final Point[] points) {
+		final float pointsCount = points.length;
+		float centroidX = 0f, centroidY = 0f;
+		
 		for (Point p : points) {
-			p.x -= centroide.x;
-			p.y -= centroide.y;
+			centroidX += p.x;
+			centroidY += p.y;
 		}
-		
-		if (oldCentroide != null) {
-			oldCentroide.x = centroide.x;
-			oldCentroide.y = centroide.y;
-		}
-		
-		return polygonArea;
+		return new Point(centroidX / pointsCount, centroidY / pointsCount);
 	}
-	
-	private static Point triangleCenterOfMass(Point p0, Point p1, Point p2) {
-		return new Point((p0.x + p1.x + p2.x) / 3f, (p0.y + p1.y + p2.y) / 3f);
-	}
-	
-	private static float trinagleArea(Point p0, Point p1, Point p2) {
-		return (p0.x * p1.y + p1.x * p2.y + p2.x * p0.y 
-				- p1.x * p0.y - p2.x * p1.y - p0.x * p2.y) / 2f;
-	}
-	
-
 	
 	/**
 	 * Computes minimum distance from line to point

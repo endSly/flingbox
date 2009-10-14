@@ -18,6 +18,10 @@
 
 package edu.eside.flingbox.math;
 
+/**
+ * Basic 2x2 matrix implementation
+ *
+ */
 public final class Matrix22 {
 	// Matrix values
 	public float[] values;

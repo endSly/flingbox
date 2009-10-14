@@ -43,7 +43,7 @@ public class PhysicPolygon extends PhysicObject {
 		mPolygonVectors = polygonVectors;
 		
 		mListener = listener;
-		listener.onMovement(mPosition, 0f);
+		mListener.onMovement(mPosition, 0f);
 	}
 	
 	Vector2D[] getPolygon() {

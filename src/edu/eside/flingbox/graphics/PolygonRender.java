@@ -33,6 +33,8 @@ import edu.eside.flingbox.math.Point;
  * into OpenGL's space. 
  * Translation and rotation values should be set in {@link AtomicBody}
  * and calculated by physic engine.
+ * 
+ * This should only be instantiate by {@link Polygon}.
  */
 public class PolygonRender extends Render {
 	// Buffers needed to allocate graphical polygon

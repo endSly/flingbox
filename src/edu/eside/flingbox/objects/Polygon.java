@@ -28,6 +28,11 @@ import edu.eside.flingbox.physics.PhysicObject;
 import edu.eside.flingbox.physics.PhysicPolygon;
 import edu.eside.flingbox.physics.PhysicObject.OnMovementListener;
 
+/**
+ * Polygon is a general class with handles Physics and render from 
+ * a Polygonal Body
+ *
+ */
 public final class Polygon extends AtomicBody implements OnMovementListener {
 	private final static float DEFAULT_REDUCER_EPSILON = 5.0f;
 	
@@ -54,12 +59,15 @@ public final class Polygon extends AtomicBody implements OnMovementListener {
 		
 		// Optimize points by Douglas-Peucker algorithm 
 		Point[] polygonPoints = PolygonUtils.douglasPeuckerReducer(points, DEFAULT_REDUCER_EPSILON);
-		// Triangulate polygon. This will be needed by Physics and Render
 		short[] triangulationIndexes = PolygonUtils.triangulatePolygon(polygonPoints);
+		Point centroid = PolygonUtils.polygonCentroid(polygonPoints);
+		float polygonArea = Math.abs(PolygonUtils.polygonArea(polygonPoints));
 		
-		Point centroid = new Point();
-		
-		float polygonArea = PolygonUtils.normalizePolygon(polygonPoints, triangulationIndexes, centroid);
+		// Relocate polygon to fin centroid with point (0, 0)
+		for (Point p : polygonPoints) {
+			p.x -= centroid.x;
+			p.y -= centroid.y;
+		}
 		
 		mPoints = polygonPoints;
 		mPointsCount = (short) (polygonPoints.length);
@@ -70,7 +78,7 @@ public final class Polygon extends AtomicBody implements OnMovementListener {
 	
 	/**
 	 * @return Polygons total points. 
-	 * 		@warning THIS COULD NOT MATCH WITH points IN CONSTRUCTOR!!
+	 * NOTE: THIS COULD NOT MATCH WITH points IN CONSTRUCTOR!!
 	 */
 	public int getPointsCount() {
 		return mPointsCount;

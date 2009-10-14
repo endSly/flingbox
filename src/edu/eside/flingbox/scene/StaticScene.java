@@ -34,7 +34,11 @@ import edu.eside.flingbox.math.Point;
 
 public abstract class StaticScene implements OnInputListener {
 	
-	public final class BackgroundRender extends PolygonRender {
+	protected final class BackgroundRender extends PolygonRender {
+		
+		private final static float BACKGROUND_COLOR_R = 0.6f;
+		private final static float BACKGROUND_COLOR_G = 0.6f;
+		private final static float BACKGROUND_COLOR_B = 1.0f;
 		
 		public BackgroundRender(float left, float right, float top, float bottom) {
 			super(new Point[] {
@@ -47,7 +51,7 @@ public abstract class StaticScene implements OnInputListener {
 					0, 1, 2, 
 					1, 2, 3
 			});
-			setColor(0.6f, 0.6f, 1.0f, 1.0f);
+			setColor(BACKGROUND_COLOR_R, BACKGROUND_COLOR_G, BACKGROUND_COLOR_B, 1.0f);
 		}
 
 		
