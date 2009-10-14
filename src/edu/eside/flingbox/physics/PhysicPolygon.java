@@ -25,22 +25,24 @@ public class PhysicPolygon extends PhysicObject {
 
 	// Some physical values needed
 	private final Vector2D[] mPolygonVectors;
+	private final Vector2D[] mPolygonNormals;
 	
 	private OnMovementListener mListener;
 	
 	public PhysicPolygon(final Point[] points, final float bodyMass, 
-			final Point position, final OnMovementListener listener) 
-	throws IllegalArgumentException {
+			final Point position, final OnMovementListener listener) {
 		super(bodyMass, position);
 		
 		final int pointsCount = points.length;
 		final Vector2D[] polygonVectors = new Vector2D[pointsCount];
+		
 		
 		// Stroes points into Vector array.
 		for (int i = 0; i < pointsCount; i++) 
 			polygonVectors[i] = new Vector2D(points[i].x, points[i].y);
 		
 		mPolygonVectors = polygonVectors;
+		mPolygonNormals = new Vector2D[pointsCount];
 		
 		mListener = listener;
 		mListener.onMovement(mPosition, 0f);

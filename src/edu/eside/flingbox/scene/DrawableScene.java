@@ -153,10 +153,11 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 				// if we had points enough
 				if (pointsCount >= 3) {
 					mDrawingPattern.trimToSize();
-					Polygon drawedPolygon = new Polygon((Point[]) mDrawingPattern.toArray(new Point[0]));
+					Polygon drawedPolygon;
+					drawedPolygon = new Polygon((Point[]) mDrawingPattern.toArray(new Point[0]));
 					drawedPolygon.setRandomColor();
 					mOnSceneBodys.add(drawedPolygon.getRender());
-
+					
 					// Vibrate as haptic feedback
 					//mVibrator.vibrate(150);
 				}

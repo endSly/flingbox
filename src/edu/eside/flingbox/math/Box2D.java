@@ -18,6 +18,13 @@
 
 package edu.eside.flingbox.math;
 
+/**
+ * Class for a basic Box.
+ *
+ */
 public final class Box2D {
 
+	public Box2D(float left, float right, float top, float bottom) {
+		
+	}
 }

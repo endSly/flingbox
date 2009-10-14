@@ -53,7 +53,11 @@ public class PolygonRender extends Render {
 	 * initializes values needed by OpenGL.
 	 * @param points	Polygon's points
 	 */
-	public PolygonRender(final Point[] points, final short[] triangulationIndexes) {
+	public PolygonRender(final Point[] points, final short[] triangulationIndexes)
+	throws IllegalArgumentException{
+		if (points == null || points.length < 3 || triangulationIndexes == null)
+			throw new IllegalArgumentException();
+		
 		// Set object's color
 		mColor = new float[] {
 			0f, 0f, 0f, 1f

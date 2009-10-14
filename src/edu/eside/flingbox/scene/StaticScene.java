@@ -54,7 +54,6 @@ public abstract class StaticScene implements OnInputListener {
 			setColor(BACKGROUND_COLOR_R, BACKGROUND_COLOR_G, BACKGROUND_COLOR_B, 1.0f);
 		}
 
-		
 	}
 	
 	// Constant limits for the Scene borders
@@ -115,8 +114,6 @@ public abstract class StaticScene implements OnInputListener {
 		// Set positions
 		mCamera.setPosition(newX, newY, width);
 		
-		fitCameraToScene();
-		
 		return true;
 	}
 
@@ -125,14 +122,12 @@ public abstract class StaticScene implements OnInputListener {
 			float dX, float dY) {
 		// Fit dX and dY into the openGL space
 		final float width = mCamera.getWidth();
-		float newX = mCamera.getX() - (dX * width / mDisplayWidth);
-		float newY = mCamera.getY() + (dY * width / mDisplayWidth); 	// Maintain aspect radio
+		final float newX = mCamera.getX() - (dX * width / mDisplayWidth);
+		final float newY = mCamera.getY() + (dY * width / mDisplayWidth); 	// Maintain aspect radio
 		
 		// Set positions
 		mCamera.setPosition(newX, newY, width);
-		
-		fitCameraToScene();
-		
+
 		return true;
 	}
 
@@ -143,55 +138,16 @@ public abstract class StaticScene implements OnInputListener {
 	@Override
 	public boolean onZoom(float x, float y, float scale) {
 		// Fit dX and dY into the openGL space
-		float newWidth = mCamera.getWidth() * scale;
-		float newX = mCamera.getX();
-		float newY = mCamera.getY();
-		
-		// Check that zoom is in the range
-		if (newWidth > SCENE_MAX_WIDTH) {
-			newWidth = SCENE_MAX_WIDTH;
-		} else if (newWidth < SCENE_MIN_WIDTH) {
-			newWidth = SCENE_MIN_WIDTH;
-		}
-			
+		final float newWidth = mCamera.getWidth() * scale;
+		final float newX = mCamera.getX();
+		final float newY = mCamera.getY();
+	
 		// Set new position
 		mCamera.setPosition(newX, newY, newWidth);
 		
-		fitCameraToScene();
-
 		return true;
 	}
-	
-	private void fitCameraToScene() {
-		float newX = mCamera.getX();
-		float newY = mCamera.getY();
-		float width = mCamera.getWidth();
-		
-		boolean doSceneFit = false; 
-		// Now check borders. Correct if goes out of range
-		if (mCamera.left < SCENE_LEFT_BORDER) {
-			newX += SCENE_LEFT_BORDER - mCamera.left;
-			doSceneFit = true;
-		} else if (mCamera.rigth > SCENE_RIGHT_BORDER) {
-			newX -= mCamera.rigth - SCENE_RIGHT_BORDER;
-			doSceneFit = true;
-		}
-		if ((mCamera.bottom < SCENE_BOTTOM_BORDER) 
-				&& (mCamera.top < SCENE_TOP_BORDER)) {
-			newY += SCENE_BOTTOM_BORDER - mCamera.bottom;
-			
-			doSceneFit = true;
-		} else if ((mCamera.bottom > SCENE_BOTTOM_BORDER) 
-				&& (mCamera.top > SCENE_TOP_BORDER)) {
-			newY -= mCamera.top - SCENE_TOP_BORDER;
-			doSceneFit = true;
-		}
-		
-		// Set new corrected position
-		if (doSceneFit)
-			mCamera.setPosition(newX, newY, width);
-		
-	}
+
 
 
 }

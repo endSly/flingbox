@@ -181,7 +181,7 @@ public class SceneRenderer implements Renderer {
 			gl.glLoadIdentity();
 
 			// Set background color
-			gl.glClearColor(0f, 0f, 0.5f, 1.0f);
+			gl.glClearColor(0f, 0f, 0.2f, 1.0f);
 
 			// Render All objects
 			for (Render r : mGraphicsToRender) {
