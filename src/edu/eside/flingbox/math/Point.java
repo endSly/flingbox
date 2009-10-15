@@ -73,4 +73,14 @@ public final class Point {
 		this.y = y;
 	}
 	
+	/**
+	 * Move point values
+	 * @param dx Increment in X
+	 * @param dy Increment Y
+	 */
+	public void move(float dx, float dy) {
+		this.x += dx;
+		this.y += dy;
+	}
+	
 }

@@ -127,7 +127,7 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 	}
 
 	public void onLongPress(MotionEvent e) {
-	
+		
 		
 	}
 	
@@ -194,13 +194,14 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 	public boolean onScroll(MotionEvent downEv, MotionEvent ev, float distanceX,
 			float distanceY) {
 		// Drawing can be locked until Up event
-		if (mIsDrawingLocked)
-			return false;
+		if (mIsDrawingLocked || !mIsDrawing)
+			return super.onScroll(downEv, ev, distanceX, distanceY);
 		
 		// Gets screen projection into the OpenGL space
 		final float x = mCamera.left + (ev.getX() * mCamera.getWidth() / mDisplayWidth);
 		final float y = mCamera.top - (ev.getY() * mCamera.getHeight() / mDisplayHeight);
 
+		/*
 		if (!mIsDrawing) {
 			// Start drawing
 			mIsDrawing = true;
@@ -214,7 +215,7 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 			mDrawingPattern.add(new Point(onDownX, onDownY));
 
 			mOnSceneBodys.add(mDrawingRender);
-		}
+		}*/
 		
 		mDrawingPattern.add(new Point(x, y));
 		return true;
@@ -230,8 +231,20 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 
 	@Override
 	public boolean onSingleTapUp(MotionEvent e) {
-		// TODO Auto-generated method stub
-		return false;
+		// Start drawing
+		mIsDrawing = true;
+		
+		mDrawingPattern = new ArrayList<Point>(40);
+		mDrawingRender = new DrawingRender(mDrawingPattern);
+		
+		final float onDownX = mCamera.left + (e.getX() * mCamera.getWidth() / mDisplayWidth);
+		final float onDownY = mCamera.top - (e.getY() * mCamera.getHeight() / mDisplayHeight);
+
+		mDrawingPattern.add(new Point(onDownX, onDownY));
+
+		mOnSceneBodys.add(mDrawingRender);
+		
+		return true;
 	}
 
 }

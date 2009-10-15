@@ -117,7 +117,7 @@ public abstract class StaticScene implements OnInputListener {
 		return true;
 	}
 
-	@Override
+
 	public boolean onMultitouchScroll(MotionEvent downEvent, MotionEvent ev,
 			float dX, float dY) {
 		// Fit dX and dY into the openGL space
@@ -135,7 +135,7 @@ public abstract class StaticScene implements OnInputListener {
 	 * Called when multitouch zoom occurs.
 	 * Also corrects to fit camera to scene.
 	 */
-	@Override
+
 	public boolean onZoom(float x, float y, float scale) {
 		// Fit dX and dY into the openGL space
 		final float newWidth = mCamera.getWidth() * scale;
@@ -145,6 +145,20 @@ public abstract class StaticScene implements OnInputListener {
 		// Set new position
 		mCamera.setPosition(newX, newY, newWidth);
 		
+		return true;
+	}
+	
+	public boolean onScroll(MotionEvent downEv, MotionEvent ev, float distanceX,
+			float distanceY) {
+		final Camera cam = mCamera;
+		// Fit dX and dY into the openGL space
+		final float width = cam.getWidth();
+		final float newX = cam.getX() + (distanceX * width / mDisplayWidth);
+		final float newY = cam.getY() - (distanceY * width / mDisplayWidth); 	// Maintain aspect radio
+		
+		// Set positions
+		cam.setPosition(newX, newY, width);
+
 		return true;
 	}
 
