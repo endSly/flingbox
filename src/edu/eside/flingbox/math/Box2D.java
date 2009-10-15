@@ -51,4 +51,9 @@ public final class Box2D {
 		this.bottomRight = new Point(box.bottomRight);
 	}
 	
+	public boolean isPointInside(Point p) {
+		return (p.x > this.topLeft.x) && (p.x < this.bottomRight.x) &&
+			(p.y > this.bottomRight.y) && (p.y < this.topLeft.y);
+	}
+	
 }

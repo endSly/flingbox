@@ -219,6 +219,8 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 		mDrawingPattern.add(new Point(x, y));
 		return true;
 	}
+	
+	
 
 	@Override
 	public void onShowPress(MotionEvent e) {
