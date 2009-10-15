@@ -21,6 +21,7 @@ package edu.eside.flingbox.physics.collisions;
 import edu.eside.flingbox.math.Box2D;
 import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.math.Vector2D;
+import edu.eside.flingbox.physics.collisions.Collider.Collision;
 
 /**
  * Collider for a polygon. it handles all functions needed by 
@@ -30,6 +31,7 @@ import edu.eside.flingbox.math.Vector2D;
  */
 public class ColliderPolygon extends Collider {
 	
+	// needed to discartd quickly collisions
 	private final float mRadius; 
 	private final Box2D mBoundingBox;
 	
@@ -65,6 +67,16 @@ public class ColliderPolygon extends Collider {
 	}
 	
 	/**
+	 * Checks if this collides with other collider.
+	 * 
+	 * @param otherCollider
+	 * @return 
+	 */
+	public Collision collidesTo(Collider otherCollider) {
+		return new Collision();
+	}
+	
+	/**
 	 * Computes Polygon normals.
 	 * 
 	 * @param contour Counterclockwise polygon points
@@ -76,7 +88,7 @@ public class ColliderPolygon extends Collider {
 		
 		for (int i = 0; i < pointsCount; i++) {
 			final Vector2D p0 = contour[i], p1 = contour[i == pointsCount - 1 ? 0 : i ]; 
-			normals[i] = new Vector2D((p1.j - p0.j), (p0.i - p1.i));
+			normals[i] = new Vector2D((p1.j - p0.j), (p0.i - p1.i));//.normalize();
 		}
 		
 		return normals;

@@ -23,4 +23,8 @@ public abstract class Collider {
 		
 		public void onCollide(Collider collide);
 	}
+	
+	public final class Collision {
+		private boolean mDoCollide;
+	}
 }
