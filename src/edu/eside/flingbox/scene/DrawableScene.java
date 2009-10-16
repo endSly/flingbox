@@ -31,6 +31,7 @@ import android.opengl.GLException;
 import android.view.MotionEvent;
 
 import edu.eside.flingbox.graphics.Render;
+import edu.eside.flingbox.input.SceneMTGestureDetector;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.objects.Polygon;
@@ -201,9 +202,11 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 		final float x = mCamera.left + (ev.getX() * mCamera.getWidth() / mDisplayWidth);
 		final float y = mCamera.top - (ev.getY() * mCamera.getHeight() / mDisplayHeight);
 
-		/*
-		if (!mIsDrawing) {
-			// Start drawing
+		// Start drawing if not drawing.
+		// ONLY FOR MULTITOUCH
+		if (!mIsDrawing 
+				&& (mGestureDetector instanceof SceneMTGestureDetector)) {
+			
 			mIsDrawing = true;
 			
 			mDrawingPattern = new ArrayList<Point>(40);
@@ -215,7 +218,7 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 			mDrawingPattern.add(new Point(onDownX, onDownY));
 
 			mOnSceneBodys.add(mDrawingRender);
-		}*/
+		}
 		
 		mDrawingPattern.add(new Point(x, y));
 		return true;

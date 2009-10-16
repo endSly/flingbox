@@ -28,9 +28,9 @@ import android.view.GestureDetector;
  * 
  * Listener should implement {@link OnInputListener}.
  */
-public class SceneMTGestureDetector extends GestureDetector {
+public class SceneMTGestureDetector extends SceneGestureDetector {
 	
-	public interface OnInputListener extends OnGestureListener {
+	public interface OnInputListener extends SceneGestureDetector.OnInputListener {
 		/**
 		 * Called when user uses multi-touch zoom
 		 * @param scale	Scale of zoom
