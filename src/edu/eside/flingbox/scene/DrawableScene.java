@@ -157,7 +157,8 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 					Polygon drawedPolygon;
 					drawedPolygon = new Polygon((Point[]) mDrawingPattern.toArray(new Point[0]));
 					drawedPolygon.setRandomColor();
-					mOnSceneBodys.add(drawedPolygon.getRender());
+					
+					add(drawedPolygon);
 					
 					// Vibrate as haptic feedback
 					//mVibrator.vibrate(150);
@@ -217,7 +218,8 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 
 			mDrawingPattern.add(new Point(onDownX, onDownY));
 
-			mOnSceneBodys.add(mDrawingRender);
+			// We only need render, no physics
+			mSceneRenderer.add(mDrawingRender);
 		}
 		
 		mDrawingPattern.add(new Point(x, y));
@@ -245,7 +247,7 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 
 		mDrawingPattern.add(new Point(onDownX, onDownY));
 
-		mOnSceneBodys.add(mDrawingRender);
+		mSceneRenderer.add(mDrawingRender);
 		
 		return true;
 	}

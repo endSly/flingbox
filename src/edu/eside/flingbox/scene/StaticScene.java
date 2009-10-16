@@ -31,6 +31,8 @@ import edu.eside.flingbox.graphics.SceneRenderer.Camera;
 import edu.eside.flingbox.input.SceneGestureDetector;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 import edu.eside.flingbox.math.Point;
+import edu.eside.flingbox.objects.AtomicBody;
+import edu.eside.flingbox.physics.ScenePhysics;
 
 public abstract class StaticScene implements OnInputListener {
 	
@@ -75,19 +77,21 @@ public abstract class StaticScene implements OnInputListener {
 	
 	protected Camera mCamera;
 	
-	protected SceneRenderer mSceneRenderer;
-	protected SceneGestureDetector mGestureDetector;
+	protected final SceneRenderer mSceneRenderer;
+	protected final ScenePhysics mScenePhysics;
+	protected final SceneGestureDetector mGestureDetector;
 	
-	protected ArrayList<Render> mOnSceneBodys;
+	protected final ArrayList<AtomicBody> mOnSceneBodys;
 	
 	public StaticScene(Context c) {
 		//mVibrator = (Vibrator)c.getSystemService(Context.VIBRATOR_SERVICE);
 		
 		// Create list of objects.
-		mOnSceneBodys = new ArrayList<Render>();
-		mSceneRenderer = new SceneRenderer(mOnSceneBodys);
+		mOnSceneBodys = new ArrayList<AtomicBody>();
+		mSceneRenderer = new SceneRenderer();
+		mScenePhysics = new ScenePhysics();
 		
-		mOnSceneBodys.add(new BackgroundRender(
+		mSceneRenderer.add(new BackgroundRender(
 				SCENE_LEFT_BORDER, SCENE_RIGHT_BORDER,
 				SCENE_TOP_BORDER, SCENE_BOTTOM_BORDER));
 		
@@ -96,6 +100,12 @@ public abstract class StaticScene implements OnInputListener {
 		mCamera = mSceneRenderer.getCamera();
 		
 		System.gc();	// This is a good moment to call to Garbage Collector.
+	}
+	
+	public void add(AtomicBody body) {
+		mOnSceneBodys.add(body);
+		mSceneRenderer.add(body.getRender());
+		mScenePhysics.add(body.getPhysics());
 	}
 	
 	public Renderer getSceneRenderer() {

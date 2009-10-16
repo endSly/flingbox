@@ -141,11 +141,65 @@ public class SceneRenderer implements Renderer {
 	
 	/**
 	 * Default Constructor
-	 * @param graphicsToRender	Delegate with ArrayList of Renderizable
+	 * Creates an Render Scene without any object
 	 */
-	public SceneRenderer(ArrayList<Render> graphicsToRender) {
-		mGraphicsToRender = graphicsToRender;
+	public SceneRenderer() {
+		mGraphicsToRender = new ArrayList<Render>();
 		mCamera = new Camera();
+	}
+	
+	/**
+	 * Default Constructor
+	 * Creates an Render Scene with one object.
+	 * 
+	 * @param render Object to be rendered
+	 */
+	public SceneRenderer(Render render) {
+		mGraphicsToRender = new ArrayList<Render>();
+		mCamera = new Camera();
+		mGraphicsToRender.add(render);
+	}
+	
+	/**
+	 * Default Constructor
+	 * Creates an Render Scene with one object.
+	 * 
+	 * @param renders Objects to be rendered
+	 */
+	public SceneRenderer(Render[] renders) {
+		mGraphicsToRender = new ArrayList<Render>();
+		mCamera = new Camera();
+		for (Render r : renders)
+			mGraphicsToRender.add(r);
+	}
+
+	/**
+	 * Adds one object to be rendered.
+	 * 
+	 * @param render object
+	 */
+	public void add(Render render) {
+		mGraphicsToRender.add(render);
+	}
+	
+	/**
+	 * Adds an array of renderizable objects to scene.
+	 * 
+	 * @param renders array of objects
+	 */
+	public void add(Render[] renders) {
+		for (Render r : renders)
+			mGraphicsToRender.add(r);
+	}
+	
+	/**
+	 * Removes object from scene
+	 * 
+	 * @param render Render to be removed
+	 * @return true if removed, else false
+	 */
+	public boolean remove(Render render) {
+		return mGraphicsToRender.remove(render);
 	}
 	
 	/**
@@ -238,5 +292,7 @@ public class SceneRenderer implements Renderer {
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
 	}
+
+	
 	
 }

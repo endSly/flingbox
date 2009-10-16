@@ -18,6 +18,9 @@
 
 package edu.eside.flingbox.objects;
 
+import edu.eside.flingbox.graphics.Render;
+import edu.eside.flingbox.physics.PhysicObject;
+
 /**
  * An AtomicBody is a general abstraction witch handles 
  * basic data that any object should have.
@@ -29,5 +32,7 @@ package edu.eside.flingbox.objects;
  */
 public abstract class AtomicBody {
 	
-
+	public abstract Render getRender();
+	
+	public abstract PhysicObject getPhysics();
 }
