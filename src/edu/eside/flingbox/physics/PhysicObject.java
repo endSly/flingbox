@@ -19,20 +19,33 @@
 package edu.eside.flingbox.physics;
 
 import edu.eside.flingbox.math.Point;
+import edu.eside.flingbox.math.Vector2D;
+import edu.eside.flingbox.physics.collisions.Collider;
 
 public abstract class PhysicObject {
 	
 	public interface OnMovementListener {
 		public void onMovement(Point deplazament, float rotation);
 	}
+	
+	/** Object with MAX_MASS should be impossible to move */
 	protected final static float MAX_MASS = Float.MAX_VALUE;
 	
 	protected final float mBodyMass;
+	
 	protected final Point mPosition;
+	protected float mRotation = 0f;
+	
+	protected final Vector2D mVelocity;
+	protected float mAngularVelocity;
+	
+	protected Collider mCollider;
+	
 	
 	public PhysicObject(final float bodyMass, final Point position) {
 		mBodyMass = bodyMass;
 		mPosition = position;
+		mVelocity = new Vector2D();
 	}
 	
 	public float getBodyMass() {
@@ -43,6 +56,12 @@ public abstract class PhysicObject {
 		return mPosition;
 	}
 	
+	/**
+	 * @return the Collider
+	 */
+	public Collider getCollider() {
+		return mCollider;
+	}
 
 
 }

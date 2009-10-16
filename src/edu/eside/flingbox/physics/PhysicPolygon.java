@@ -29,7 +29,7 @@ public class PhysicPolygon extends PhysicObject {
 	
 	private final OnMovementListener mListener;
 	
-	private final ColliderPolygon mCollider;
+	
 	
 	public PhysicPolygon(final Point[] points, final float bodyMass, 
 			final Point position, final OnMovementListener listener) {
@@ -52,12 +52,7 @@ public class PhysicPolygon extends PhysicObject {
 
 	}
 	
-	/**
-	 * @return the Collider
-	 */
-	public ColliderPolygon getCollider() {
-		return mCollider;
-	}
+	
 
 
 

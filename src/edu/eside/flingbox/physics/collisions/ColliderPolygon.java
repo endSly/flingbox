@@ -31,10 +31,6 @@ import edu.eside.flingbox.physics.collisions.Collider.Collision;
  */
 public class ColliderPolygon extends Collider {
 	
-	// needed to discartd quickly collisions
-	private final float mRadius; 
-	private final Box2D mBoundingBox;
-	
 	private final Vector2D[] mPolygonNormals;
 	
 	/** Handled in Physics, only pointer */
@@ -141,5 +137,11 @@ public class ColliderPolygon extends Collider {
 		return (float) Math.sqrt(radiusSquare);
 	}
 	
+	/**
+	 * 
+	 */
+	public boolean checkCollision(Collider collider) {
+		return false;
+	}
 	
 }

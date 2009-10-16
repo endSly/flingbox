@@ -1,5 +1,8 @@
 package edu.eside.flingbox.physics.force;
 
-public class Force {
+import edu.eside.flingbox.math.Vector2D;
 
+public class Force {
+	private Vector2D mComponent;
+	
 }

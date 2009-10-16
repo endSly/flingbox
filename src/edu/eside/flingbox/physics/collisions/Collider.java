@@ -18,6 +18,9 @@
 
 package edu.eside.flingbox.physics.collisions;
 
+import edu.eside.flingbox.math.Box2D;
+import edu.eside.flingbox.math.Point;
+
 public abstract class Collider {
 	public interface OnCollideListener {
 		
@@ -27,4 +30,36 @@ public abstract class Collider {
 	public final class Collision {
 		private boolean mDoCollide;
 	}
+	
+	// needed to discartd quickly collisions
+	protected float mRadius; 
+	protected Box2D mBoundingBox;
+	
+	protected Point mPosition;
+	protected float mRotation;
+	
+	
+	public boolean checkCollision(Collider collider) {
+		/*
+		 *  Start checking bounding circle
+		 */
+		final float radiusLength = mRadius + collider.mRadius;
+		final float thisX = mPosition.x, thisY = mPosition.y, 
+			otherX = collider.mPosition.x, otherY = collider.mPosition.y;
+		final float distanceSqr = ((thisX - otherX) * (thisX - otherX) 
+				+ (thisY - otherY) * (thisY - otherY));
+		
+		if (distanceSqr > (radiusLength * radiusLength))
+			return false;	// No collision
+		
+		/*
+		 * Check bounding Boxes.
+		 * Check only the box's sides that we need
+		 */
+		
+		
+		return true;
+		
+	}
+	
 }
