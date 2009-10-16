@@ -27,10 +27,6 @@ public class PhysicPolygon extends PhysicObject {
 	// Some physical values needed
 	private final Vector2D[] mPolygonContour;
 	
-	private final OnMovementListener mListener;
-	
-	
-	
 	public PhysicPolygon(final Point[] points, final float bodyMass, 
 			final Point position, final OnMovementListener listener) {
 		super(bodyMass, position);

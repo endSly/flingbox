@@ -36,16 +36,31 @@ public abstract class PhysicObject {
 	protected final Point mPosition;
 	protected float mRotation = 0f;
 	
-	protected final Vector2D mVelocity;
-	protected float mAngularVelocity;
+	protected final Vector2D mVelocity = new Vector2D();
+	protected float mAngularVelocity = 0.0f;
+	
+	protected Vector2D mAppliedForce = new Vector2D();
+	protected float mAppliedMoment = 0.0f;
 	
 	protected Collider mCollider;
 	
+	protected OnMovementListener mListener;
 	
 	public PhysicObject(final float bodyMass, final Point position) {
 		mBodyMass = bodyMass;
 		mPosition = position;
-		mVelocity = new Vector2D();
+	}
+	
+	public void applyForce(Vector2D force) {
+		mAppliedForce = force;
+	}
+	
+	public void onUpdateBody(float time) {
+		mVelocity.add((new Vector2D(mAppliedForce)).mul((time / 1000f)));
+		mPosition.set(mPosition.x + mVelocity.i * (time / 1000f), 
+				mPosition.y + mVelocity.j * (time / 1000f));
+		
+		mListener.onMovement(mPosition, 0.0f);
 	}
 	
 	public float getBodyMass() {
@@ -62,6 +77,8 @@ public abstract class PhysicObject {
 	public Collider getCollider() {
 		return mCollider;
 	}
+	
+	
 
 
 }

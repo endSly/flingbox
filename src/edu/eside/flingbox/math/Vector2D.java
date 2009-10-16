@@ -44,6 +44,15 @@ public final class Vector2D {
 	}
 	
 	/**
+	 * Copy constructor
+	 * @param v vector to copy
+	 */
+	public Vector2D(Vector2D v) {
+		this.i = v.i;
+		this.j = v.j;
+	}
+
+	/**
 	 * @return 	Length of vector
 	 */
 	public float length() {

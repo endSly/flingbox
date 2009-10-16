@@ -35,9 +35,11 @@ public abstract class Collider {
 	protected float mRadius; 
 	protected Box2D mBoundingBox;
 	
-	protected Point mPosition;
-	protected float mRotation;
+	protected final Point mPosition;
 	
+	public Collider() {
+		mPosition = new Point();
+	}
 	
 	public boolean checkCollision(Collider collider) {
 		/*

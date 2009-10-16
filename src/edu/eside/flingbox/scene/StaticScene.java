@@ -99,6 +99,8 @@ public abstract class StaticScene implements OnInputListener {
 		
 		mCamera = mSceneRenderer.getCamera();
 		
+		mScenePhysics.startSimulation();
+		
 		System.gc();	// This is a good moment to call to Garbage Collector.
 	}
 	

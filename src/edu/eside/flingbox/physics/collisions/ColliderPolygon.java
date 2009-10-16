@@ -19,6 +19,7 @@
 package edu.eside.flingbox.physics.collisions;
 
 import edu.eside.flingbox.math.Box2D;
+import edu.eside.flingbox.math.Matrix22;
 import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.collisions.Collider.Collision;
@@ -30,6 +31,8 @@ import edu.eside.flingbox.physics.collisions.Collider.Collision;
  *
  */
 public class ColliderPolygon extends Collider {
+	
+	private float mRotationAngle;
 	
 	private final Vector2D[] mPolygonNormals;
 	
@@ -46,6 +49,7 @@ public class ColliderPolygon extends Collider {
 	 * @return
 	 */
 	public ColliderPolygon(final Vector2D[] contour) {
+		super();
 		mPolygonContour = contour;
 		mRadius = computeBoundingCircleRadius(contour);
 		mBoundingBox = computeBoundingBox(contour);
@@ -141,6 +145,36 @@ public class ColliderPolygon extends Collider {
 	 * 
 	 */
 	public boolean checkCollision(Collider collider) {
+		if (super.checkCollision(collider)) {
+			final Vector2D[] normals = mPolygonNormals;
+			final int pointsCount = normals.length;
+			// We are going to rotate normals
+			Matrix22 rotationMatrix = Matrix22.rotationMatrix(mRotationAngle);
+			
+			Vector2D collisionVector = new Vector2D(collider.mPosition.x - mPosition.x, 
+					collider.mPosition.y - mPosition.y);
+			
+			for (int i = 0; i < pointsCount; i++) {
+				Vector2D rotatedNormal = normals[i].mul(rotationMatrix);
+				/*
+				 * Check if the segment collides with the object.
+				 * Ignore normas wich are not pointing to object
+				 */
+				final float dotProduct = collisionVector.i * rotatedNormal.i 
+					+ collisionVector.j * rotatedNormal.j;
+				// If dot product is less than 0, the vectors are oposite, a > 180º
+				if (dotProduct > 0) {
+					
+				}
+				
+			}
+			
+
+			
+			
+			
+			
+		}
 		return false;
 	}
 	

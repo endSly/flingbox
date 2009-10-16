@@ -147,7 +147,7 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 				mIsDrawingLocked = false;
 				
 				// Remove drawing line
-				mOnSceneBodys.remove(mDrawingRender);
+				mSceneRenderer.remove(mDrawingRender);
 				mDrawingRender = null;
 					
 				final int pointsCount = mDrawingPattern.size();
