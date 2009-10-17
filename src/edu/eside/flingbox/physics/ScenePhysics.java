@@ -21,6 +21,7 @@ package edu.eside.flingbox.physics;
 
 import java.util.ArrayList;
 
+import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.collisions.SceneCollider;
 import edu.eside.flingbox.physics.force.Force;
@@ -34,7 +35,8 @@ public final class ScenePhysics implements Runnable {
 	private Force mGravity;
 	
 	private final Thread mSimulationThread;
-	private boolean mDoKill;
+	private boolean mDoKill = false;
+	private boolean mIsSimulating = false;
 	
 	public ScenePhysics() {
 		mOnSceneBodys = new ArrayList<PhysicObject>();
@@ -75,14 +77,20 @@ public final class ScenePhysics implements Runnable {
 	public void startSimulation() {
 		System.gc();
 		
-		mSimulationThread.start();
 		mDoKill = false;
+		mSimulationThread.start();
+		mIsSimulating = true;
 	}
 	
 	public void stopSimulation() {
 		mDoKill = true;
+		while (mDoKill) { }	// Wait until thread ends.
 	}
-
+	
+	public boolean isSimulating() {
+		return mIsSimulating;
+	}
+	
 	@Override
 	public void run() {
 		long time = System.currentTimeMillis();
@@ -101,6 +109,7 @@ public final class ScenePhysics implements Runnable {
 			time = System.currentTimeMillis();
 		}
 		mDoKill = false;
+		mIsSimulating = false;
 		
 	}
 	

@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.IOException;
 
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
+import edu.eside.flingbox.math.Point;
+import edu.eside.flingbox.objects.AtomicBody;
 
 import android.content.Context;
 import android.os.Environment;
@@ -29,6 +31,8 @@ import android.view.MotionEvent;
 
 
 public class Scene extends DrawableScene implements OnInputListener {
+	
+	private AtomicBody mSelectedBody = null;
 
 	public Scene(Context c) {
 		super(c);
@@ -41,9 +45,31 @@ public class Scene extends DrawableScene implements OnInputListener {
 	}
 
 	public boolean onDown(MotionEvent e) {
-		// TODO Auto-generated method stub
+		final float onDownX = mCamera.left + (e.getX() * mCamera.getWidth() / mDisplayWidth);
+		final float onDownY = mCamera.top - (e.getY() * mCamera.getHeight() / mDisplayHeight);
+		final Point p = new Point(onDownX, onDownY);
+		
+		for (AtomicBody object : mOnSceneBodys)
+			if (object.isPointOver(p))
+				return true;
+		
 		return super.onDown(e);
 	}
+	
+	@Override
+	public boolean onTrackballEvent(MotionEvent ev) {
+		boolean handled = false;
+		if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+			if (mScenePhysics.isSimulating())
+				mScenePhysics.stopSimulation();
+			else 
+				mScenePhysics.startSimulation();
+			handled = true;
+		}
+			
+		return handled | super.onTrackballEvent(ev);
+	}
+	
 	
 	public boolean onSaveScene() {
 		File savedFile = new File(Environment.getExternalStorageDirectory() 

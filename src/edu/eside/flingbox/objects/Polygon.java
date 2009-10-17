@@ -39,9 +39,6 @@ public final class Polygon extends AtomicBody implements OnMovementListener {
 	private final Point[] mPoints;
 	private final short mPointsCount;
 
-	private final PolygonRender mPolygonRender;
-	private final PhysicPolygon mPolygonPhysics;
-	
 	/**
 	 * Default Constructor for a Polygon
 	 * @param points	Array of Polygon's point
@@ -72,8 +69,8 @@ public final class Polygon extends AtomicBody implements OnMovementListener {
 		mPoints = polygonPoints;
 		mPointsCount = (short) (polygonPoints.length);
 		
-		mPolygonRender = new PolygonRender(mPoints, triangulationIndexes);
-		mPolygonPhysics = new PhysicPolygon(mPoints, polygonArea, centroid, this);
+		mRender = new PolygonRender(mPoints, triangulationIndexes);
+		mPhysics = new PhysicPolygon(mPoints, polygonArea, centroid, this);
 	}
 	
 	/**
@@ -84,30 +81,12 @@ public final class Polygon extends AtomicBody implements OnMovementListener {
 		return mPointsCount;
 	}
 	
-	public Render getRender() {
-		return mPolygonRender;
-	}
-	
-	public PhysicObject getPhysics() {
-		return mPolygonPhysics;
-	}
-	
 	/**
 	 * Sets random color to polygon
 	 */
 	public void setRandomColor() {
 		Random rnd = new Random();
-		mPolygonRender.setColor(rnd.nextFloat() ,rnd.nextFloat() ,rnd.nextFloat() , 1.0f);
-	}
-	
-	/**
-	 * Estimates if point is inside polygon by bounding box
-	 * @param p		Point to check
-	 * @return		true if point is inside, else false.
-	 */
-	public boolean isPointInside(Point p) {
-		
-		return false;
+		((PolygonRender) mRender).setColor(rnd.nextFloat() ,rnd.nextFloat() ,rnd.nextFloat() , 1.0f);
 	}
 
 	/**
@@ -115,8 +94,8 @@ public final class Polygon extends AtomicBody implements OnMovementListener {
 	 */
 	@Override
 	public void onMovement(Point deplazament, float rotation) {
-		if (mPolygonRender != null)
-			mPolygonRender.setPosition(deplazament, rotation);
+		if (mRender != null)
+			((PolygonRender) mRender).setPosition(deplazament, rotation);
 	}
 
 }

@@ -18,8 +18,12 @@
 
 package edu.eside.flingbox.objects;
 
+import edu.eside.flingbox.graphics.PolygonRender;
 import edu.eside.flingbox.graphics.Render;
+import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.physics.PhysicObject;
+import edu.eside.flingbox.physics.PhysicPolygon;
+import edu.eside.flingbox.physics.collisions.Collider;
 
 /**
  * An AtomicBody is a general abstraction witch handles 
@@ -32,7 +36,25 @@ import edu.eside.flingbox.physics.PhysicObject;
  */
 public abstract class AtomicBody {
 	
-	public abstract Render getRender();
+	protected Render mRender;
+	protected PhysicObject mPhysics;
 	
-	public abstract PhysicObject getPhysics();
+	public Render getRender() {
+		return mRender;
+	}
+	
+	public PhysicObject getPhysics() {
+		return mPhysics;
+	}
+	
+	public boolean isPointOver(Point p) {
+		if (mPhysics != null) {
+			Collider collider = mPhysics.getCollider();
+			if (collider != null)
+				return collider.isPointOver(p);
+		}
+		
+		return false;
+		
+	}
 }

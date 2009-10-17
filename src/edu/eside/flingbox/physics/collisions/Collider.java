@@ -64,4 +64,13 @@ public abstract class Collider {
 		
 	}
 	
+	public boolean isPointOver(Point p) {
+		final float thisX = mPosition.x, thisY = mPosition.y, 
+			pointX = p.x, pointY = p.y;
+		final float distanceSqr = ((thisX - pointX) * (thisX - pointX) 
+				+ (thisY - pointY) * (thisY - pointY));
+		
+		return (distanceSqr < (mRadius * mRadius));
+	}
+	
 }
