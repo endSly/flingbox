@@ -21,8 +21,10 @@ package edu.eside.flingbox.physics;
 import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.collisions.ColliderPolygon;
+import edu.eside.flingbox.physics.collisions.Collision;
+import edu.eside.flingbox.physics.collisions.Collider.OnCollideListener;
 
-public class PhysicPolygon extends PhysicObject {
+public class PhysicPolygon extends PhysicObject implements OnCollideListener {
 
 	// Some physical values needed
 	private final Vector2D[] mPolygonContour;
@@ -44,8 +46,16 @@ public class PhysicPolygon extends PhysicObject {
 		mListener = listener;
 		mListener.onMovement(mPosition, 0f);
 		
-		mCollider = new ColliderPolygon(mPolygonContour);
+		mCollider = new ColliderPolygon(mPolygonContour, this);
+		mCollider.setPosition(mPosition);
 
+	}
+
+	@Override
+	public void onCollide(Collision collide) {
+		this.applyForce(collide.sense);
+		return;
+		
 	}
 	
 	

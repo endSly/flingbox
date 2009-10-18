@@ -47,6 +47,10 @@ public abstract class AtomicBody {
 		return mPhysics;
 	}
 	
+	public void fixObject() {
+		mPhysics.fixObject();
+	}
+	
 	public boolean isPointOver(Point p) {
 		if (mPhysics != null) {
 			Collider collider = mPhysics.getCollider();

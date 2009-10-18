@@ -19,10 +19,10 @@
 package edu.eside.flingbox.physics.collisions;
 
 import edu.eside.flingbox.math.Box2D;
+import edu.eside.flingbox.math.Intersect;
 import edu.eside.flingbox.math.Matrix22;
 import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.math.Vector2D;
-import edu.eside.flingbox.physics.collisions.Collider.Collision;
 
 /**
  * Collider for a polygon. it handles all functions needed by 
@@ -48,8 +48,8 @@ public class ColliderPolygon extends Collider {
 	 * 
 	 * @return
 	 */
-	public ColliderPolygon(final Vector2D[] contour) {
-		super();
+	public ColliderPolygon(final Vector2D[] contour, OnCollideListener listener) {
+		super(listener);
 		mPolygonContour = contour;
 		mRadius = computeBoundingCircleRadius(contour);
 		mBoundingBox = computeBoundingBox(contour);
@@ -72,9 +72,9 @@ public class ColliderPolygon extends Collider {
 	 * @param otherCollider
 	 * @return 
 	 */
-	public Collision collidesTo(Collider otherCollider) {
-		return new Collision();
-	}
+	//public Collision collidesTo(Collider otherCollider) {
+	//	return new Collision();
+	//}
 	
 	/**
 	 * Computes Polygon normals.
@@ -149,30 +149,62 @@ public class ColliderPolygon extends Collider {
 			final Vector2D[] normals = mPolygonNormals;
 			final int pointsCount = normals.length;
 			// We are going to rotate normals
-			Matrix22 rotationMatrix = Matrix22.rotationMatrix(mRotationAngle);
+			//Matrix22 rotationMatrix = Matrix22.rotationMatrix(mRotationAngle);
 			
-			Vector2D collisionVector = new Vector2D(collider.mPosition.x - mPosition.x, 
-					collider.mPosition.y - mPosition.y);
+			//Vector2D collisionVector = new Vector2D(collider.mPosition.x - mPosition.x, 
+			//		collider.mPosition.y - mPosition.y);
 			
+			// Translate this polygon
+			final Vector2D[] polygonContour = mPolygonContour;
+			final Vector2D[] locatedPolygon = new Vector2D[pointsCount];
+			final Vector2D position = new Vector2D(mPosition.x, mPosition.y);
 			for (int i = 0; i < pointsCount; i++) {
-				Vector2D rotatedNormal = normals[i].mul(rotationMatrix);
-				/*
-				 * Check if the segment collides with the object.
-				 * Ignore normas wich are not pointing to object
-				 */
-				final float dotProduct = collisionVector.i * rotatedNormal.i 
-					+ collisionVector.j * rotatedNormal.j;
-				// If dot product is less than 0, the vectors are oposite, a > 180º
-				if (dotProduct > 0) {
-					
-				}
-				
+				locatedPolygon[i] = new Vector2D(polygonContour[i]);
+				locatedPolygon[i].add(position);
 			}
 			
-
+			// Translate other polygon
+			final Vector2D[] otherPolygonContour = ((ColliderPolygon) collider).mPolygonContour;
+			final int otherPointsCount = otherPolygonContour.length;
+			final Vector2D[] otherLocatedPolygon = new Vector2D[otherPointsCount];
+			final Vector2D otherPosition = new Vector2D(
+					((ColliderPolygon) collider).mPosition.x, 
+					((ColliderPolygon) collider).mPosition.y);
 			
+			for (int i = 0; i < otherPointsCount; i++) {
+				otherLocatedPolygon[i] = new Vector2D(otherPolygonContour[i]);
+				otherLocatedPolygon[i].add(otherPosition);
+			}
 			
+			Intersect[] intersections = Intersect.intersectionsOfTrace(polygonContour, 
+					otherPolygonContour);
 			
+			final int intersctionsCount = intersections.length;
+			for (int i = 0
+					; i < intersctionsCount - 1 && intersections[i + 1] != null
+					; i += 2) {
+				final Vector2D ingoingIntersect = intersections[i].collisionPoint, 
+					outgoingIntersect = intersections[i + 1].collisionPoint;
+				Vector2D sense = new Vector2D(outgoingIntersect);
+				sense.sub(ingoingIntersect);
+				sense = sense.normalVector();
+				
+				Vector2D collisonPosition = new Vector2D(ingoingIntersect)
+					.add(outgoingIntersect)
+					.mul(0.5f);
+				
+				Collision collisionA = new Collision(
+						new Vector2D(collisonPosition).sub(position), 
+						sense);
+				
+				Collision collisionB = new Collision(
+						new Vector2D(collisonPosition).sub(otherPosition), 
+						new Vector2D(sense.negate()));
+				
+				mCollisionListener.onCollide(collisionA);
+				//if (collider != null && collider.mCollisionListener != null)
+				collider.mCollisionListener.onCollide(collisionB);
+			}
 			
 		}
 		return false;

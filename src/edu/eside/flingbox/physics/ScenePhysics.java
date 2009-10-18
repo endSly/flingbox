@@ -95,18 +95,18 @@ public final class ScenePhysics implements Runnable {
 	public void run() {
 		long time = System.currentTimeMillis();
 		for (; !mDoKill; ) {
+			time = System.currentTimeMillis() - time;
+			for (PhysicObject object : mOnSceneBodys) {
+				object.applyGravity(GRAVITY_EARTH);
+				object.onUpdateBody(time);
+			}
+			mCollider.checkCollisions();
+			time = System.currentTimeMillis();
 			try {
 				Thread.sleep(20);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			time = System.currentTimeMillis() - time;
-			for (PhysicObject object : mOnSceneBodys) {
-				object.applyForce(GRAVITY_EARTH);
-				object.onUpdateBody(time);
-			}
-			mCollider.checkCollisions();
-			time = System.currentTimeMillis();
 		}
 		mDoKill = false;
 		mIsSimulating = false;

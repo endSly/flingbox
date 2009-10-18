@@ -22,6 +22,7 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView.Renderer;
+import android.os.Vibrator;
 import android.view.MotionEvent;
 
 import edu.eside.flingbox.graphics.PolygonRender;
@@ -73,7 +74,7 @@ public abstract class StaticScene implements OnInputListener {
 	protected final float mDisplayHeight = 480f;
 	
 	// Vibrator instance
-	//protected Vibrator mVibrator;
+	protected Vibrator mVibrator;
 	
 	protected Camera mCamera;
 	
@@ -98,6 +99,8 @@ public abstract class StaticScene implements OnInputListener {
 		mGestureDetector = new SceneGestureDetector(c, this);
 		
 		mCamera = mSceneRenderer.getCamera();
+		
+		mVibrator = (Vibrator) c.getSystemService(Context.VIBRATOR_SERVICE);
 		
 		System.gc();	// This is a good moment to call to Garbage Collector.
 	}

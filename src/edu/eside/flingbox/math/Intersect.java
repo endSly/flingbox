@@ -48,22 +48,27 @@ public class Intersect {
 		if (uA < 0 || uA > 1 || uB < 0 || uB > 1) 
 			return null; 	// lines can't intersect
 		
-		return null;
+		Intersect intersect =  new Intersect(new Vector2D(a0x + uA * (a1x - a0x), 
+				a0y + uA * (a1y - a0y)));
+		
+		return intersect;
 	}
 	
-	public static Intersect[][] intersectionsOfTrace(Vector2D[] traceA, Vector2D[] traceB) {
+	public static Intersect[] intersectionsOfTrace(Vector2D[] traceA, Vector2D[] traceB) {
 		final int aLen = traceA.length, bLen = traceB.length;
+		Intersect[] intersects = new Intersect[aLen > bLen ? aLen : bLen];
 		int intersecitonsCount = 0;
 		for (int i = 0; i < aLen - 1; i++)
 			for (int j = 0; j < bLen - 1; j++) {
 				Intersect intersect = intersectionOfSegments(traceA[i], traceA[i + 1], 
 						traceB[j], traceB[j + 1]);
 				if (intersect != null) {
-					
+					intersect.isIngoingIntersection = (intersecitonsCount % 2) == 0;
+					intersects[intersecitonsCount] = intersect;
 					intersecitonsCount++;
 				}
 			}
-		return null;
+		return intersects;
 	}
 	
 	

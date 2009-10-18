@@ -24,21 +24,20 @@ import edu.eside.flingbox.math.Point;
 public abstract class Collider {
 	public interface OnCollideListener {
 		
-		public void onCollide(Collider collide);
-	}
-	
-	public final class Collision {
-		private boolean mDoCollide;
+		public void onCollide(Collision collide);
 	}
 	
 	// needed to discartd quickly collisions
 	protected float mRadius; 
 	protected Box2D mBoundingBox;
 	
+	protected final OnCollideListener mCollisionListener;
+	
 	protected final Point mPosition;
 	
-	public Collider() {
+	public Collider(OnCollideListener listener) {
 		mPosition = new Point();
+		mCollisionListener = listener;
 	}
 	
 	public boolean checkCollision(Collider collider) {
@@ -71,6 +70,10 @@ public abstract class Collider {
 				+ (thisY - pointY) * (thisY - pointY));
 		
 		return (distanceSqr < (mRadius * mRadius));
+	}
+	
+	public void setPosition(Point position) {
+		mPosition.set(position.x, position.y);
 	}
 	
 }

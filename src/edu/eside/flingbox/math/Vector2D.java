@@ -123,4 +123,13 @@ public final class Vector2D {
 		return this;
 	}
 	
+	/**
+	 * Computes vector's normal
+	 * 
+	 * @return New vector with the normal.
+	 */
+	public Vector2D normalVector() {
+		return new Vector2D(this.j, -this.i);
+	}
+	
 }

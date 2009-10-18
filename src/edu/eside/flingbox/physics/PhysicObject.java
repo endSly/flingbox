@@ -58,6 +58,11 @@ public abstract class PhysicObject {
 		mBodyMass = MAX_MASS;
 	}
 	
+	public synchronized void applyGravity(Vector2D gravityForce) {
+		if (!mDoIgnoreGravity)
+			mAppliedForce.add(gravityForce);
+	}
+	
 	public synchronized void applyForce(Vector2D force) {
 		mAppliedForce.add(force);
 	}
@@ -68,6 +73,10 @@ public abstract class PhysicObject {
 				mPosition.y + mVelocity.j * (time / 1000f));
 		
 		mListener.onMovement(mPosition, 0.0f);
+		mCollider.setPosition(mPosition);
+		
+		mAppliedForce.i = 0f;
+		mAppliedForce.j = 0f;
 	}
 	
 	public float getBodyMass() {

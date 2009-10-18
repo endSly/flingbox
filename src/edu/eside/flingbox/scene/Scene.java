@@ -40,8 +40,22 @@ public class Scene extends DrawableScene implements OnInputListener {
 
 	public boolean onFling(MotionEvent onDownEv, MotionEvent ev, float velocityX,
 			float velocityY) {
-		// TODO Auto-generated method stub
+		/** TEST FOR SIMULATOR */
+		if (mScenePhysics.isSimulating())
+			mScenePhysics.stopSimulation();
+		else 
+			mScenePhysics.startSimulation();
 		return false;
+	}
+	
+	public void onLongPress(MotionEvent e) {
+		if (mSelectedBody != null) {
+			mSelectedBody.fixObject();
+			// vibrate as haptic feedback
+			mVibrator.vibrate(60);
+		}
+		super.onLongPress(e);
+		
 	}
 
 	public boolean onDown(MotionEvent e) {
