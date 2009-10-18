@@ -50,10 +50,34 @@ public class Scene extends DrawableScene implements OnInputListener {
 		final Point p = new Point(onDownX, onDownY);
 		
 		for (AtomicBody object : mOnSceneBodys)
-			if (object.isPointOver(p))
+			if (object.isPointOver(p)) {
+				mSelectedBody = object;
 				return true;
+			}
 		
 		return super.onDown(e);
+	}
+	
+	@Override
+	public boolean onUp(MotionEvent e) {
+		mSelectedBody = null;
+		return super.onUp(e);
+	}
+	
+	@Override
+	public boolean onScroll(MotionEvent downEv, MotionEvent ev, float distanceX,
+			float distanceY) {
+		if (mSelectedBody != null) {
+			
+		}
+		
+		return super.onScroll(downEv, ev, distanceX, distanceY);
+		
+	}
+	
+	public boolean onDragObject(MotionEvent e, AtomicBody o) {
+		
+		return false;
 	}
 	
 	@Override

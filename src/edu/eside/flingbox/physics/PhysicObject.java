@@ -31,7 +31,9 @@ public abstract class PhysicObject {
 	/** Object with MAX_MASS should be impossible to move */
 	protected final static float MAX_MASS = Float.MAX_VALUE;
 	
-	protected final float mBodyMass;
+	protected float mBodyMass;
+	
+	protected boolean mDoIgnoreGravity = false;
 	
 	protected final Point mPosition;
 	protected float mRotation = 0f;
@@ -51,11 +53,16 @@ public abstract class PhysicObject {
 		mPosition = position;
 	}
 	
-	public void applyForce(Vector2D force) {
-		mAppliedForce = force;
+	public void fixObject() {
+		mDoIgnoreGravity = true;
+		mBodyMass = MAX_MASS;
 	}
 	
-	public void onUpdateBody(float time) {
+	public synchronized void applyForce(Vector2D force) {
+		mAppliedForce.add(force);
+	}
+	
+	public synchronized void onUpdateBody(float time) {
 		mVelocity.add((new Vector2D(mAppliedForce)).mul((time / 1000f)));
 		mPosition.set(mPosition.x + mVelocity.i * (time / 1000f), 
 				mPosition.y + mVelocity.j * (time / 1000f));
