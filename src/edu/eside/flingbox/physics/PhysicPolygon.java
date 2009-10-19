@@ -44,9 +44,9 @@ public class PhysicPolygon extends PhysicObject implements OnCollideListener {
 		mPolygonContour = polygonVectors;
 		
 		mListener = listener;
-		mListener.onMovement(mPosition, 0f);
-		
 		mCollider = new ColliderPolygon(mPolygonContour, this);
+		
+		mListener.onMovement(mPosition, 0f);
 		mCollider.setPosition(mPosition);
 
 	}

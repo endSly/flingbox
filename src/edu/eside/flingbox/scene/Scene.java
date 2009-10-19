@@ -24,6 +24,7 @@ import java.io.IOException;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.objects.AtomicBody;
+import edu.eside.flingbox.objects.Polygon;
 
 import android.content.Context;
 import android.os.Environment;
@@ -36,15 +37,12 @@ public class Scene extends DrawableScene implements OnInputListener {
 
 	public Scene(Context c) {
 		super(c);
+		
 	}
 
 	public boolean onFling(MotionEvent onDownEv, MotionEvent ev, float velocityX,
 			float velocityY) {
-		/** TEST FOR SIMULATOR */
-		if (mScenePhysics.isSimulating())
-			mScenePhysics.stopSimulation();
-		else 
-			mScenePhysics.startSimulation();
+		
 		return false;
 	}
 	

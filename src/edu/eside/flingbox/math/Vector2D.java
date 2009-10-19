@@ -102,6 +102,15 @@ public final class Vector2D {
 	}
 	
 	/**
+	 * 
+	 * @param v
+	 * @return
+	 */
+	public float dotProduct(Vector2D v) {
+		return this.i * v.i + this.j * v.j;
+	}
+	
+	/**
 	 * Multiplicates vector by matrix
 	 * @param m	Matrix
 	 * @return	New vector with result
@@ -130,6 +139,18 @@ public final class Vector2D {
 	 */
 	public Vector2D normalVector() {
 		return new Vector2D(this.j, -this.i);
+	}
+	
+	/**
+	 * Resturn string with the vector
+	 */
+	public String toString() {
+		return "Vector(" + this.i + "i + " + this.j + "j)";
+	}
+
+	public void set(Vector2D v) {
+		this.i = v.i;
+		this.j = v.j;
 	}
 	
 }

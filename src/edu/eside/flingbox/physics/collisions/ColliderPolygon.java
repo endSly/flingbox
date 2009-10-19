@@ -157,27 +157,24 @@ public class ColliderPolygon extends Collider {
 			// Translate this polygon
 			final Vector2D[] polygonContour = mPolygonContour;
 			final Vector2D[] locatedPolygon = new Vector2D[pointsCount];
-			final Vector2D position = new Vector2D(mPosition.x, mPosition.y);
-			for (int i = 0; i < pointsCount; i++) {
-				locatedPolygon[i] = new Vector2D(polygonContour[i]);
-				locatedPolygon[i].add(position);
-			}
+			final Vector2D position = mPosition;
+			for (int i = 0; i < pointsCount; i++) 
+				locatedPolygon[i] = new Vector2D(polygonContour[i]).add(position);
 			
 			// Translate other polygon
 			final Vector2D[] otherPolygonContour = ((ColliderPolygon) collider).mPolygonContour;
 			final int otherPointsCount = otherPolygonContour.length;
 			final Vector2D[] otherLocatedPolygon = new Vector2D[otherPointsCount];
 			final Vector2D otherPosition = new Vector2D(
-					((ColliderPolygon) collider).mPosition.x, 
-					((ColliderPolygon) collider).mPosition.y);
+					((ColliderPolygon) collider).mPosition);
 			
-			for (int i = 0; i < otherPointsCount; i++) {
-				otherLocatedPolygon[i] = new Vector2D(otherPolygonContour[i]);
-				otherLocatedPolygon[i].add(otherPosition);
-			}
+			for (int i = 0; i < otherPointsCount; i++)
+				otherLocatedPolygon[i] = new Vector2D(otherPolygonContour[i])
+					.add(otherPosition);
+
 			
-			Intersect[] intersections = Intersect.intersectionsOfTrace(polygonContour, 
-					otherPolygonContour);
+			Intersect[] intersections = Intersect.intersectionsOfTrace(
+					locatedPolygon, otherLocatedPolygon);
 			
 			final int intersctionsCount = intersections.length;
 			for (int i = 0
@@ -187,22 +184,24 @@ public class ColliderPolygon extends Collider {
 					outgoingIntersect = intersections[i + 1].collisionPoint;
 				Vector2D sense = new Vector2D(outgoingIntersect);
 				sense.sub(ingoingIntersect);
-				sense = sense.normalVector();
+				sense = sense.normalVector().mul(1E7f);
 				
 				Vector2D collisonPosition = new Vector2D(ingoingIntersect)
 					.add(outgoingIntersect)
 					.mul(0.5f);
 				
+				Vector2D bodysSide = (new Vector2D(position)).sub(collisonPosition);
+				boolean polygonSide = bodysSide.dotProduct(sense) >= 0;
+				
 				Collision collisionA = new Collision(
 						new Vector2D(collisonPosition).sub(position), 
-						sense);
+						polygonSide ? sense : new Vector2D(sense).negate());
 				
 				Collision collisionB = new Collision(
 						new Vector2D(collisonPosition).sub(otherPosition), 
-						new Vector2D(sense.negate()));
+						!polygonSide ? sense : new Vector2D(sense).negate());
 				
 				mCollisionListener.onCollide(collisionA);
-				//if (collider != null && collider.mCollisionListener != null)
 				collider.mCollisionListener.onCollide(collisionB);
 			}
 			

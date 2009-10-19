@@ -20,6 +20,7 @@ package edu.eside.flingbox.physics.collisions;
 
 import edu.eside.flingbox.math.Box2D;
 import edu.eside.flingbox.math.Point;
+import edu.eside.flingbox.math.Vector2D;
 
 public abstract class Collider {
 	public interface OnCollideListener {
@@ -33,10 +34,10 @@ public abstract class Collider {
 	
 	protected final OnCollideListener mCollisionListener;
 	
-	protected final Point mPosition;
+	protected final Vector2D mPosition;
 	
 	public Collider(OnCollideListener listener) {
-		mPosition = new Point();
+		mPosition = new Vector2D();
 		mCollisionListener = listener;
 	}
 	
@@ -45,8 +46,8 @@ public abstract class Collider {
 		 *  Start checking bounding circle
 		 */
 		final float radiusLength = mRadius + collider.mRadius;
-		final float thisX = mPosition.x, thisY = mPosition.y, 
-			otherX = collider.mPosition.x, otherY = collider.mPosition.y;
+		final float thisX = mPosition.i, thisY = mPosition.j, 
+			otherX = collider.mPosition.i, otherY = collider.mPosition.j;
 		final float distanceSqr = ((thisX - otherX) * (thisX - otherX) 
 				+ (thisY - otherY) * (thisY - otherY));
 		
@@ -64,7 +65,7 @@ public abstract class Collider {
 	}
 	
 	public boolean isPointOver(Point p) {
-		final float thisX = mPosition.x, thisY = mPosition.y, 
+		final float thisX = mPosition.i, thisY = mPosition.j, 
 			pointX = p.x, pointY = p.y;
 		final float distanceSqr = ((thisX - pointX) * (thisX - pointX) 
 				+ (thisY - pointY) * (thisY - pointY));
@@ -72,8 +73,9 @@ public abstract class Collider {
 		return (distanceSqr < (mRadius * mRadius));
 	}
 	
-	public void setPosition(Point position) {
-		mPosition.set(position.x, position.y);
+	// TODO
+	public void setPosition(Vector2D position) {
+		mPosition.set(position);
 	}
 	
 }

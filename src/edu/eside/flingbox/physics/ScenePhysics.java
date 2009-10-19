@@ -21,19 +21,15 @@ package edu.eside.flingbox.physics;
 
 import java.util.ArrayList;
 
-import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.collisions.SceneCollider;
-import edu.eside.flingbox.physics.force.Force;
 
 public final class ScenePhysics implements Runnable {
-	public static final Vector2D GRAVITY_EARTH = new Vector2D(0f, -9.81f * 630f);
+	public static final Vector2D GRAVITY_EARTH = new Vector2D(0f, -9.81f * 530f);
 	
 	private final ArrayList<PhysicObject> mOnSceneBodys;
 	private final SceneCollider mCollider;
-	
-	private Force mGravity;
-	
+
 	private final Thread mSimulationThread;
 	private boolean mDoKill = false;
 	private boolean mIsSimulating = false;
@@ -110,7 +106,6 @@ public final class ScenePhysics implements Runnable {
 		}
 		mDoKill = false;
 		mIsSimulating = false;
-		
 	}
 	
 }

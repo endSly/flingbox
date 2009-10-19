@@ -83,4 +83,11 @@ public final class Point {
 		this.y += dy;
 	}
 	
+	/**
+	 * Returns string with point
+	 */
+	public String toString() {
+		return "Point(" + this.x + ", " + this.y + ")";
+	}
+	
 }

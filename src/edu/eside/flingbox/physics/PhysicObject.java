@@ -25,7 +25,7 @@ import edu.eside.flingbox.physics.collisions.Collider;
 public abstract class PhysicObject {
 	
 	public interface OnMovementListener {
-		public void onMovement(Point deplazament, float rotation);
+		public void onMovement(Vector2D mPosition, float rotation);
 	}
 	
 	/** Object with MAX_MASS should be impossible to move */
@@ -35,7 +35,7 @@ public abstract class PhysicObject {
 	
 	protected boolean mDoIgnoreGravity = false;
 	
-	protected final Point mPosition;
+	protected final Vector2D mPosition;
 	protected float mRotation = 0f;
 	
 	protected final Vector2D mVelocity = new Vector2D();
@@ -50,7 +50,7 @@ public abstract class PhysicObject {
 	
 	public PhysicObject(final float bodyMass, final Point position) {
 		mBodyMass = bodyMass;
-		mPosition = position;
+		mPosition = new Vector2D(position.x, position.y);
 	}
 	
 	public void fixObject() {
@@ -64,13 +64,12 @@ public abstract class PhysicObject {
 	}
 	
 	public synchronized void applyForce(Vector2D force) {
-		mAppliedForce.add(force);
+		mAppliedForce.add(force.mul(1f / mBodyMass));
 	}
 	
 	public synchronized void onUpdateBody(float time) {
 		mVelocity.add((new Vector2D(mAppliedForce)).mul((time / 1000f)));
-		mPosition.set(mPosition.x + mVelocity.i * (time / 1000f), 
-				mPosition.y + mVelocity.j * (time / 1000f));
+		mPosition.add((new Vector2D(mVelocity)).mul(time / 1000f));
 		
 		mListener.onMovement(mPosition, 0.0f);
 		mCollider.setPosition(mPosition);
@@ -83,7 +82,7 @@ public abstract class PhysicObject {
 		return mBodyMass;
 	}
 	
-	public Point getPosition() {
+	public Vector2D getPosition() {
 		return mPosition;
 	}
 	

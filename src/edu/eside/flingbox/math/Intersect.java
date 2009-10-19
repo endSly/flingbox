@@ -19,8 +19,6 @@
 package edu.eside.flingbox.math;
 
 public class Intersect {
-	private final static float EPSILON = 0.001f;
-	
 	public final Vector2D collisionPoint;
 	
 	public Vector2D polygonASegment;
@@ -39,29 +37,33 @@ public class Intersect {
 			b0x = segB0.i, b0y = segB0.j, b1x = segB1.i, b1y = segB1.j;
 		
 		final float d = (b1y - b0y) * (a1x - a0x) - (b1x - b0x) * (a1y - a0y);
-		if (d < EPSILON)
+		
+		if (d == 0.0f)
 			return null;	// Parallel lines
 		
 		final float uA = ((b1x - b0x) * (a0y - b0y) - (b1y - b0y) * (a0x - b0x)) / d;
 		final float uB = ((a1x - a0x) * (a0y - b0y) - (a1y - a0y) * (a0x - b0x)) / d;
-		
+
 		if (uA < 0 || uA > 1 || uB < 0 || uB > 1) 
 			return null; 	// lines can't intersect
 		
-		Intersect intersect =  new Intersect(new Vector2D(a0x + uA * (a1x - a0x), 
-				a0y + uA * (a1y - a0y)));
+		Intersect intersect =  new Intersect(new Vector2D(
+				a0x + uA * (a1x - a0x), a0y + uA * (a1y - a0y)));
 		
 		return intersect;
 	}
 	
 	public static Intersect[] intersectionsOfTrace(Vector2D[] traceA, Vector2D[] traceB) {
 		final int aLen = traceA.length, bLen = traceB.length;
+		
 		Intersect[] intersects = new Intersect[aLen > bLen ? aLen : bLen];
 		int intersecitonsCount = 0;
-		for (int i = 0; i < aLen - 1; i++)
-			for (int j = 0; j < bLen - 1; j++) {
-				Intersect intersect = intersectionOfSegments(traceA[i], traceA[i + 1], 
-						traceB[j], traceB[j + 1]);
+		
+		for (int i = 0; i < aLen; i++)
+			for (int j = 0; j < bLen; j++) {
+				Intersect intersect = intersectionOfSegments(
+						traceA[i], traceA[(i + 1) % aLen], 
+						traceB[j], traceB[(j + 1) % bLen]);
 				if (intersect != null) {
 					intersect.isIngoingIntersection = (intersecitonsCount % 2) == 0;
 					intersects[intersecitonsCount] = intersect;

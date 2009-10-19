@@ -24,6 +24,7 @@ import edu.eside.flingbox.graphics.PolygonRender;
 import edu.eside.flingbox.graphics.Render;
 import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.math.PolygonUtils;
+import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.PhysicObject;
 import edu.eside.flingbox.physics.PhysicPolygon;
 import edu.eside.flingbox.physics.PhysicObject.OnMovementListener;
@@ -92,10 +93,9 @@ public final class Polygon extends AtomicBody implements OnMovementListener {
 	/**
 	 * Called when movement occurs.
 	 */
-	@Override
-	public void onMovement(Point deplazament, float rotation) {
+	public void onMovement(Vector2D position, float rotation) {
 		if (mRender != null)
-			((PolygonRender) mRender).setPosition(deplazament, rotation);
+			((PolygonRender) mRender).setPosition(new Point(position.i, position.j), rotation);
 	}
 
 }
