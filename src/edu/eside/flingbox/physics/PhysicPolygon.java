@@ -25,7 +25,11 @@ import edu.eside.flingbox.physics.collisions.ColliderPolygon;
 import edu.eside.flingbox.physics.collisions.Collision;
 import edu.eside.flingbox.physics.collisions.Collider.OnCollideListener;
 
-public class PhysicPolygon extends PhysicObject implements OnCollideListener {
+/**
+ * Implements physics properties for polygols
+ *
+ */
+public class PhysicPolygon extends PhysicBody implements OnCollideListener {
 
 	// Some physical values needed
 	private final Vector2D[] mPolygonContour;
@@ -50,28 +54,33 @@ public class PhysicPolygon extends PhysicObject implements OnCollideListener {
 		mListener.onMovement(mPosition, 0f);
 		mCollider.setPosition(mPosition);
 			// TODO
-		mRotationalMoment = 0.33f * mBodyMass * mCollider.getBoundingCircle() 
+		mAngularMass = 0.33f * mMass * mCollider.getBoundingCircle() 
 		* mCollider.getBoundingCircle();
 
 	}
 	
 	public synchronized void onUpdateBody(float time) {
-		super.onUpdateBody(time);
-		mAngularVelocity += mAppliedMoment * time / 1000f;
+		mVelocity.add((new Vector2D(mAppliedForce)).mul((time / 1000f) / mMass));
+		mPosition.add((new Vector2D(mVelocity)).mul(time / 1000f));
+		
+		mAngularVelocity += mAppliedMoment * (time / 1000f) / mAngularMass;
 		float angleToRotate = mAngularVelocity * time / 1000f;
 		Matrix22 rotationMatrix = Matrix22.rotationMatrix(angleToRotate);
 		for (Vector2D vertex : mPolygonContour)
 			vertex.mul(rotationMatrix);
 		
-		mRotation += angleToRotate;
-		while (mRotation > 2 * Math.PI)
-			mRotation -= mRotation;
-		while (mRotation < - 2 * Math.PI)
-			mRotation += mRotation;
+		mAngle += angleToRotate;
+		while (mAngle > 2 * Math.PI)
+			mAngle -= mAngle;
+		while (mAngle < 0)
+			mAngle += mAngle;
 		
+		mCollider.setPosition(mPosition);
+		
+		mAppliedForce.set(0f, 0f);
 		mAppliedMoment = 0f;
 		
-		mListener.onMovement(mPosition, mRotation);
+		mListener.onMovement(mPosition, mAngle);
 	}
 
 	@Override

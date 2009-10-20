@@ -54,7 +54,9 @@ public class SceneGestureDetector extends GestureDetector {
 			mListener = (OnInputListener) listener;
 	}
 
-
+	/**
+	 * Should be called on touch event
+	 */
 	public boolean onTouchEvent(MotionEvent ev) {
 		boolean handled = false;
 		if (ev.getAction() == MotionEvent.ACTION_UP)

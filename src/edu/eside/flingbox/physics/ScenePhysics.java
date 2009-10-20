@@ -27,7 +27,7 @@ import edu.eside.flingbox.physics.collisions.SceneCollider;
 public final class ScenePhysics implements Runnable {
 	public static final Vector2D GRAVITY_EARTH = new Vector2D(0f, -9.81f * 530f);
 	
-	private final ArrayList<PhysicObject> mOnSceneBodys;
+	private final ArrayList<PhysicBody> mOnSceneBodys;
 	private final SceneCollider mCollider;
 
 	private final Thread mSimulationThread;
@@ -35,36 +35,36 @@ public final class ScenePhysics implements Runnable {
 	private boolean mIsSimulating = false;
 	
 	public ScenePhysics() {
-		mOnSceneBodys = new ArrayList<PhysicObject>();
+		mOnSceneBodys = new ArrayList<PhysicBody>();
 		mSimulationThread = new Thread(this);
 		mCollider = new SceneCollider();
 	}
 	
-	public ScenePhysics(PhysicObject object) {
-		mOnSceneBodys = new ArrayList<PhysicObject>();
+	public ScenePhysics(PhysicBody object) {
+		mOnSceneBodys = new ArrayList<PhysicBody>();
 		mCollider = new SceneCollider(object.getCollider());
 		mCollider.add(object.getCollider());
 		mSimulationThread = new Thread(this);
 		
 	}
 	
-	public ScenePhysics(PhysicObject[] objects) {
-		mOnSceneBodys = new ArrayList<PhysicObject>();
+	public ScenePhysics(PhysicBody[] objects) {
+		mOnSceneBodys = new ArrayList<PhysicBody>();
 		mCollider = new SceneCollider();
-		for (PhysicObject object : objects) {
+		for (PhysicBody object : objects) {
 			mOnSceneBodys.add(object);
 			mCollider.add(object.getCollider());
 		}
 		mSimulationThread = new Thread(this);
 	}
 	
-	public void add(PhysicObject object) {
+	public void add(PhysicBody object) {
 		mOnSceneBodys.add(object);
 		mCollider.add(object.getCollider());
 	}
 	
-	public void add(PhysicObject[] objects) {
-		for (PhysicObject object : objects) {
+	public void add(PhysicBody[] objects) {
+		for (PhysicBody object : objects) {
 			mOnSceneBodys.add(object);
 			mCollider.add(object.getCollider());
 		}
@@ -92,8 +92,8 @@ public final class ScenePhysics implements Runnable {
 		long time = System.currentTimeMillis();
 		for (; !mDoKill; ) {
 			time = System.currentTimeMillis() - time;
-			for (PhysicObject object : mOnSceneBodys) {
-				object.applyGravity(GRAVITY_EARTH);
+			for (PhysicBody object : mOnSceneBodys) {
+				object.applyGravity(new Vector2D(GRAVITY_EARTH).mul(object.getBodyMass()));
 				object.onUpdateBody(time);
 			}
 			mCollider.checkCollisions();

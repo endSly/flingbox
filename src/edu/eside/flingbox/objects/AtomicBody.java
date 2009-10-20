@@ -20,7 +20,7 @@ package edu.eside.flingbox.objects;
 
 import edu.eside.flingbox.graphics.Render;
 import edu.eside.flingbox.math.Point;
-import edu.eside.flingbox.physics.PhysicObject;
+import edu.eside.flingbox.physics.PhysicBody;
 import edu.eside.flingbox.physics.collisions.Collider;
 
 /**
@@ -34,28 +34,61 @@ import edu.eside.flingbox.physics.collisions.Collider;
  */
 public abstract class AtomicBody {
 	
+	// Instance of the body to be rendered
 	protected Render mRender;
-	protected PhysicObject mPhysics;
+	// Instance of the body in to the physic space
+	protected PhysicBody mPhysics;
 	
+	/**
+	 * Empty constructor
+	 */
+	protected AtomicBody() { }
+	
+	/**
+	 * Local constructor for any body.
+	 * 
+	 * @param render {@link Render} instance of body
+	 * @param physics {@link PhysicObject} instace of body
+	 * @hide
+	 */
+	protected AtomicBody(Render render, PhysicBody physics) {
+		mRender = render;
+		mPhysics = physics;
+	}
+	
+	/**
+	 * @return object's render. NOTE Can be null!
+	 */
 	public Render getRender() {
 		return mRender;
 	}
 	
-	public PhysicObject getPhysics() {
+	/**
+	 * @return object's physics. NOTE Can be null!
+	 */
+	public PhysicBody getPhysics() {
 		return mPhysics;
 	}
 	
+	/**
+	 * Fixes object into scene.
+	 */
 	public void fixObject() {
 		mPhysics.fixObject();
 	}
 	
+	/**
+	 * Calculates if point is over object.
+	 * 
+	 * @param p Point to be checked
+	 * @return true if is over.
+	 */
 	public boolean isPointOver(Point p) {
 		if (mPhysics != null) {
 			Collider collider = mPhysics.getCollider();
 			if (collider != null)
 				return collider.isPointOver(p);
 		}
-		
 		return false;
 		
 	}

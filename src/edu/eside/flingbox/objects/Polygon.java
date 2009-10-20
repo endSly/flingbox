@@ -20,14 +20,12 @@ package edu.eside.flingbox.objects;
 
 import java.util.Random;
 
-import edu.eside.flingbox.graphics.Render;
 import edu.eside.flingbox.graphics.RenderPolygon;
 import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.math.PolygonUtils;
 import edu.eside.flingbox.math.Vector2D;
-import edu.eside.flingbox.physics.PhysicObject;
 import edu.eside.flingbox.physics.PhysicPolygon;
-import edu.eside.flingbox.physics.PhysicObject.OnMovementListener;
+import edu.eside.flingbox.physics.PhysicBody.OnMovementListener;
 
 /**
  * Polygon is a general class with handles Physics and render from 
@@ -57,9 +55,25 @@ public final class Polygon extends AtomicBody implements OnMovementListener {
 		
 		// Optimize points by Douglas-Peucker algorithm 
 		Point[] polygonPoints = PolygonUtils.douglasPeuckerReducer(points, DEFAULT_REDUCER_EPSILON);
+		
+		float polygonArea = PolygonUtils.polygonArea(polygonPoints);
+		// Set points in Clock-wise order
+		if (polygonArea > 0)
+			/* If points are in anti-Clock-wise order
+			 * returned arre will be positive, else, it 
+			 * will be negative.
+			 */
+			for (int i = 0, j = polygonPoints.length - 1; j >= 0; --j, ++i) {
+				Point temp = polygonPoints[i];
+				polygonPoints[i] = polygonPoints[j];
+				polygonPoints[j] = temp;
+			}	
+		else
+			polygonArea = -polygonArea;
+		
+		
 		short[] triangulationIndexes = PolygonUtils.triangulatePolygon(polygonPoints);
 		Point centroid = PolygonUtils.polygonCentroid(polygonPoints);
-		float polygonArea = Math.abs(PolygonUtils.polygonArea(polygonPoints));
 		
 		// Relocate polygon to fin centroid with point (0, 0)
 		for (Point p : polygonPoints) {
@@ -70,8 +84,8 @@ public final class Polygon extends AtomicBody implements OnMovementListener {
 		mPoints = polygonPoints;
 		mPointsCount = (short) (polygonPoints.length);
 		
-		mRender = new RenderPolygon(mPoints, triangulationIndexes);
-		mPhysics = new PhysicPolygon(mPoints, polygonArea, centroid, this);
+		mRender = new RenderPolygon(polygonPoints, triangulationIndexes);
+		mPhysics = new PhysicPolygon(polygonPoints, polygonArea, centroid, this);
 	}
 	
 	/**

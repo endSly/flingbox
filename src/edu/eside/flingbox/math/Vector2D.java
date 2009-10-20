@@ -176,6 +176,22 @@ public final class Vector2D {
 	}
 	
 	/**
+	 * Computes distance from current vector, to point
+	 * pointed by p.
+	 * 
+	 * @param p vector to point
+	 * @return distance
+	 */
+	public float distanceToPoint(Vector2D p) {
+		Vector2D dir = (new Vector2D(this)).normalize();
+		float f = dir.dotProduct(p);
+		dir.mul(f);
+		// Return distance
+		return (float) Math.abs(Math.sqrt(
+				(p.i - dir.i) * (p.i - dir.i) + (p.j - dir.j) * (p.j - dir.j)));
+	}
+	
+	/**
 	 * Resturn string with the vector
 	 */
 	public String toString() {
