@@ -18,11 +18,9 @@
 
 package edu.eside.flingbox.objects;
 
-import edu.eside.flingbox.graphics.PolygonRender;
 import edu.eside.flingbox.graphics.Render;
 import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.physics.PhysicObject;
-import edu.eside.flingbox.physics.PhysicPolygon;
 import edu.eside.flingbox.physics.collisions.Collider;
 
 /**

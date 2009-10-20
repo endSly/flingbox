@@ -25,8 +25,7 @@ import android.opengl.GLSurfaceView.Renderer;
 import android.os.Vibrator;
 import android.view.MotionEvent;
 
-import edu.eside.flingbox.graphics.PolygonRender;
-import edu.eside.flingbox.graphics.Render;
+import edu.eside.flingbox.graphics.RenderPolygon;
 import edu.eside.flingbox.graphics.SceneRenderer;
 import edu.eside.flingbox.graphics.SceneRenderer.Camera;
 import edu.eside.flingbox.input.SceneGestureDetector;
@@ -37,7 +36,7 @@ import edu.eside.flingbox.physics.ScenePhysics;
 
 public abstract class StaticScene implements OnInputListener {
 	
-	protected final class BackgroundRender extends PolygonRender {
+	protected final class BackgroundRender extends RenderPolygon {
 		
 		private final static float BACKGROUND_COLOR_R = 0.6f;
 		private final static float BACKGROUND_COLOR_G = 0.6f;

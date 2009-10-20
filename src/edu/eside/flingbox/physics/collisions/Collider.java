@@ -18,7 +18,6 @@
 
 package edu.eside.flingbox.physics.collisions;
 
-import edu.eside.flingbox.math.Box2D;
 import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.math.Vector2D;
 
@@ -30,7 +29,6 @@ public abstract class Collider {
 	
 	// needed to discartd quickly collisions
 	protected float mRadius; 
-	protected Box2D mBoundingBox;
 	
 	protected final OnCollideListener mCollisionListener;
 	
@@ -76,6 +74,10 @@ public abstract class Collider {
 	// TODO
 	public void setPosition(Vector2D position) {
 		mPosition.set(position);
+	}
+	
+	public float getBoundingCircle() {
+		return mRadius;
 	}
 	
 }

@@ -20,8 +20,8 @@ package edu.eside.flingbox.objects;
 
 import java.util.Random;
 
-import edu.eside.flingbox.graphics.PolygonRender;
 import edu.eside.flingbox.graphics.Render;
+import edu.eside.flingbox.graphics.RenderPolygon;
 import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.math.PolygonUtils;
 import edu.eside.flingbox.math.Vector2D;
@@ -70,7 +70,7 @@ public final class Polygon extends AtomicBody implements OnMovementListener {
 		mPoints = polygonPoints;
 		mPointsCount = (short) (polygonPoints.length);
 		
-		mRender = new PolygonRender(mPoints, triangulationIndexes);
+		mRender = new RenderPolygon(mPoints, triangulationIndexes);
 		mPhysics = new PhysicPolygon(mPoints, polygonArea, centroid, this);
 	}
 	
@@ -87,7 +87,7 @@ public final class Polygon extends AtomicBody implements OnMovementListener {
 	 */
 	public void setRandomColor() {
 		Random rnd = new Random();
-		((PolygonRender) mRender).setColor(rnd.nextFloat() ,rnd.nextFloat() ,rnd.nextFloat() , 1.0f);
+		((RenderPolygon) mRender).setColor(rnd.nextFloat() ,rnd.nextFloat() ,rnd.nextFloat() , 1.0f);
 	}
 
 	/**
@@ -95,7 +95,7 @@ public final class Polygon extends AtomicBody implements OnMovementListener {
 	 */
 	public void onMovement(Vector2D position, float rotation) {
 		if (mRender != null)
-			((PolygonRender) mRender).setPosition(new Point(position.i, position.j), rotation);
+			((RenderPolygon) mRender).setPosition(new Point(position.i, position.j), rotation);
 	}
 
 }

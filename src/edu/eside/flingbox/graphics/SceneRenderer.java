@@ -61,8 +61,8 @@ public class SceneRenderer implements Renderer {
 		 * Set surface and calculates camera's position and width
 		 * to kept aspect ratio.
 		 * 
-		 * @param surfaceWidth		Surface's width
-		 * @param surfaceHeight		Surface's height
+		 * @param surfaceWidth Surface's width
+		 * @param surfaceHeight Surface's height
 		 */
 		public void setSurfaceSize(int surfaceWidth, int surfaceHeight) {
 			mSurfaceWidth = surfaceWidth;
@@ -75,9 +75,10 @@ public class SceneRenderer implements Renderer {
 		
 		/**
 		 * Sets Camera's position.
-		 * @param x		Center of the focus, x
-		 * @param y		Center of the focus, y
-		 * @param width	Width of camera's frame.
+		 * 
+		 * @param x Center of the focus, x
+		 * @param y Center of the focus, y
+		 * @param width Width of camera's frame.
 		 * 		height is calculated to keep aspect ratio
 		 */
 		public void setPosition(float x, float y, final float width) {
@@ -292,7 +293,5 @@ public class SceneRenderer implements Renderer {
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
 	}
-
-	
 	
 }

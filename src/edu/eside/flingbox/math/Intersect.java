@@ -18,21 +18,45 @@
 
 package edu.eside.flingbox.math;
 
+/**
+ * Handles functions to compute and storage intersections between 
+ * two or more Vectors.
+ *
+ */
 public class Intersect {
-	public final Vector2D collisionPoint;
 	
-	public Vector2D polygonASegment;
-	public Vector2D polygonBSegment;
+	// Stores point of the intersection
+	public final Vector2D intersectionPoint;
+	
+	// Stores first point of segmets that intersect
+	public Vector2D intersectionASegment;
+	public Vector2D intersectionBSegment;
 	
 	public boolean isIngoingIntersection;
 	
+	/**
+	 * Local constructor. Use {@link intersectionOfSegments} or
+	 * {@link intersectionOfTrace} to create an intersection.
+	 * 
+	 * @param collisionPoint
+	 * @hide
+	 */
 	private Intersect(Vector2D collisionPoint) {
-		this.collisionPoint = collisionPoint;
+		this.intersectionPoint = collisionPoint;
 	}
 	
+	/**
+	 * computes intersection of two segments
+	 * 
+	 * @param segA0 First segment start point
+	 * @param segA1 First segment end point
+	 * @param segB0 Second segment start point
+	 * @param segB1 Second segment end point
+	 * @return intersection between segments or null if no intersection.
+	 */
 	public static Intersect intersectionOfSegments(Vector2D segA0, Vector2D segA1, 
 			Vector2D segB0, Vector2D segB1) {
-		
+		// Get components to local variables. Just for performance
 		final float a0x = segA0.i, a0y = segA0.j, a1x = segA1.i, a1y = segA1.j, 
 			b0x = segB0.i, b0y = segB0.j, b1x = segB1.i, b1y = segB1.j;
 		
@@ -47,18 +71,29 @@ public class Intersect {
 		if (uA < 0 || uA > 1 || uB < 0 || uB > 1) 
 			return null; 	// lines can't intersect
 		
+		// We have an intersect
 		Intersect intersect =  new Intersect(new Vector2D(
 				a0x + uA * (a1x - a0x), a0y + uA * (a1y - a0y)));
+		
+		intersect.intersectionASegment = segA0;
+		intersect.intersectionBSegment = segB0;
 		
 		return intersect;
 	}
 	
+	/**
+	 * Computes intersction between two traces.
+	 * 
+	 * @param traceA First trace
+	 * @param traceB Second trace
+	 * @return Array with Intersects. Some positions can be null
+	 */
 	public static Intersect[] intersectionsOfTrace(Vector2D[] traceA, Vector2D[] traceB) {
 		final int aLen = traceA.length, bLen = traceB.length;
 		
 		Intersect[] intersects = new Intersect[aLen > bLen ? aLen : bLen];
 		int intersecitonsCount = 0;
-		
+		 // We are going to probe each segment.
 		for (int i = 0; i < aLen; i++)
 			for (int j = 0; j < bLen; j++) {
 				Intersect intersect = intersectionOfSegments(

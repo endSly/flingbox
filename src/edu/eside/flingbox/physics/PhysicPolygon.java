@@ -18,6 +18,7 @@
 
 package edu.eside.flingbox.physics;
 
+import edu.eside.flingbox.math.Matrix22;
 import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.collisions.ColliderPolygon;
@@ -26,7 +27,6 @@ import edu.eside.flingbox.physics.collisions.Collider.OnCollideListener;
 
 public class PhysicPolygon extends PhysicObject implements OnCollideListener {
 
-	protected float mRotationalMoment;
 	// Some physical values needed
 	private final Vector2D[] mPolygonContour;
 	
@@ -49,12 +49,34 @@ public class PhysicPolygon extends PhysicObject implements OnCollideListener {
 		
 		mListener.onMovement(mPosition, 0f);
 		mCollider.setPosition(mPosition);
+			// TODO
+		mRotationalMoment = 0.33f * mBodyMass * mCollider.getBoundingCircle() 
+		* mCollider.getBoundingCircle();
 
+	}
+	
+	public synchronized void onUpdateBody(float time) {
+		super.onUpdateBody(time);
+		mAngularVelocity += mAppliedMoment * time / 1000f;
+		float angleToRotate = mAngularVelocity * time / 1000f;
+		Matrix22 rotationMatrix = Matrix22.rotationMatrix(angleToRotate);
+		for (Vector2D vertex : mPolygonContour)
+			vertex.mul(rotationMatrix);
+		
+		mRotation += angleToRotate;
+		while (mRotation > 2 * Math.PI)
+			mRotation -= mRotation;
+		while (mRotation < - 2 * Math.PI)
+			mRotation += mRotation;
+		
+		mAppliedMoment = 0f;
+		
+		mListener.onMovement(mPosition, mRotation);
 	}
 
 	@Override
 	public void onCollide(Collision collide) {
-		this.applyForce(collide.sense);
+		this.applyForce(collide.sense, collide.position);
 		return;
 		
 	}

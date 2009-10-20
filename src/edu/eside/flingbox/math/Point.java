@@ -23,12 +23,18 @@ package edu.eside.flingbox.math;
  * basic functions.
  */
 public final class Point {
-	public float x, y;
+	public float x = 0f, y = 0f;
+	
+	/**
+	 * Constructor for zero point
+	 */
+	public Point() { }
 	
 	/**
 	 * Dafult constructor for a point
-	 * @param x		X
-	 * @param y		Y
+	 * 
+	 * @param x	x component of the point
+	 * @param y	y component of the point
 	 */
 	public Point(float x, float y) {
 		this.x = x;
@@ -36,15 +42,8 @@ public final class Point {
 	}
 	
 	/**
-	 * Constructor for zero point
-	 */
-	public Point() {
-		this.x = 0f;
-		this.y = 0f;
-	}
-	
-	/**
-	 * Cpy constructor
+	 * Copy constructor
+	 * 
 	 * @param p Point to copy
 	 */
 	public Point(Point p) {
@@ -54,6 +53,7 @@ public final class Point {
 	
 	/**
 	 * Computes distance to p
+	 * 
 	 * @param p		Point
 	 * @return		Distance
 	 */
@@ -65,6 +65,7 @@ public final class Point {
 
 	/**
 	 * Sets point values
+	 * 
 	 * @param x Point's X
 	 * @param y Point's Y
 	 */
@@ -74,7 +75,18 @@ public final class Point {
 	}
 	
 	/**
+	 * Copy point's values
+	 * 
+	 * @param p point to be copied
+	 */
+	public void set(Point p) {
+		this.x = p.x;
+		this.y = p.y;
+	}
+	
+	/**
 	 * Move point values
+	 * 
 	 * @param dx Increment in X
 	 * @param dy Increment Y
 	 */

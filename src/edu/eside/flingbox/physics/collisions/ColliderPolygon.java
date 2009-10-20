@@ -18,10 +18,7 @@
 
 package edu.eside.flingbox.physics.collisions;
 
-import edu.eside.flingbox.math.Box2D;
 import edu.eside.flingbox.math.Intersect;
-import edu.eside.flingbox.math.Matrix22;
-import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.math.Vector2D;
 
 /**
@@ -52,18 +49,7 @@ public class ColliderPolygon extends Collider {
 		super(listener);
 		mPolygonContour = contour;
 		mRadius = computeBoundingCircleRadius(contour);
-		mBoundingBox = computeBoundingBox(contour);
 		mPolygonNormals = computePolygonNormals(contour);
-	}
-	
-	/**
-	 * Checks if the point is inside Polygon's bounding box.
-	 * 
-	 * @param p Point to check.
-	 * @return true if is inside,else false.
-	 */
-	public boolean isOverallPointInside(Point p) {
-		return mBoundingBox.isPointInside(p);
 	}
 	
 	/**
@@ -93,38 +79,7 @@ public class ColliderPolygon extends Collider {
 		
 		return normals;
 	}
-	
-	/**
-	 * Computes horizontal bounding box 
-	 * 
-	 * @param contour Polygons contour
-	 * @return Bounding box
-	 */
-	private static Box2D computeBoundingBox(final Vector2D[] contour) {
-		float leftBound = contour[0].i;
-		float rightBound = leftBound;
-		float topBound = contour[0].j;
-		float bottomBound = topBound;
-		
-		for (int i = contour.length - 1; i >= 0; i--) {
-			final float x = contour[i].i;
-			final float y = contour[i].j;
-			if (x < leftBound)
-				leftBound = x;
-			else if (x > rightBound)
-				rightBound = x;
-			if (y < bottomBound)
-				bottomBound = y;
-			else if (y > topBound)
-				topBound = y;
-		}
-		
-		Box2D boundingBox = new Box2D();
-		boundingBox.topLeft.set(leftBound, topBound);
-		boundingBox.bottomRight.set(rightBound, bottomBound);
-		return boundingBox;
-	}
-	
+
 	/**
 	 * Computes bounding circle with center in point (0, 0)
 	 * 
@@ -180,8 +135,8 @@ public class ColliderPolygon extends Collider {
 			for (int i = 0
 					; i < intersctionsCount - 1 && intersections[i + 1] != null
 					; i += 2) {
-				final Vector2D ingoingIntersect = intersections[i].collisionPoint, 
-					outgoingIntersect = intersections[i + 1].collisionPoint;
+				final Vector2D ingoingIntersect = intersections[i].intersectionPoint, 
+					outgoingIntersect = intersections[i + 1].intersectionPoint;
 				Vector2D sense = new Vector2D(outgoingIntersect);
 				sense.sub(ingoingIntersect);
 				sense = sense.normalVector().mul(1E7f);

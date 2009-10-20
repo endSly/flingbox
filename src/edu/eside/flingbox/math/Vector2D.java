@@ -45,14 +45,48 @@ public final class Vector2D {
 	
 	/**
 	 * Copy constructor
+	 * 
 	 * @param v vector to copy
 	 */
 	public Vector2D(Vector2D v) {
 		this.i = v.i;
 		this.j = v.j;
 	}
+	
+	/**
+	 * Constructs vector to point
+	 * 
+	 * @param p point
+	 */
+	public Vector2D(Point p) {
+		this.i = p.x;
+		this.j = p.y;
+	}
+	
+	/**
+	 * Copys values form other vector
+	 * 
+	 * @param v vector to be copied
+	 */
+	public void set(Vector2D v) {
+		this.i = v.i;
+		this.j = v.j;
+	}
+	
+	/**
+	 * Sets vector's values
+	 * 
+	 * @param i x component of the vector
+	 * @param j y component of the vector
+	 */
+	public void set(float i, float j) {
+		this.i = i;
+		this.j = j;
+	}
 
 	/**
+	 * Computes length of the vector
+	 * 
 	 * @return 	Length of vector
 	 */
 	public float length() {
@@ -146,11 +180,6 @@ public final class Vector2D {
 	 */
 	public String toString() {
 		return "Vector(" + this.i + "i + " + this.j + "j)";
-	}
-
-	public void set(Vector2D v) {
-		this.i = v.i;
-		this.j = v.j;
 	}
 	
 }

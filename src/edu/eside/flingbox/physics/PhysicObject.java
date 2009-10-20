@@ -32,6 +32,7 @@ public abstract class PhysicObject {
 	protected final static float MAX_MASS = Float.MAX_VALUE;
 	
 	protected float mBodyMass;
+	protected float mRotationalMoment;
 	
 	protected boolean mDoIgnoreGravity = false;
 	
@@ -56,6 +57,8 @@ public abstract class PhysicObject {
 	public void fixObject() {
 		mDoIgnoreGravity = true;
 		mBodyMass = MAX_MASS;
+		mRotationalMoment = MAX_MASS;
+		
 	}
 	
 	public synchronized void applyGravity(Vector2D gravityForce) {
@@ -63,15 +66,33 @@ public abstract class PhysicObject {
 			mAppliedForce.add(gravityForce);
 	}
 	
-	public synchronized void applyForce(Vector2D force) {
-		mAppliedForce.add(force.mul(1f / mBodyMass));
+	public synchronized void applyForce(Vector2D force, Vector2D applicationPoint) {
+		mAppliedForce.add((new Vector2D(force)).mul(1f / mBodyMass));
+		// Calcule moment
+		
+		Vector2D forceDir = (new Vector2D(force)).normalize();
+		float f = forceDir.dotProduct(applicationPoint);
+		forceDir.mul(f);
+		
+		float distance = (float) Math.sqrt(
+				(applicationPoint.i - forceDir.i) * (applicationPoint.i - forceDir.i)
+				+ (applicationPoint .j - forceDir.j) * (applicationPoint.j - forceDir.j));
+		mAppliedMoment += (force.length() * distance) / mRotationalMoment;
+		
+		/*
+		float p = force.dotProduct(applicationPoint);
+		Vector2D proyection = (new Vector2D(force)).mul(p);
+		float distance = (float) Math.sqrt(
+				(applicationPoint.i - proyection.i) * (applicationPoint.i - proyection.i)
+				+ (applicationPoint .j - proyection.j) * (applicationPoint.j - proyection.j));
+		mAppliedMoment += force.length() * distance;
+		*/
 	}
 	
 	public synchronized void onUpdateBody(float time) {
 		mVelocity.add((new Vector2D(mAppliedForce)).mul((time / 1000f)));
 		mPosition.add((new Vector2D(mVelocity)).mul(time / 1000f));
 		
-		mListener.onMovement(mPosition, 0.0f);
 		mCollider.setPosition(mPosition);
 		
 		mAppliedForce.i = 0f;

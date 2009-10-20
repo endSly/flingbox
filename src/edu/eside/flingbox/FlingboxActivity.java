@@ -18,15 +18,14 @@
 
 package edu.eside.flingbox;
 
-import edu.eside.flingbox.math.Intersect;
-import edu.eside.flingbox.math.Vector2D;
-import edu.eside.flingbox.scene.Scene;
 import android.app.Activity;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
+
+import edu.eside.flingbox.scene.Scene;
 
 /**
  * Flingbox main activity.
