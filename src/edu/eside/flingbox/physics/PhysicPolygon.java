@@ -26,6 +26,7 @@ import edu.eside.flingbox.physics.collisions.Collider.OnCollideListener;
 
 public class PhysicPolygon extends PhysicObject implements OnCollideListener {
 
+	protected float mRotationalMoment;
 	// Some physical values needed
 	private final Vector2D[] mPolygonContour;
 	
