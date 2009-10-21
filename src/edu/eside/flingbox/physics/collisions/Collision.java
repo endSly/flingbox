@@ -20,11 +20,21 @@ package edu.eside.flingbox.physics.collisions;
 
 import edu.eside.flingbox.math.Vector2D;
 
+/**
+ * Class to handle collision.
+ */
 public final class Collision {
+	// Collision's relative poition
 	public final Vector2D position;
 	
+	// Collision's sense
 	public final Vector2D sense;
 	
+	/**
+	 * Default constructor for a collsion
+	 * @param position relative position
+	 * @param sense collisio's sense
+	 */
 	public Collision(Vector2D position, Vector2D sense) {
 		this.position = new Vector2D(position);
 		this.sense = new Vector2D(sense);

@@ -70,6 +70,7 @@ public abstract class PhysicBody implements OnCollideListener {
 	
 	/**
 	 * Local constructor for any abstract body
+	 * 
 	 * @param bodyMass body's mass
 	 * @param position body's position
 	 */
@@ -87,7 +88,7 @@ public abstract class PhysicBody implements OnCollideListener {
 	public abstract void onUpdateBody(float time);
 	
 	/**
-	 * Fixs body, making imposible to move it
+	 * Fixs body, making imposible to move mVelocityit
 	 */
 	public void fixObject() {
 		mIgnoreGravity = true;
@@ -106,6 +107,7 @@ public abstract class PhysicBody implements OnCollideListener {
 	
 	/**
 	 * Applies force to the object
+	 * 
 	 * @param force Force
 	 * @param applicationPoint relative point in wich force is applied
 	 */
@@ -114,9 +116,7 @@ public abstract class PhysicBody implements OnCollideListener {
 		mAppliedForce.add(force);
 		
 		// Calculate moment
-		final float distance = force.distanceToPoint(applicationPoint);
-		// Acomulate moment
-		mAppliedMoment += (force.length() * distance);
+		mAppliedMoment += applicationPoint.crossProduct(force);
 	}
 	
 	/**
@@ -134,10 +134,35 @@ public abstract class PhysicBody implements OnCollideListener {
 	}
 	
 	/**
+	 * @return velocity
+	 */
+	public Vector2D getVelocity() {
+		return mVelocity;
+	}
+	
+	/**
+	 * Sets velocity components
+	 * 
+	 * @param vx
+	 * @param vy
+	 */
+	public void setVelocity(float vx, float vy) {
+		mVelocity.set(vx, vy);
+	}
+	
+	/**
 	 * @return Body's absolute position
 	 */
 	public Vector2D getPosition() {
 		return mPosition;
+	}
+	
+	/**
+	 * @param position new postion of the object
+	 */
+	public void setPosition(float x, float y) {
+		mPosition.set(x, y);
+		onUpdateBody(0);
 	}
 	
 	/**
@@ -148,13 +173,17 @@ public abstract class PhysicBody implements OnCollideListener {
 	}
 	
 	/**
+	 * @param angle new object's angle
+	 */
+	public void setAngle(float angle) {
+		mAngle = angle;
+	}
+	
+	/**
 	 * @return the Collider
 	 */
 	public Collider getCollider() {
 		return mCollider;
 	}
-	
-	
-
 
 }

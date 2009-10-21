@@ -24,7 +24,6 @@ import java.io.IOException;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.objects.AtomicBody;
-import edu.eside.flingbox.objects.Polygon;
 
 import android.content.Context;
 import android.os.Environment;
@@ -40,10 +39,18 @@ public class Scene extends DrawableScene implements OnInputListener {
 		
 	}
 
-	public boolean onFling(MotionEvent onDownEv, MotionEvent ev, float velocityX,
+	public boolean onFling(MotionEvent onDownEv, MotionEvent e, float velocityX,
 			float velocityY) {
-		
-		return false;
+		boolean handled = false;
+		if (mSelectedBody != null) {
+			final float vx = mCamera.left + (velocityX * mCamera.getWidth() / mDisplayWidth);
+			final float vy = mCamera.top - (velocityY * mCamera.getHeight() / mDisplayHeight);
+			
+			mSelectedBody.getPhysics().setVelocity(vx, vy);
+			handled = true;
+		}
+			
+		return handled;
 	}
 	
 	public void onLongPress(MotionEvent e) {
@@ -77,13 +84,18 @@ public class Scene extends DrawableScene implements OnInputListener {
 	}
 	
 	@Override
-	public boolean onScroll(MotionEvent downEv, MotionEvent ev, float distanceX,
+	public boolean onScroll(MotionEvent downEv, MotionEvent e, float distanceX,
 			float distanceY) {
+		boolean handled = false;
 		if (mSelectedBody != null) {
+			final float onDownX = mCamera.left + (e.getX() * mCamera.getWidth() / mDisplayWidth);
+			final float onDownY = mCamera.top - (e.getY() * mCamera.getHeight() / mDisplayHeight);
 			
+			mSelectedBody.getPhysics().setPosition(onDownX, onDownY);
+			handled = true;
 		}
-		
-		return super.onScroll(downEv, ev, distanceX, distanceY);
+
+		return handled ? true : super.onScroll(downEv, e, distanceX, distanceY);
 		
 	}
 	

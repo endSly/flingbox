@@ -104,6 +104,7 @@ public final class Vector2D {
 	
 	/**
 	 * Adds a vector
+	 * 
 	 * @param v	Vector
 	 * @return	result vector
 	 */
@@ -115,6 +116,7 @@ public final class Vector2D {
 	
 	/**
 	 * Subs a vector
+	 * 
 	 * @param v	Vector
 	 * @return	result vector
 	 */
@@ -126,6 +128,7 @@ public final class Vector2D {
 	
 	/**
 	 * Multiplicates vector by scalar
+	 * 
 	 * @param s	Scalar
 	 * @return	result vector
 	 */
@@ -136,16 +139,39 @@ public final class Vector2D {
 	}
 	
 	/**
+	 * Computes dot product
 	 * 
-	 * @param v
-	 * @return
+	 * @param v vector
+	 * @return dot product
 	 */
 	public float dotProduct(Vector2D v) {
 		return this.i * v.i + this.j * v.j;
 	}
 	
 	/**
+	 * Computes Z axis of cross product
+	 * 
+	 * @param v vector
+	 * @return Z axis of cross product
+	 */
+	public float crossProduct(Vector2D v) {
+		return this.i * v.j - this.j * v.i;
+	}
+	
+	/**
+	 * Computes angle formad by current vector and other vector.
+	 * 
+	 * @param v Vector
+	 * @return angle formed [0..PI]
+	 */
+	public float angleWithVector(Vector2D v) {
+		float d = dotProduct(v) / (length() * v.length());
+		return (float) Math.acos(d);
+	}
+	
+	/**
 	 * Multiplicates vector by matrix
+	 * 
 	 * @param m	Matrix
 	 * @return	New vector with result
 	 */
@@ -157,6 +183,7 @@ public final class Vector2D {
 	
 	/**
 	 * Normalizes vector
+	 * 
 	 * @return	Normalized vector
 	 */
 	public Vector2D normalize() {

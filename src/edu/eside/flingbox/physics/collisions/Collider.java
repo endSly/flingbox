@@ -21,24 +21,48 @@ package edu.eside.flingbox.physics.collisions;
 import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.math.Vector2D;
 
+/**
+ * Abstract collision manager for any object.
+ */
 public abstract class Collider {
+	
+	/**
+	 * Implements callback for collision
+	 */
 	public interface OnCollideListener {
-		
-		public void onCollide(Collision collide);
+		/**
+		 * Called when collision occurs
+		 * 
+		 * @param collision collision
+		 */
+		public void onCollide(Collision collision);
 	}
 	
 	// needed to discartd quickly collisions
 	protected float mRadius; 
 	
+	// Listener to notify when collide occurs
 	protected final OnCollideListener mCollisionListener;
 	
+	// Objects position. need to be updated
 	protected final Vector2D mPosition;
 	
+	/**
+	 * Local constructor for any collider.
+	 * 
+	 * @param listener Collision listener
+	 */
 	public Collider(OnCollideListener listener) {
 		mPosition = new Vector2D();
 		mCollisionListener = listener;
 	}
 	
+	/**
+	 * Checks if objects can collide
+	 * 
+	 * @param collider other objects collider.
+	 * @return true if objects can collide
+	 */
 	public boolean checkCollision(Collider collider) {
 		/*
 		 *  Start checking bounding circle
@@ -51,17 +75,17 @@ public abstract class Collider {
 		
 		if (distanceSqr > (radiusLength * radiusLength))
 			return false;	// No collision
-		
-		/*
-		 * Check bounding Boxes.
-		 * Check only the box's sides that we need
-		 */
-		
-		
+
 		return true;
 		
 	}
 	
+	/**
+	 * Checks if poion is over object
+	 * 
+	 * @param p point
+	 * @return true if point is over
+	 */
 	public boolean isPointOver(Point p) {
 		final float thisX = mPosition.i, thisY = mPosition.j, 
 			pointX = p.x, pointY = p.y;
@@ -71,11 +95,18 @@ public abstract class Collider {
 		return (distanceSqr < (mRadius * mRadius));
 	}
 	
-	// TODO
+	/**
+	 * Sets objetc's position
+	 * 
+	 * @param position position
+	 */
 	public void setPosition(Vector2D position) {
 		mPosition.set(position);
 	}
 	
+	/**
+	 * @return Bounding circle's radius
+	 */
 	public float getBoundingCircle() {
 		return mRadius;
 	}

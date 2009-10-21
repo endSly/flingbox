@@ -29,7 +29,7 @@ import edu.eside.flingbox.math.Vector2D;
  */
 public class ColliderPolygon extends Collider {
 	
-	private float mRotationAngle;
+	//private float mRotationAngle;
 	
 	private final Vector2D[] mPolygonNormals;
 	
@@ -53,17 +53,8 @@ public class ColliderPolygon extends Collider {
 	}
 	
 	/**
-	 * Checks if this collides with other collider.
-	 * 
-	 * @param otherCollider
-	 * @return 
-	 */
-	//public Collision collidesTo(Collider otherCollider) {
-	//	return new Collision();
-	//}
-	
-	/**
-	 * Computes Polygon normals.
+	 * Computes Polygon normals. 
+	 * Needed to descart polygon's segments quickly.
 	 * 
 	 * @param contour Counterclockwise polygon points
 	 * @return Polygon's normals
@@ -97,12 +88,12 @@ public class ColliderPolygon extends Collider {
 	}
 	
 	/**
-	 * 
+	 * TODO
 	 */
 	public boolean checkCollision(Collider collider) {
 		if (super.checkCollision(collider)) {
-			final Vector2D[] normals = mPolygonNormals;
-			final int pointsCount = normals.length;
+			//final Vector2D[] normals = mPolygonNormals;
+			
 			// We are going to rotate normals
 			//Matrix22 rotationMatrix = Matrix22.rotationMatrix(mRotationAngle);
 			
@@ -111,6 +102,7 @@ public class ColliderPolygon extends Collider {
 			
 			// Translate this polygon
 			final Vector2D[] polygonContour = mPolygonContour;
+			final int pointsCount = polygonContour.length;
 			final Vector2D[] locatedPolygon = new Vector2D[pointsCount];
 			final Vector2D position = mPosition;
 			for (int i = 0; i < pointsCount; i++) 
@@ -139,7 +131,7 @@ public class ColliderPolygon extends Collider {
 					outgoingIntersect = intersections[i + 1].intersectionPoint;
 				Vector2D sense = new Vector2D(outgoingIntersect);
 				sense.sub(ingoingIntersect);
-				sense = sense.normalVector().mul(1E7f);
+				sense = sense.normalVector().mul(1E6f);
 				
 				Vector2D collisonPosition = new Vector2D(ingoingIntersect)
 					.add(outgoingIntersect)

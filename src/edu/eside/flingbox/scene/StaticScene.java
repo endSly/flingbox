@@ -119,12 +119,16 @@ public abstract class StaticScene implements OnInputListener {
 	}
 	
 	public boolean onTrackballEvent(MotionEvent ev) {
+		/*
 		final float width = mCamera.getWidth();
 		float newX = mCamera.getX() - (ev.getX() * width / mDisplayWidth * 16);
 		float newY = mCamera.getY() + (ev.getY() * width / mDisplayWidth * 16); 	// Maintain aspect radio
 		
 		// Set positions
 		mCamera.setPosition(newX, newY, width);
+		*/
+		
+		onZoom(0f, 0f, 1f + 1f / (300f + ev.getY()));
 		
 		return true;
 	}

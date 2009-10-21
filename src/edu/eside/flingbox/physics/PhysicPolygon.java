@@ -21,12 +21,13 @@ package edu.eside.flingbox.physics;
 import edu.eside.flingbox.math.Matrix22;
 import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.math.Vector2D;
+import edu.eside.flingbox.physics.collisions.Collider;
 import edu.eside.flingbox.physics.collisions.ColliderPolygon;
 import edu.eside.flingbox.physics.collisions.Collision;
 import edu.eside.flingbox.physics.collisions.Collider.OnCollideListener;
 
 /**
- * Implements physics properties for polygols
+ * Implements physics properties for polygols.
  *
  */
 public class PhysicPolygon extends PhysicBody implements OnCollideListener {
@@ -34,6 +35,16 @@ public class PhysicPolygon extends PhysicBody implements OnCollideListener {
 	// Some physical values needed
 	private final Vector2D[] mPolygonContour;
 	
+	//private float mDensity = 1.0f;
+	
+	/**
+	 * Constructor physics for default polygon.
+	 * 
+	 * @param points polygon's points
+	 * @param bodyMass polygon's mass
+	 * @param position Polygon's start position
+	 * @param listener Lister to be called when movement occurs
+	 */
 	public PhysicPolygon(final Point[] points, final float bodyMass, 
 			final Point position, final OnMovementListener listener) {
 		super(bodyMass, position);
@@ -46,6 +57,7 @@ public class PhysicPolygon extends PhysicBody implements OnCollideListener {
 		for (int i = 0; i < pointsCount; i++) 
 			polygonVectors[i] = new Vector2D(points[i].x, points[i].y);
 		
+		// Sets polygon's properties
 		mPolygonContour = polygonVectors;
 		
 		mListener = listener;
@@ -53,16 +65,32 @@ public class PhysicPolygon extends PhysicBody implements OnCollideListener {
 		
 		mListener.onMovement(mPosition, 0f);
 		mCollider.setPosition(mPosition);
-			// TODO
-		mAngularMass = 0.33f * mMass * mCollider.getBoundingCircle() 
-		* mCollider.getBoundingCircle();
+
+		mAngularMass = computeAngularMass(bodyMass, mCollider);
 
 	}
 	
+	/**
+	 * TODO: Computes Angular mass for current polygon
+	 * 
+	 * @param mass Body's mass
+	 * @param collider Body's Collider
+	 * @return Polygon's angular mass
+	 */
+	private static float computeAngularMass(float mass, Collider collider) {
+		final float radius = collider.getBoundingCircle();
+		return 0.4f * mass * radius * radius;
+	}
+	
+	/**
+	 * Called when object has been updated
+	 */
 	public synchronized void onUpdateBody(float time) {
+		// Sets velocity and position
 		mVelocity.add((new Vector2D(mAppliedForce)).mul((time / 1000f) / mMass));
 		mPosition.add((new Vector2D(mVelocity)).mul(time / 1000f));
 		
+		// Sets angular velocity and rotation
 		mAngularVelocity += mAppliedMoment * (time / 1000f) / mAngularMass;
 		float angleToRotate = mAngularVelocity * time / 1000f;
 		Matrix22 rotationMatrix = Matrix22.rotationMatrix(angleToRotate);
@@ -71,10 +99,11 @@ public class PhysicPolygon extends PhysicBody implements OnCollideListener {
 		
 		mAngle += angleToRotate;
 		while (mAngle > 2 * Math.PI)
-			mAngle -= mAngle;
+			mAngle -= 2 * Math.PI;
 		while (mAngle < 0)
-			mAngle += mAngle;
+			mAngle += 2 * Math.PI;
 		
+		// Updates positions
 		mCollider.setPosition(mPosition);
 		
 		mAppliedForce.set(0f, 0f);
@@ -83,6 +112,9 @@ public class PhysicPolygon extends PhysicBody implements OnCollideListener {
 		mListener.onMovement(mPosition, mAngle);
 	}
 
+	/**
+	 * Called when collision occurs
+	 */
 	@Override
 	public void onCollide(Collision collide) {
 		this.applyForce(collide.sense, collide.position);
@@ -90,8 +122,4 @@ public class PhysicPolygon extends PhysicBody implements OnCollideListener {
 		
 	}
 	
-	
-
-
-
 }

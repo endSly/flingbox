@@ -89,6 +89,14 @@ public final class Polygon extends AtomicBody implements OnMovementListener {
 	}
 	
 	/**
+	 * @return Polygon points
+	 * NOTE: THIS COULD NOT MATCH WITH points IN CONSTRUCTOR!!
+	 */
+	public Point[] getPoints() {
+		return mPoints;
+	}
+
+	/**
 	 * @return Polygons total points. 
 	 * NOTE: THIS COULD NOT MATCH WITH points IN CONSTRUCTOR!!
 	 */
@@ -108,8 +116,9 @@ public final class Polygon extends AtomicBody implements OnMovementListener {
 	 * Called when movement occurs.
 	 */
 	public void onMovement(Vector2D position, float rotation) {
-		if (mRender != null)
-			((RenderPolygon) mRender).setPosition(new Point(position.i, position.j), rotation);
+		if (mRender != null && mRender instanceof RenderPolygon)
+			((RenderPolygon) mRender).setPosition(
+					new Point(position.i, position.j), rotation);
 	}
 
 }

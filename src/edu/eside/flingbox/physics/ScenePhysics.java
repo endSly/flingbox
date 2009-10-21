@@ -24,45 +24,70 @@ import java.util.ArrayList;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.collisions.SceneCollider;
 
-public final class ScenePhysics implements Runnable {
-	public static final Vector2D GRAVITY_EARTH = new Vector2D(0f, -9.81f * 530f);
+/**
+ * Stores all physic object in scene and make those 
+ * interact.
+ * ScenePhysics manage thread for update objects 
+ */
+public class ScenePhysics implements Runnable {
+	public static final Vector2D GRAVITY_EARTH = new Vector2D(0f, -9.81f * 30f);
+	public static final Vector2D GRAVITY_MOON = new Vector2D(0f, -1.63f * 530f);
 	
+	// List of physical objects on scene
 	private final ArrayList<PhysicBody> mOnSceneBodys;
+	// Collision manager for current scene
 	private final SceneCollider mCollider;
 
+	// Thread for simulation
 	private final Thread mSimulationThread;
+	// Flags for Stopping simulation
 	private boolean mDoKill = false;
 	private boolean mIsSimulating = false;
 	
+	/**
+	 * Initializes an empty 
+	 */
 	public ScenePhysics() {
 		mOnSceneBodys = new ArrayList<PhysicBody>();
-		mSimulationThread = new Thread(this);
 		mCollider = new SceneCollider();
+		mSimulationThread = new Thread(this);
 	}
 	
+	/**
+	 * Intializes scene with one object 
+	 * @param object first object
+	 */
 	public ScenePhysics(PhysicBody object) {
-		mOnSceneBodys = new ArrayList<PhysicBody>();
-		mCollider = new SceneCollider(object.getCollider());
+		this();
+		mOnSceneBodys.add(object);
 		mCollider.add(object.getCollider());
-		mSimulationThread = new Thread(this);
-		
 	}
 	
+	/**
+	 * Intializes scene with array of objects 
+	 * @param objects array of objects
+	 */
 	public ScenePhysics(PhysicBody[] objects) {
-		mOnSceneBodys = new ArrayList<PhysicBody>();
-		mCollider = new SceneCollider();
+		this();
 		for (PhysicBody object : objects) {
 			mOnSceneBodys.add(object);
 			mCollider.add(object.getCollider());
 		}
-		mSimulationThread = new Thread(this);
 	}
 	
+	/**
+	 * Adds physical object
+	 * @param object object to be added
+	 */
 	public void add(PhysicBody object) {
 		mOnSceneBodys.add(object);
 		mCollider.add(object.getCollider());
 	}
 	
+	/**
+	 * Adds an array of objects
+	 * @param objects array of objects to be added
+	 */
 	public void add(PhysicBody[] objects) {
 		for (PhysicBody object : objects) {
 			mOnSceneBodys.add(object);
@@ -70,27 +95,45 @@ public final class ScenePhysics implements Runnable {
 		}
 	}
 	
+	/**
+	 * Starts simulation
+	 */
 	public void startSimulation() {
 		System.gc();
-		
+
 		mDoKill = false;
+		if (mIsSimulating) 
+			return;
+		
 		mSimulationThread.start();
 		mIsSimulating = true;
 	}
 	
+	/**
+	 * Sends message to kill and waits
+	 */
 	public void stopSimulation() {
+		if (!mIsSimulating)
+			return;
 		mDoKill = true;
-		while (mDoKill) { }	// Wait until thread ends.
+		while (mIsSimulating) { }	// Wait until thread ends.
 	}
 	
+	/**
+	 * @return true if simulating
+	 */
 	public boolean isSimulating() {
 		return mIsSimulating;
 	}
 	
+	/**
+	 * Thread for simulation
+	 */
 	@Override
 	public void run() {
 		long time = System.currentTimeMillis();
 		for (; !mDoKill; ) {
+			// Compute time
 			time = System.currentTimeMillis() - time;
 			for (PhysicBody object : mOnSceneBodys) {
 				object.applyGravity(new Vector2D(GRAVITY_EARTH).mul(object.getBodyMass()));
