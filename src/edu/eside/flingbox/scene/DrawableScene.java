@@ -34,6 +34,7 @@ import edu.eside.flingbox.graphics.Render;
 import edu.eside.flingbox.input.SceneMTGestureDetector;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 import edu.eside.flingbox.math.Point;
+import edu.eside.flingbox.math.PolygonUtils;
 import edu.eside.flingbox.objects.Polygon;
 
 /**
@@ -155,7 +156,9 @@ public abstract class DrawableScene extends StaticScene implements OnInputListen
 				if (pointsCount >= 3) {
 					mDrawingPattern.trimToSize();
 					Polygon drawedPolygon;
-					drawedPolygon = new Polygon((Point[]) mDrawingPattern.toArray(new Point[0]));
+					// Optimize points by Douglas-Peucker algorithm s 
+					Point[] optimizedPoints = PolygonUtils.douglasPeuckerReducer(mDrawingPattern.toArray(new Point[0]), 5.0f);
+					drawedPolygon = new Polygon(optimizedPoints);
 					drawedPolygon.setRandomColor();
 					
 					add(drawedPolygon);

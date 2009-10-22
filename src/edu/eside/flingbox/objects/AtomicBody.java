@@ -76,20 +76,4 @@ public abstract class AtomicBody {
 	public void fixObject() {
 		mPhysics.fixObject();
 	}
-	
-	/**
-	 * Calculates if point is over object.
-	 * 
-	 * @param p Point to be checked
-	 * @return true if is over.
-	 */
-	public boolean isPointOver(Point p) {
-		if (mPhysics != null) {
-			Collider collider = mPhysics.getCollider();
-			if (collider != null)
-				return collider.isPointOver(p);
-		}
-		return false;
-		
-	}
 }

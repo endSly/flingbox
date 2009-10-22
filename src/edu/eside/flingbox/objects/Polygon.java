@@ -33,8 +33,6 @@ import edu.eside.flingbox.physics.PhysicBody.OnMovementListener;
  *
  */
 public final class Polygon extends AtomicBody implements OnMovementListener {
-	private final static float DEFAULT_REDUCER_EPSILON = 5.0f;
-	
 	private final Point[] mPoints;
 	private final short mPointsCount;
 
@@ -43,18 +41,16 @@ public final class Polygon extends AtomicBody implements OnMovementListener {
 	 * @param points	Array of Polygon's point
 	 * @throws IllegalArgumentException		If not enough points
 	 */
-	public Polygon(final Point[] points) throws IllegalArgumentException {
+	public Polygon(final Point[] polygonPoints) throws IllegalArgumentException {
 		super();
 		
 		// Get passed points count
-		final int pointsCount = points.length;
+		final int pointsCount = polygonPoints.length;
 		
 		// If not points enough to build a polygon.
 		if (pointsCount < 3)
 			throw new IllegalArgumentException("Not points enough to build a polygon.");
-		
-		// Optimize points by Douglas-Peucker algorithm 
-		Point[] polygonPoints = PolygonUtils.douglasPeuckerReducer(points, DEFAULT_REDUCER_EPSILON);
+	
 		
 		float polygonArea = PolygonUtils.polygonArea(polygonPoints);
 		// Set points in Clock-wise order

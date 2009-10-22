@@ -20,6 +20,7 @@ package edu.eside.flingbox.physics;
 
 import edu.eside.flingbox.math.Matrix22;
 import edu.eside.flingbox.math.Point;
+import edu.eside.flingbox.math.PolygonUtils;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.collisions.Collider;
 import edu.eside.flingbox.physics.collisions.ColliderPolygon;
@@ -83,6 +84,16 @@ public class PhysicPolygon extends PhysicBody implements OnCollideListener {
 	}
 	
 	/**
+	 * Check if point is contained by the polygon
+	 * 
+	 * @param p point to check
+	 * @return true if is containded
+	 */
+	public boolean contains(Point p) {
+		return PolygonUtils.polygonConatinsPoint(mPolygonContour, new Point(p.x - mPosition.i, p.y - mPosition.j));
+	}
+	
+	/**
 	 * Called when object has been updated
 	 */
 	public synchronized void onUpdateBody(float time) {
@@ -117,6 +128,7 @@ public class PhysicPolygon extends PhysicBody implements OnCollideListener {
 	 */
 	@Override
 	public void onCollide(Collision collide) {
+		
 		this.applyForce(collide.sense, collide.position);
 		return;
 		

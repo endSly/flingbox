@@ -155,6 +155,44 @@ public final class PolygonUtils {
 	}
 	
 	/**
+	 * Checks if a Point is contained by a polygon. It is bassed on 
+	 * Winding number algorithm.
+	 * More info at {@link http://en.wikipedia.org/wiki/Winding_number}
+	 * 
+	 * @param polygon polygon's points
+	 * @param point point to be checked
+	 */
+	public static boolean polygonConatinsPoint(Vector2D[] polygon, Point point) {
+		final int pointsCount = polygon.length;
+		final float px = point.x, py = point.y;
+		int c = 0;
+		for (int i = 0; i < pointsCount; i++) {
+			Vector2D v1 = polygon[i];
+			Vector2D v2 = polygon[(i + 1) % pointsCount] ;
+			if ((v1.j < py) && (v2.j > py)) {  
+				if (v1.i > px || v2.i > px)
+					c++;
+				// Check if point is at left or at rigth of the object
+				//final float segmentAtX = ((v2.i - v1.i) / (v2.j - v1.j)) * (py - v1.j) + v1.i;
+				//if (segmentAtX > px) 
+				//	c++;
+				//else if (segmentAtX == px)
+				//	return true; // is over the bounder
+			} else if ((v1.j > py) && (v2.j < py)) {
+				if (v1.i > px || v2.i > px)
+					c--;
+				// Check if point is at left or at rigth of the object
+				//final float segmentAtX = ((v2.i - v1.i) / (v2.j - v1.j)) * (py - v1.j) + v1.i;
+				//if (segmentAtX > px) 
+				//	c--;
+				//else if (segmentAtX == px)
+				//	return true; // is over the bounder
+			}
+		}
+		return c != 0;
+	}
+	
+	/**
 	 * Computes area of polygon.
 	 * @param points Polygon's points
 	 * @return Polygon's area. if points are counter-clockwise the 

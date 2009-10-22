@@ -18,8 +18,8 @@
 
 package edu.eside.flingbox.physics.collisions;
 
-import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.math.Vector2D;
+import edu.eside.flingbox.physics.PhysicBody;
 
 /**
  * Abstract collision manager for any object.
@@ -38,24 +38,39 @@ public abstract class Collider {
 		public void onCollide(Collision collision);
 	}
 	
-	// needed to discartd quickly collisions
+	/** bounding circle radius, needed to discartd quickly collisions */
 	protected float mRadius; 
 	
-	// Listener to notify when collide occurs
+	/** Listener to notify when collide occurs */
 	protected final OnCollideListener mCollisionListener;
 	
-	// Objects position. need to be updated
+	/** Objects position. needs to be updated */
 	protected final Vector2D mPosition;
+	 
+	protected final PhysicBody mPhysicBody;
 	
 	/**
 	 * Local constructor for any collider.
 	 * 
 	 * @param listener Collision listener
 	 */
-	public Collider(OnCollideListener listener) {
+	public Collider(PhysicBody physicBody) {
+		mPosition = new Vector2D();
+		mCollisionListener = physicBody;
+		mPhysicBody = physicBody;
+	}
+	
+	/**
+	 * Local constructor for any collider.
+	 * 
+	 * @param listener Collision listener
+	 */
+	public Collider(OnCollideListener listener, PhysicBody physicBody) {
 		mPosition = new Vector2D();
 		mCollisionListener = listener;
+		mPhysicBody = physicBody;
 	}
+
 	
 	/**
 	 * Checks if objects can collide
@@ -78,21 +93,6 @@ public abstract class Collider {
 
 		return true;
 		
-	}
-	
-	/**
-	 * Checks if poion is over object
-	 * 
-	 * @param p point
-	 * @return true if point is over
-	 */
-	public boolean isPointOver(Point p) {
-		final float thisX = mPosition.i, thisY = mPosition.j, 
-			pointX = p.x, pointY = p.y;
-		final float distanceSqr = ((thisX - pointX) * (thisX - pointX) 
-				+ (thisY - pointY) * (thisY - pointY));
-		
-		return (distanceSqr < (mRadius * mRadius));
 	}
 	
 	/**

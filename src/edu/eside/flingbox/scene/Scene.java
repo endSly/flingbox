@@ -69,7 +69,7 @@ public class Scene extends DrawableScene implements OnInputListener {
 		final Point p = new Point(onDownX, onDownY);
 		
 		for (AtomicBody object : mOnSceneBodys)
-			if (object.isPointOver(p)) {
+			if (object.getPhysics().contains(p)) {
 				mSelectedBody = object;
 				return true;
 			}

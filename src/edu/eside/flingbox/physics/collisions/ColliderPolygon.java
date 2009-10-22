@@ -20,6 +20,7 @@ package edu.eside.flingbox.physics.collisions;
 
 import edu.eside.flingbox.math.Intersect;
 import edu.eside.flingbox.math.Vector2D;
+import edu.eside.flingbox.physics.PhysicBody;
 
 /**
  * Collider for a polygon. it handles all functions needed by 
@@ -45,8 +46,8 @@ public class ColliderPolygon extends Collider {
 	 * 
 	 * @return
 	 */
-	public ColliderPolygon(final Vector2D[] contour, OnCollideListener listener) {
-		super(listener);
+	public ColliderPolygon(final Vector2D[] contour, PhysicBody thisPhysic) {
+		super(thisPhysic);
 		mPolygonContour = contour;
 		mRadius = computeBoundingCircleRadius(contour);
 		mPolygonNormals = computePolygonNormals(contour);
@@ -131,7 +132,7 @@ public class ColliderPolygon extends Collider {
 					outgoingIntersect = intersections[i + 1].intersectionPoint;
 				Vector2D sense = new Vector2D(outgoingIntersect);
 				sense.sub(ingoingIntersect);
-				sense = sense.normalVector().mul(1E6f);
+				sense = sense.normalVector();
 				
 				Vector2D collisonPosition = new Vector2D(ingoingIntersect)
 					.add(outgoingIntersect)
@@ -143,10 +144,12 @@ public class ColliderPolygon extends Collider {
 				Collision collisionA = new Collision(
 						new Vector2D(collisonPosition).sub(position), 
 						polygonSide ? sense : new Vector2D(sense).negate());
+				collisionA.collidingBody = collider.mPhysicBody;
 				
 				Collision collisionB = new Collision(
 						new Vector2D(collisonPosition).sub(otherPosition), 
 						!polygonSide ? sense : new Vector2D(sense).negate());
+				collisionA.collidingBody = mPhysicBody;
 				
 				mCollisionListener.onCollide(collisionA);
 				collider.mCollisionListener.onCollide(collisionB);

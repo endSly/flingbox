@@ -19,6 +19,7 @@
 package edu.eside.flingbox.physics;
 
 import edu.eside.flingbox.math.Point;
+import edu.eside.flingbox.math.PolygonUtils;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.collisions.Collider;
 import edu.eside.flingbox.physics.collisions.Collider.OnCollideListener;
@@ -41,31 +42,44 @@ public abstract class PhysicBody implements OnCollideListener {
 		public void onMovement(Vector2D position, float angle);
 	}
 	
-	/** Object with INFINITE_MASS should be impossible to move */
+	/** Objects with INFINITE_MASS should be impossible to move */
 	protected final static float INFINITE_MASS = Float.POSITIVE_INFINITY;
+	/** Objects with INFINITE_ANGULAR_MASS should be imposible to rotate */
 	protected final static float INFINITE_ANGULAR_MASS = Float.POSITIVE_INFINITY;
 	
-	protected boolean mIgnoreGravity = false;
+	/** Sets if objects can be moved */
+	protected boolean mIsMoveable = true;
+	/** Sets if objects can be rotated */
+	protected boolean mIsRotable = true;
+	/** Sets if objects should interactue */
+	protected boolean mIsEnabled = true;
 	
-	// Store body's position with rotational angle
+	/** Restitution Coeficient is a fractional value representing the ratio 
+	 * of velocities before and after an impact */
+	protected float mRestitutionCoeficient = 1.0f;
+	
+	/** Object's current position */
 	protected final Vector2D mPosition;
+	/** Object's current rotated angle */
 	protected float mAngle = 0f;
 	
-	// Store body's mass and angular mass
+	/** Body's mass */
 	protected float mMass;
+	/** Body's angular mass */
 	protected float mAngularMass = 0f;
-	
-	// Store Variables for movement
+	/** Body's current velocity */
 	protected final Vector2D mVelocity = new Vector2D();
+	/** Body's current angular Velocity */
 	protected float mAngularVelocity = 0.0f;
-	
+	/** Current applied force to the body */
 	protected Vector2D mAppliedForce = new Vector2D();
+	/** Current applied moment to he body*/
 	protected float mAppliedMoment = 0.0f;
 	
-	// Body's collider
+	/** Collider for this body */
 	protected Collider mCollider;
 	
-	// OnMovement callback listener
+	/**OnMovement callback listener */
 	protected OnMovementListener mListener;
 	
 	/**
@@ -91,7 +105,14 @@ public abstract class PhysicBody implements OnCollideListener {
 	 * Fixs body, making imposible to move mVelocityit
 	 */
 	public void fixObject() {
-		mIgnoreGravity = true;
+		mIsMoveable = false;
+		mIsRotable = false;
+		
+		// Stop current object
+		mVelocity.set(0f, 0f);
+		mAngularVelocity = 0f;
+		
+		//This will make object fixed
 		mMass = INFINITE_MASS;
 		mAngularMass = INFINITE_ANGULAR_MASS;
 		
@@ -101,7 +122,7 @@ public abstract class PhysicBody implements OnCollideListener {
 	  * @param gravityForce
 	  */
 	public synchronized void applyGravity(Vector2D gravityForce) {
-		if (!mIgnoreGravity)
+		if (mIsMoveable)
 			mAppliedForce.add(gravityForce);
 	}
 	
@@ -118,6 +139,17 @@ public abstract class PhysicBody implements OnCollideListener {
 		// Calculate moment
 		mAppliedMoment += applicationPoint.crossProduct(force);
 	}
+	
+	/**
+	 * Check if point is contained by the polygon
+	 * 
+	 * @param p point to check
+	 * @return true if is containded
+	 */
+	public boolean contains(Point p) {
+		return false; // Atomic body cannot be contained
+	}
+	
 	
 	/**
 	 * @return Body's mass
@@ -177,6 +209,18 @@ public abstract class PhysicBody implements OnCollideListener {
 	 */
 	public void setAngle(float angle) {
 		mAngle = angle;
+	}
+	
+	/**
+	 * Computes current object's energy
+	 *  
+	 * @return energy in juls
+	 */
+	public float getEnergy() {
+		final float velocity = mVelocity.length() ;
+		final float kineticEnergy = 0.5f * mMass * velocity * velocity;
+		final float kineticRotationalEnergy = 0.5f * mAngularMass * mAngularVelocity * mAngularVelocity;
+		return kineticEnergy + kineticRotationalEnergy;
 	}
 	
 	/**
