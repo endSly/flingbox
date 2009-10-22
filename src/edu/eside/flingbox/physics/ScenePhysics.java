@@ -30,7 +30,7 @@ import edu.eside.flingbox.physics.collisions.SceneCollider;
  * ScenePhysics manage thread for update objects 
  */
 public class ScenePhysics implements Runnable {
-	public static final Vector2D GRAVITY_EARTH = new Vector2D(0f, -9.81f * 30f);
+	public static final Vector2D GRAVITY_EARTH = new Vector2D(0f, -9.81f * 50f);
 	public static final Vector2D GRAVITY_MOON = new Vector2D(0f, -1.63f * 530f);
 	
 	// List of physical objects on scene
@@ -135,9 +135,10 @@ public class ScenePhysics implements Runnable {
 		for (; !mDoKill; ) {
 			// Compute time
 			time = System.currentTimeMillis() - time;
-			for (PhysicBody object : mOnSceneBodys) {
-				object.applyGravity(new Vector2D(GRAVITY_EARTH).mul(object.getBodyMass()));
-				object.onUpdateBody(time);
+			final ArrayList<PhysicBody> bodys = mOnSceneBodys;
+			for (int i = bodys.size() - 1; i >= 0; i--) {
+				bodys.get(i).applyGravity(new Vector2D(GRAVITY_EARTH).mul(bodys.get(i).getBodyMass()));
+				bodys.get(i).onUpdateBody(time);
 			}
 			mCollider.checkCollisions();
 			time = System.currentTimeMillis();

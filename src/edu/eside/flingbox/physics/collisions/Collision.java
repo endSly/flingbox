@@ -27,6 +27,8 @@ import edu.eside.flingbox.physics.PhysicBody;
 public final class Collision {
 	
 	public PhysicBody collidingBody;
+	/** Collision's relative poition */
+	public Vector2D otherBodyCollisionPoint;
 	
 	/** Collision's relative poition */
 	public final Vector2D position;

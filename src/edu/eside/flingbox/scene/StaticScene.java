@@ -128,7 +128,7 @@ public abstract class StaticScene implements OnInputListener {
 		mCamera.setPosition(newX, newY, width);
 		*/
 		
-		onZoom(0f, 0f, 1f + ev.getY() / 16f);
+		onZoom(0f, 0f, 1f + ev.getY() / 8f);
 		
 		return true;
 	}

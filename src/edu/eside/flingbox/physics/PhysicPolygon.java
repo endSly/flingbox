@@ -104,15 +104,18 @@ public class PhysicPolygon extends PhysicBody implements OnCollideListener {
 		// Sets angular velocity and rotation
 		mAngularVelocity += mAppliedMoment * (time / 1000f) / mAngularMass;
 		float angleToRotate = mAngularVelocity * time / 1000f;
-		Matrix22 rotationMatrix = Matrix22.rotationMatrix(angleToRotate);
-		for (Vector2D vertex : mPolygonContour)
-			vertex.mul(rotationMatrix);
+		if (angleToRotate != 0) {
+			final Matrix22 rotationMatrix = Matrix22.rotationMatrix(angleToRotate);
+			final Vector2D[] contour = mPolygonContour;
+			for (int i = contour.length -1; i >= 0; i-- )
+				contour[i].set(contour[i].mul(rotationMatrix));
 		
-		mAngle += angleToRotate;
-		while (mAngle > 2 * Math.PI)
-			mAngle -= 2 * Math.PI;
-		while (mAngle < 0)
-			mAngle += 2 * Math.PI;
+			mAngle += angleToRotate;
+			while (mAngle > 2 * Math.PI)
+				mAngle -= 2 * Math.PI;
+			while (mAngle < 0)
+				mAngle += 2 * Math.PI;
+		}
 		
 		// Updates positions
 		mCollider.setPosition(mPosition);
@@ -128,6 +131,13 @@ public class PhysicPolygon extends PhysicBody implements OnCollideListener {
 	 */
 	@Override
 	public void onCollide(Collision collide) {
+		PhysicBody otherBody = collide.collidingBody;
+		
+		// Calculate impulse in Juls
+		//Jx = (e+1)/k * (Vaix - Vbix)( 1/ma - rax2/Ia + 1/mb - rbx2/Ib) - (e+1)/k * (Vaiy - Vbiy) (rax ray / Ia + rbx rby / Ib)
+		//Jy = - (e+1)/k * (Vaix - Vbix) (rax ray / Ia + rbx rby / Ib) + (e+1)/k * (Vaiy - Vbiy) ( 1/ma - ray2/Ia + 1/mb - rby2/Ib)
+		
+		
 		
 		this.applyForce(collide.sense, collide.position);
 		return;

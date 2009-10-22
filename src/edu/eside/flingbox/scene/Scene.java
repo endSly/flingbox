@@ -57,7 +57,7 @@ public class Scene extends DrawableScene implements OnInputListener {
 		if (mSelectedBody != null) {
 			mSelectedBody.fixObject();
 			// vibrate as haptic feedback
-			mVibrator.vibrate(60);
+			mVibrator.vibrate(50);
 		}
 		super.onLongPress(e);
 		

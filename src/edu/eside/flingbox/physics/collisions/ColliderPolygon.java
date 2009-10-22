@@ -132,7 +132,7 @@ public class ColliderPolygon extends Collider {
 					outgoingIntersect = intersections[i + 1].intersectionPoint;
 				Vector2D sense = new Vector2D(outgoingIntersect);
 				sense.sub(ingoingIntersect);
-				sense = sense.normalVector();
+				sense = sense.normalVector().mul(1E7f);
 				
 				Vector2D collisonPosition = new Vector2D(ingoingIntersect)
 					.add(outgoingIntersect)
@@ -149,7 +149,10 @@ public class ColliderPolygon extends Collider {
 				Collision collisionB = new Collision(
 						new Vector2D(collisonPosition).sub(otherPosition), 
 						!polygonSide ? sense : new Vector2D(sense).negate());
-				collisionA.collidingBody = mPhysicBody;
+				collisionB.collidingBody = mPhysicBody;
+				
+				collisionA.otherBodyCollisionPoint = collisionB.position;
+				collisionB.otherBodyCollisionPoint = collisionA.position;
 				
 				mCollisionListener.onCollide(collisionA);
 				collider.mCollisionListener.onCollide(collisionB);
