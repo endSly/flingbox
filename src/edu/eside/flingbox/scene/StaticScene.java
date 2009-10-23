@@ -34,7 +34,7 @@ import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.objects.AtomicBody;
 import edu.eside.flingbox.physics.ScenePhysics;
 
-public abstract class StaticScene implements OnInputListener {
+public class StaticScene implements OnInputListener {
 	
 	protected final class BackgroundRender extends RenderPolygon {
 		
@@ -178,6 +178,35 @@ public abstract class StaticScene implements OnInputListener {
 		cam.setPosition(newX, newY, width);
 
 		return true;
+	}
+
+	@Override
+	public boolean onUp(MotionEvent ev) {
+		return false;
+	}
+
+	@Override
+	public boolean onDown(MotionEvent e) {
+		return false;
+	}
+
+	@Override
+	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+			float velocityY) {
+		return false;
+	}
+
+	@Override
+	public void onLongPress(MotionEvent e) {
+	}
+
+	@Override
+	public void onShowPress(MotionEvent e) {
+	}
+
+	@Override
+	public boolean onSingleTapUp(MotionEvent e) {
+		return false;
 	}
 
 	

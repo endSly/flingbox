@@ -21,13 +21,13 @@ package edu.eside.flingbox.scene;
 import java.io.File;
 import java.io.IOException;
 
-import edu.eside.flingbox.ObjectSettingsActivity;
+import edu.eside.flingbox.ObjectSettingsDialog;
+import edu.eside.flingbox.R;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.objects.AtomicBody;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Environment;
 import android.view.MotionEvent;
 
@@ -39,6 +39,24 @@ public class Scene extends DrawableScene implements OnInputListener {
 	public Scene(Context c) {
 		super(c);
 		
+	}
+	
+	public boolean startSimulation() {
+		if (mScenePhysics.isSimulating())
+			return false;
+		mScenePhysics.startSimulation();
+		return true;
+	}
+	
+	public boolean stopSimulation() {
+		if (!mScenePhysics.isSimulating())
+			return false;
+		mScenePhysics.stopSimulation();
+		return true;
+	}
+	
+	public boolean isSimulating() {
+		return mScenePhysics.isSimulating();
 	}
 
 	public boolean onFling(MotionEvent onDownEv, MotionEvent e, float velocityX,
@@ -58,11 +76,11 @@ public class Scene extends DrawableScene implements OnInputListener {
 	
 	public void onLongPress(MotionEvent e) {
 		if (mSelectedBody != null) {
-			mContext.startActivity(new Intent(mContext, ObjectSettingsActivity.class));
+			mVibrator.vibrate(50); // vibrate as haptic feedback
+			ObjectSettingsDialog dialog = new ObjectSettingsDialog(mContext);
+			dialog.show();
 			
 			mSelectedBody.fixObject();
-			// vibrate as haptic feedback
-			mVibrator.vibrate(50);
 		}
 		super.onLongPress(e);
 		
@@ -113,11 +131,7 @@ public class Scene extends DrawableScene implements OnInputListener {
 	public boolean onTrackballEvent(MotionEvent ev) {
 		boolean handled = false;
 		if (ev.getAction() == MotionEvent.ACTION_DOWN) {
-			if (mScenePhysics.isSimulating())
-				mScenePhysics.stopSimulation();
-			else 
-				mScenePhysics.startSimulation();
-			handled = true;
+			startSimulation();
 		}
 			
 		return handled | super.onTrackballEvent(ev);

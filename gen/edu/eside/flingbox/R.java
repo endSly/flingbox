@@ -18,6 +18,11 @@ public final class R {
     }
     public static final class string {
         public static final int app_name=0x7f040000;
+        public static final int end_simulation=0x7f040003;
+        public static final int load_scene=0x7f040004;
         public static final int obj_settings_name=0x7f040001;
+        public static final int preferences=0x7f040006;
+        public static final int save_scene=0x7f040005;
+        public static final int simulate=0x7f040002;
     }
 }

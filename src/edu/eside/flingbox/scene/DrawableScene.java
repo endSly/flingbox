@@ -40,7 +40,7 @@ import edu.eside.flingbox.objects.Polygon;
 /**
  * Implements drawing methods to {@link StaticScene}
  */
-public abstract class DrawableScene extends StaticScene implements OnInputListener {
+public class DrawableScene extends StaticScene implements OnInputListener {
 	
 	/**
 	 * {@link Renderizable} Object witch handles drawing pattern

@@ -21,9 +21,9 @@ package edu.eside.flingbox;
 import android.app.Activity;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
-import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -34,6 +34,14 @@ import edu.eside.flingbox.scene.Scene;
  * Shows scene at full screen.
  */
 public class FlingboxActivity extends Activity {
+	// TODO Play and pause two menus separated
+	private final static int MENU_PLAY_PAUSE = 0;
+	private final static int MENU_PREFERENCES = 1;
+	
+	private final static int MENU_LOAD_SCENE = 10;
+	private final static int MENU_SAVE_SCENE = 11;
+	
+	
 	private GLSurfaceView mSurface;
 	private Scene mScene; 
 	
@@ -52,15 +60,41 @@ public class FlingboxActivity extends Activity {
         // Request full screen view
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
+        
         // Set OpenGL's surface
         setContentView(mSurface);
-        
     }
     
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-    	menu.add("Test0");
-    	menu.add("Test1");
+    /**
+     * Creates the menu items 
+     */
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, MENU_PLAY_PAUSE, 0, R.string.simulate);
+        menu.add(1, MENU_PREFERENCES, 1, R.string.preferences);
+        menu.add(10, MENU_LOAD_SCENE, 2, R.string.load_scene);
+        menu.add(10, MENU_SAVE_SCENE, 3, R.string.save_scene);
+        return true;
+    }
+    
+    /**
+     * Handles item selections 
+     */
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case MENU_PLAY_PAUSE:
+        	if (mScene.isSimulating())
+        		mScene.stopSimulation();
+        	else
+        		mScene.startSimulation();
+            return true;
+        case MENU_PREFERENCES:
+            return true;
+        case MENU_LOAD_SCENE:
+        	return true;
+        case MENU_SAVE_SCENE:
+        	return true;
+        }
+        return false;
     }
     
     /**

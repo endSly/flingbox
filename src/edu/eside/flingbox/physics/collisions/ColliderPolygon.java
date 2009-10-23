@@ -70,7 +70,7 @@ public class ColliderPolygon extends Collider {
 	}
 	
 	/**
-	 * Computes Polygon normals. 
+	 * Computes Polygon normals.  
 	 * Needed to descart polygon's segments quickly.
 	 * 
 	 * @param contour Counterclockwise polygon points
