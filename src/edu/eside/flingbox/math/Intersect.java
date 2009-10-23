@@ -80,22 +80,27 @@ public class Intersect {
 		
 		return intersect;
 	}
-	
 	/**
 	 * Computes intersction between two traces.
-	 * 
-	 * @param traceA First trace
-	 * @param traceB Second trace
+	 *
+	 * @param traceA first trace array
+	 * @param a0 first point to check
+	 * @param a1 last point to check
+	 * @param traceB second trace array
+	 * @param b0 first point to check
+	 * @param b1 last point to check
 	 * @return Array with Intersects. Some positions can be null
 	 */
-	public static Intersect[] intersectionsOfTrace(Vector2D[] traceA, Vector2D[] traceB) {
+	public static Intersect[] intersectionsOfTrace(Vector2D[] traceA, int a0 , int a1, 
+			Vector2D[] traceB, int b0, int b1) { 
 		final int aLen = traceA.length, bLen = traceB.length;
-		
-		Intersect[] intersects = new Intersect[aLen > bLen ? aLen : bLen];
+		Intersect[] intersects = new Intersect[a1 - a0 > b1 - b0 ? a1 - a0 : b1 - b0];
 		int intersecitonsCount = 0;
+		a1++;	// Last point should also be checked 
+		b1++;
 		 // We are going to probe each segment.
-		for (int i = 0; i < aLen; i++)
-			for (int j = 0; j < bLen; j++) {
+		for (int i = a0; i != a1; i = (i + 1) % aLen)
+			for (int j = b0; j != b1; j = (j + 1) % bLen ) {
 				Intersect intersect = intersectionOfSegments(
 						traceA[i], traceA[(i + 1) % aLen], 
 						traceB[j], traceB[(j + 1) % bLen]);
@@ -106,6 +111,19 @@ public class Intersect {
 				}
 			}
 		return intersects;
+	}
+	
+	
+	/**
+	 * Computes intersction between two traces.
+	 * 
+	 * @param traceA First trace
+	 * @param traceB Second trace
+	 * @return Array with Intersects. Some positions can be null
+	 */
+	public static Intersect[] intersectionsOfTrace(Vector2D[] traceA, Vector2D[] traceB) {
+		final int aLen = traceA.length, bLen = traceB.length;
+		return intersectionsOfTrace(traceA, 0 , aLen - 1, traceB, 0, bLen - 1);
 	}
 	
 	

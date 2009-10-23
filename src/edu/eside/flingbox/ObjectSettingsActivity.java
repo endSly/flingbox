@@ -19,13 +19,26 @@
 package edu.eside.flingbox;
 
 import android.app.ListActivity;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.PopupWindow;
 
 public class ObjectSettingsActivity extends ListActivity {
-	/*
-	View settingsView =(View)findViewById(R.layout.object_settings);
+
+	/** 
+     * Called when the activity is first created. 
+     */
 	
-    PopupWindow window = new PopupWindow(settingsView, 10, 10);   
-	*/
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+    	super.onCreate(savedInstanceState);
+    	/*
+    	View settingsView =(View)findViewById(R.layout.object_settings);
+    	
+        PopupWindow window = new PopupWindow(settingsView, 10, 10);   
+        window.showAsDropDown(settingsView);
+    	 */
+    	//this.setContentView((View) findViewById(R.layout.object_settings));
+    }
+
 }

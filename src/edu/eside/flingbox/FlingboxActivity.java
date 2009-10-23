@@ -21,7 +21,9 @@ package edu.eside.flingbox;
 import android.app.Activity;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -54,6 +56,11 @@ public class FlingboxActivity extends Activity {
         // Set OpenGL's surface
         setContentView(mSurface);
         
+    }
+    
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+    	menu.add("Test0");
+    	menu.add("Test1");
     }
     
     /**

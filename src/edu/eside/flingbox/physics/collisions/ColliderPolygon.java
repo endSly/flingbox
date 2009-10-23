@@ -26,6 +26,12 @@ import edu.eside.flingbox.physics.PhysicBody;
  * Collider for a polygon. it handles all functions needed by 
  * collition system
  * NOTE This class should only be created by {@link PhisicPolygon}.
+ * 
+ * How collision detector optimizer works:
+ * - When created collider check each polygon's vertex angle and 
+ * stores them.
+ * - When bounding circle collides Collider checks only segments 
+ * in other circle region.
  *
  */
 public class ColliderPolygon extends Collider {
@@ -38,6 +44,8 @@ public class ColliderPolygon extends Collider {
 	/** Handled in Physics, only pointer */
 	private final Vector2D[] mPolygonContour;
 	
+	private final float[] mVertexAngle;
+	
 	/**
 	 * Default constructor for a polygon collider.
 	 * 
@@ -49,9 +57,16 @@ public class ColliderPolygon extends Collider {
 	 */
 	public ColliderPolygon(final Vector2D[] contour, PhysicBody thisPhysic) {
 		super(thisPhysic);
+		final int pointsCount = contour.length;
 		mPolygonContour = contour;
 		mRadius = computeBoundingCircleRadius(contour);
 		mPolygonNormals = computePolygonNormals(contour);
+		
+		// Stores all point's angles
+		mVertexAngle = new float[pointsCount];
+		for (int i = 0 ; i < pointsCount; i++) 
+			mVertexAngle[i] = (float) Math.atan(contour[i].j / contour[i].i);
+
 	}
 	
 	/**
@@ -90,77 +105,75 @@ public class ColliderPolygon extends Collider {
 	}
 	
 	/**
+	 * Moves polygon to determinate point
+	 * @return New translated polygon
+	 */
+	private static Vector2D[] translatePolygon(Vector2D[] polygon, Vector2D position) {
+		final int pointsCount = polygon.length;
+		final Vector2D[] locatedPolygon = new Vector2D[pointsCount];
+		for (int i = 0; i < pointsCount; i++) 
+			locatedPolygon[i] = new Vector2D(polygon[i]).add(position);
+		return locatedPolygon;
+	}
+	
+	/**
 	 * TODO
 	 */
 	public boolean checkCollision(Collider collider) {
-		if (super.checkCollision(collider)) {
-			//final Vector2D[] normals = mPolygonNormals;
+		if (!super.checkCollision(collider)) 
+			return false;
+		
+		boolean doCollide = false;
+		final Vector2D[] polygon = translatePolygon(mPolygonContour, mPosition);
+		final Vector2D[] otherPolygon = translatePolygon(((ColliderPolygon) collider).mPolygonContour, ((ColliderPolygon) collider).mPosition);
+		
+		/*
+		 * Find intersections
+		 * TODO Optimize this!!
+		 */
+		Intersect[] intersections = Intersect.intersectionsOfTrace(polygon, otherPolygon);
+		
+		/*
+		 * Compute detected intersections
+		 */
+		final int intersctionsCount = intersections.length;
+		for (int i = 0
+				; i < intersctionsCount - 1 && intersections[i + 1] != null
+				; i += 2) {
+			doCollide = true;
 			
-			// We are going to rotate normals
-			//Matrix22 rotationMatrix = Matrix22.rotationMatrix(mRotationAngle);
+			final Vector2D ingoingIntersect = intersections[i].intersectionPoint, 
+				outgoingIntersect = intersections[i + 1].intersectionPoint;
 			
-			//Vector2D collisionVector = new Vector2D(collider.mPosition.x - mPosition.x, 
-			//		collider.mPosition.y - mPosition.y);
+			Vector2D sense = new Vector2D(outgoingIntersect)
+				.sub(ingoingIntersect)
+				.normalVector()
+				.mul(1E7f);
 			
-			// Translate this polygon
-			final Vector2D[] polygonContour = mPolygonContour;
-			final int pointsCount = polygonContour.length;
-			final Vector2D[] locatedPolygon = new Vector2D[pointsCount];
-			final Vector2D position = mPosition;
-			for (int i = 0; i < pointsCount; i++) 
-				locatedPolygon[i] = new Vector2D(polygonContour[i]).add(position);
+			Vector2D collisonPosition = new Vector2D(ingoingIntersect)
+				.add(outgoingIntersect)
+				.mul(0.5f);
 			
-			// Translate other polygon
-			final Vector2D[] otherPolygonContour = ((ColliderPolygon) collider).mPolygonContour;
-			final int otherPointsCount = otherPolygonContour.length;
-			final Vector2D[] otherLocatedPolygon = new Vector2D[otherPointsCount];
-			final Vector2D otherPosition = new Vector2D(
-					((ColliderPolygon) collider).mPosition);
+			Vector2D bodysSide = (new Vector2D(mPosition)).sub(collisonPosition);
+			boolean polygonSide = bodysSide.dotProduct(sense) >= 0;
 			
-			for (int i = 0; i < otherPointsCount; i++)
-				otherLocatedPolygon[i] = new Vector2D(otherPolygonContour[i])
-					.add(otherPosition);
-
+			Collision collisionA = new Collision(
+					new Vector2D(collisonPosition).sub(mPosition), 
+					polygonSide ? sense : new Vector2D(sense).negate());
+			collisionA.collidingBody = collider.mPhysicBody;
 			
-			Intersect[] intersections = Intersect.intersectionsOfTrace(
-					locatedPolygon, otherLocatedPolygon);
+			Collision collisionB = new Collision(
+					new Vector2D(collisonPosition).sub(((ColliderPolygon) collider).mPosition), 
+					!polygonSide ? sense : new Vector2D(sense).negate());
+			collisionB.collidingBody = mPhysicBody;
 			
-			final int intersctionsCount = intersections.length;
-			for (int i = 0
-					; i < intersctionsCount - 1 && intersections[i + 1] != null
-					; i += 2) {
-				final Vector2D ingoingIntersect = intersections[i].intersectionPoint, 
-					outgoingIntersect = intersections[i + 1].intersectionPoint;
-				Vector2D sense = new Vector2D(outgoingIntersect);
-				sense.sub(ingoingIntersect);
-				sense = sense.normalVector().mul(1E7f);
-				
-				Vector2D collisonPosition = new Vector2D(ingoingIntersect)
-					.add(outgoingIntersect)
-					.mul(0.5f);
-				
-				Vector2D bodysSide = (new Vector2D(position)).sub(collisonPosition);
-				boolean polygonSide = bodysSide.dotProduct(sense) >= 0;
-				
-				Collision collisionA = new Collision(
-						new Vector2D(collisonPosition).sub(position), 
-						polygonSide ? sense : new Vector2D(sense).negate());
-				collisionA.collidingBody = collider.mPhysicBody;
-				
-				Collision collisionB = new Collision(
-						new Vector2D(collisonPosition).sub(otherPosition), 
-						!polygonSide ? sense : new Vector2D(sense).negate());
-				collisionB.collidingBody = mPhysicBody;
-				
-				collisionA.otherBodyCollisionPoint = collisionB.position;
-				collisionB.otherBodyCollisionPoint = collisionA.position;
-				
-				mCollisionListener.onCollide(collisionA);
-				collider.mCollisionListener.onCollide(collisionB);
-			}
+			collisionA.otherBodyCollisionPoint = collisionB.position;
+			collisionB.otherBodyCollisionPoint = collisionA.position;
 			
+			mCollisionListener.onCollide(collisionA);
+			collider.mCollisionListener.onCollide(collisionB);
 		}
-		return false;
+		return doCollide;
 	}
 	
 }
