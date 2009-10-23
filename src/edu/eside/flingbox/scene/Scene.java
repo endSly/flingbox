@@ -21,11 +21,13 @@ package edu.eside.flingbox.scene;
 import java.io.File;
 import java.io.IOException;
 
+import edu.eside.flingbox.ObjectSettingsActivity;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.objects.AtomicBody;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Environment;
 import android.view.MotionEvent;
 
@@ -43,8 +45,9 @@ public class Scene extends DrawableScene implements OnInputListener {
 			float velocityY) {
 		boolean handled = false;
 		if (mSelectedBody != null) {
-			final float vx = mCamera.left + (velocityX * mCamera.getWidth() / mDisplayWidth);
-			final float vy = mCamera.top - (velocityY * mCamera.getHeight() / mDisplayHeight);
+			final float cameraScale = mCamera.getWidth() / mDisplayWidth;
+			final float vx = (velocityX * cameraScale);
+			final float vy = (velocityY * cameraScale);
 			
 			mSelectedBody.getPhysics().setVelocity(vx, vy);
 			handled = true;
@@ -55,6 +58,8 @@ public class Scene extends DrawableScene implements OnInputListener {
 	
 	public void onLongPress(MotionEvent e) {
 		if (mSelectedBody != null) {
+			mContext.startActivity(new Intent(mContext, ObjectSettingsActivity.class));
+			
 			mSelectedBody.fixObject();
 			// vibrate as haptic feedback
 			mVibrator.vibrate(50);

@@ -130,16 +130,40 @@ public class PhysicPolygon extends PhysicBody implements OnCollideListener {
 	 * Called when collision occurs
 	 */
 	@Override
-	public void onCollide(Collision collide) {
-		PhysicBody otherBody = collide.collidingBody;
+	public void onCollide(Collision collision) {
+		/*
+		final PhysicBody otherBody = collision.collidingBody;
 		
-		// Calculate impulse in Juls
-		//Jx = (e+1)/k * (Vaix - Vbix)( 1/ma - rax2/Ia + 1/mb - rbx2/Ib) - (e+1)/k * (Vaiy - Vbiy) (rax ray / Ia + rbx rby / Ib)
-		//Jy = - (e+1)/k * (Vaix - Vbix) (rax ray / Ia + rbx rby / Ib) + (e+1)/k * (Vaiy - Vbiy) ( 1/ma - ray2/Ia + 1/mb - rby2/Ib)
+		final float vax = mVelocity.i, vay = mVelocity.j, vbx = otherBody.mVelocity.i, vby = otherBody.mVelocity.j,
+			ma = mMass, mb = otherBody.mMass, ia = mAngularMass, ib = otherBody.mAngularMass,
+			rax = collision.position.i, ray = collision.position.j, 
+			rbx = collision.otherBodyCollisionPoint.i, rby = collision.otherBodyCollisionPoint.j;
 		
+		final float k = 
+			1 / (ma * ma) + 2 / (ma * mb) + 1 / (mb * mb)
+			- rax * rax / (ma * ia) - rbx * rbx / (ma * ib)
+			- ray * ray / (ma * ia) - ray * ray / (mb * ia)
+			- rbx * rbx / (mb * ib) - rax * rax / (mb * ia)
+			- rby * rby / (ma * ib) - rby * rby / (mb * ib) 
+			+ rax * rax * rby * rby / (ia * ib)
+			+ ray * ray * rbx * rbx / (ia * ib)
+			- 2 * rax * ray * rbx * rby / (ia * ib);
 		
+		final float e = (mRestitutionCoeficient + 1) / k;
 		
-		this.applyForce(collide.sense, collide.position);
+		final float jx = 
+			e * (vax - vbx) * (1 / ma - rax * rax / ia + 1 / mb - rbx * rbx / ib)
+			- e * (vay - vby) * (rax * ray / ia + rbx * rby / ib);
+		final float jy = 
+			e * (vay - vby) * (1 / ma - ray * ray / ia + 1 / mb - rby * rby / ib)
+			- e * (vax - vbx) * (rax * ray / ia + rbx * rby / ib) ;
+		
+		mVelocity.i -= jx / ma;
+		mVelocity.j -= jy / ma;
+		
+		mAngularVelocity -= (jx * ray - jy * rax) / ia;
+		*/
+		this.applyForce(collision.sense, collision.position);
 		return;
 		
 	}

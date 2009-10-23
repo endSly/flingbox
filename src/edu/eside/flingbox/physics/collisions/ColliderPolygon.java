@@ -32,6 +32,7 @@ public class ColliderPolygon extends Collider {
 	
 	//private float mRotationAngle;
 	
+	@SuppressWarnings("unused")
 	private final Vector2D[] mPolygonNormals;
 	
 	/** Handled in Physics, only pointer */

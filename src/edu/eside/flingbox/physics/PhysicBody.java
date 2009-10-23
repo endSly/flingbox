@@ -19,7 +19,6 @@
 package edu.eside.flingbox.physics;
 
 import edu.eside.flingbox.math.Point;
-import edu.eside.flingbox.math.PolygonUtils;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.collisions.Collider;
 import edu.eside.flingbox.physics.collisions.Collider.OnCollideListener;
@@ -56,7 +55,7 @@ public abstract class PhysicBody implements OnCollideListener {
 	
 	/** Restitution Coeficient is a fractional value representing the ratio 
 	 * of velocities before and after an impact */
-	protected float mRestitutionCoeficient = 1.0f;
+	protected float mRestitutionCoeficient = 0.8f;
 	
 	/** Object's current position */
 	protected final Vector2D mPosition;

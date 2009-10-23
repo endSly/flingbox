@@ -83,8 +83,10 @@ public abstract class StaticScene implements OnInputListener {
 	
 	protected final ArrayList<AtomicBody> mOnSceneBodys;
 	
+	protected final Context mContext;
+	
 	public StaticScene(Context c) {
-		//mVibrator = (Vibrator)c.getSystemService(Context.VIBRATOR_SERVICE);
+		mContext = c;
 		
 		// Create list of objects.
 		mOnSceneBodys = new ArrayList<AtomicBody>();

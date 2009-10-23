@@ -19,9 +19,7 @@
 package edu.eside.flingbox.objects;
 
 import edu.eside.flingbox.graphics.Render;
-import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.physics.PhysicBody;
-import edu.eside.flingbox.physics.collisions.Collider;
 
 /**
  * An AtomicBody is a general abstraction witch handles 
