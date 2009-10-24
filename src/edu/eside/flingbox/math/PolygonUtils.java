@@ -214,18 +214,32 @@ public final class PolygonUtils {
 	
 	/**
 	 * Computes polygon centroid
+	 * 
 	 * @param points Polygon's points
 	 * @return centroid point
 	 */
 	public static Point polygonCentroid(final Point[] points) {
-		final float pointsCount = points.length;
-		float centroidX = 0f, centroidY = 0f;
+		final int pointsCount = points.length;
+		float cx = 0f, cy = 0f;
 		
 		for (Point p : points) {
-			centroidX += p.x;
-			centroidY += p.y;
+			cx += p.x;
+			cy += p.y;
 		}
-		return new Point(centroidX / pointsCount, centroidY / pointsCount);
+		cx /= pointsCount;
+		cy /= pointsCount;
+		/*
+		for (int i = 0; i < pointsCount; i++) {
+			float p0x = points[i].x, p1x = points[(i + 1) % pointsCount].x;
+			float p0y = points[i].y, p1y = points[(i + 1) % pointsCount].y;
+			cx += (p0x + p1x) * (p0x * p1y - p1x * p0y);
+			cy += (p0y + p1y) * (p0y * p1x - p1y * p0x);
+		}
+		float d = 6f * polygonArea(points);
+		cx /= d;
+		cy /= d;
+		*/
+		return new Point(cx, cy);
 	}
 	
 	/**

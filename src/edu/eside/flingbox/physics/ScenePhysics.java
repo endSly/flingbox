@@ -105,8 +105,8 @@ public class ScenePhysics implements Runnable {
 		if (mIsSimulating) 
 			return;
 		
-		mSimulationThread.start();
 		mIsSimulating = true;
+		mSimulationThread.start();
 	}
 	
 	/**
@@ -117,6 +117,8 @@ public class ScenePhysics implements Runnable {
 			return;
 		mDoKill = true;
 		while (mIsSimulating) { }	// Wait until thread ends.
+		
+		System.gc();
 	}
 	
 	/**
@@ -131,19 +133,21 @@ public class ScenePhysics implements Runnable {
 	 */
 	@Override
 	public void run() {
-		long time = System.currentTimeMillis();
+		final ArrayList<PhysicBody> bodys = mOnSceneBodys;
+		long lastTime = System.currentTimeMillis();
+		long time;
 		for (; !mDoKill; ) {
 			// Compute time
-			time = System.currentTimeMillis() - time;
-			final ArrayList<PhysicBody> bodys = mOnSceneBodys;
+			time = System.currentTimeMillis() - lastTime;
+			lastTime = System.currentTimeMillis();
 			for (int i = bodys.size() - 1; i >= 0; i--) {
 				bodys.get(i).applyGravity(new Vector2D(GRAVITY_EARTH).mul(bodys.get(i).getBodyMass()));
 				bodys.get(i).onUpdateBody(time);
 			}
 			mCollider.checkCollisions();
-			time = System.currentTimeMillis();
 			try {
-				Thread.sleep(20);
+				if (time < 20)
+					Thread.sleep(20 - time);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

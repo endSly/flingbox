@@ -85,22 +85,21 @@ public class Intersect {
 	 *
 	 * @param traceA first trace array
 	 * @param a0 first point to check
-	 * @param a1 last point to check
+	 * @param a1 last point to check NOTE: if b0 = b1 all segments will be checked
 	 * @param traceB second trace array
 	 * @param b0 first point to check
-	 * @param b1 last point to check
+	 * @param b1 last point to check NOTE: if b0 = b1 all segments will be checked
 	 * @return Array with Intersects. Some positions can be null
 	 */
 	public static Intersect[] intersectionsOfTrace(Vector2D[] traceA, int a0 , int a1, 
 			Vector2D[] traceB, int b0, int b1) { 
 		final int aLen = traceA.length, bLen = traceB.length;
-		Intersect[] intersects = new Intersect[a1 - a0 > b1 - b0 ? a1 - a0 : b1 - b0];
+		Intersect[] intersects = new Intersect[aLen > bLen ? bLen : aLen];
 		int intersecitonsCount = 0;
-		a1++;	// Last point should also be checked 
-		b1++;
 		 // We are going to probe each segment.
-		for (int i = a0; i != a1; i = (i + 1) % aLen)
-			for (int j = b0; j != b1; j = (j + 1) % bLen ) {
+		int i = a0, j = b0;
+		do {
+			do {
 				Intersect intersect = intersectionOfSegments(
 						traceA[i], traceA[(i + 1) % aLen], 
 						traceB[j], traceB[(j + 1) % bLen]);
@@ -109,7 +108,12 @@ public class Intersect {
 					intersects[intersecitonsCount] = intersect;
 					intersecitonsCount++;
 				}
-			}
+				j = (j + 1) % bLen;
+			} while (j != b1);
+			
+			i = (i + 1) % aLen;
+		} while (i != a1);
+		
 		return intersects;
 	}
 	
@@ -122,8 +126,7 @@ public class Intersect {
 	 * @return Array with Intersects. Some positions can be null
 	 */
 	public static Intersect[] intersectionsOfTrace(Vector2D[] traceA, Vector2D[] traceB) {
-		final int aLen = traceA.length, bLen = traceB.length;
-		return intersectionsOfTrace(traceA, 0 , aLen - 1, traceB, 0, bLen - 1);
+		return intersectionsOfTrace(traceA, 0 , 0, traceB, 0, 0);
 	}
 	
 	

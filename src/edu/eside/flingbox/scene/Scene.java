@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 
 import edu.eside.flingbox.ObjectSettingsDialog;
-import edu.eside.flingbox.R;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.objects.AtomicBody;
@@ -36,11 +35,21 @@ public class Scene extends DrawableScene implements OnInputListener {
 	
 	private AtomicBody mSelectedBody = null;
 
+	/**
+	 * Default constructor for an scene
+	 * 
+	 * @param c context
+	 */
 	public Scene(Context c) {
 		super(c);
 		
 	}
 	
+	/**
+	 * Starts physical simulation
+	 * 
+	 * @return true if simulation is started
+	 */
 	public boolean startSimulation() {
 		if (mScenePhysics.isSimulating())
 			return false;
@@ -131,10 +140,10 @@ public class Scene extends DrawableScene implements OnInputListener {
 	public boolean onTrackballEvent(MotionEvent ev) {
 		boolean handled = false;
 		if (ev.getAction() == MotionEvent.ACTION_DOWN) {
-			startSimulation();
+			handled |= startSimulation();
 		}
 			
-		return handled | super.onTrackballEvent(ev);
+		return handled ? true : super.onTrackballEvent(ev);
 	}
 	
 	
