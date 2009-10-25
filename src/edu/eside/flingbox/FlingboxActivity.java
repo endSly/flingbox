@@ -19,6 +19,7 @@
 package edu.eside.flingbox;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.view.Menu;
@@ -102,6 +103,15 @@ public class FlingboxActivity extends Activity {
      */
     public void onPause() {
     	super.onPause();
+    }
+    
+    /**
+     * Called only wehn orientation changed.
+     * This is called because the android:configChanges="orientation"
+     * in AndroidManifest.xml
+     */
+    public void onConfigurationChanged(Configuration newConfig) {
+    	super.onConfigurationChanged(newConfig);
     }
     
     /** 

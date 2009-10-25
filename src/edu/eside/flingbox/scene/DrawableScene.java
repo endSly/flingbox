@@ -155,16 +155,17 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 				// if we had points enough
 				if (pointsCount >= 3) {
 					mDrawingPattern.trimToSize();
-					Polygon drawedPolygon;
 					// Optimize points by Douglas-Peucker algorithm s 
 					Point[] optimizedPoints = PolygonUtils.douglasPeuckerReducer(mDrawingPattern.toArray(new Point[0]), 5.0f);
-					drawedPolygon = new Polygon(optimizedPoints);
-					drawedPolygon.setRandomColor();
+					if (optimizedPoints.length >= 3) {
+						Polygon drawedPolygon = new Polygon(optimizedPoints);
+						drawedPolygon.setRandomColor();
 					
-					add(drawedPolygon);
+						add(drawedPolygon);
 					
-					// Vibrate as haptic feedback
-					mVibrator.vibrate(50);
+						// Vibrate as haptic feedback
+						mVibrator.vibrate(50);
+					}
 				}
 				mDrawingPattern = null;
 

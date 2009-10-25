@@ -23,7 +23,7 @@ package edu.eside.flingbox.math;
  * Also includes some basic operations with 
  * vector.
  */
-public final class Vector2D {
+public class Vector2D {
 	// Vector components
 	public float i = 0f, j = 0f;
 	
