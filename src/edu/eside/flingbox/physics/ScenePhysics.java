@@ -23,6 +23,7 @@ import java.util.ArrayList;
 
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.collisions.SceneCollider;
+import edu.eside.flingbox.physics.gravity.GravitySource;
 
 /**
  * Stores all physic object in scene and make those 
@@ -30,8 +31,7 @@ import edu.eside.flingbox.physics.collisions.SceneCollider;
  * ScenePhysics manage thread for update objects 
  */
 public class ScenePhysics implements Runnable {
-	public static final Vector2D GRAVITY_EARTH = new Vector2D(0f, -9.81f * 50f);
-	public static final Vector2D GRAVITY_MOON = new Vector2D(0f, -1.63f * 530f);
+	public GravitySource mGravity;
 	
 	// List of physical objects on scene
 	private final ArrayList<PhysicBody> mOnSceneBodys;
@@ -47,18 +47,22 @@ public class ScenePhysics implements Runnable {
 	/**
 	 * Initializes an empty 
 	 */
-	public ScenePhysics() {
+	public ScenePhysics(GravitySource gravity) {
 		mOnSceneBodys = new ArrayList<PhysicBody>();
 		mCollider = new SceneCollider();
 		mSimulationThread = new Thread(this);
+		mGravity = gravity;
 	}
 	
 	/**
 	 * Intializes scene with one object 
 	 * @param object first object
 	 */
-	public ScenePhysics(PhysicBody object) {
-		this();
+	public ScenePhysics(GravitySource gravity, PhysicBody object) {
+		mOnSceneBodys = new ArrayList<PhysicBody>();
+		mCollider = new SceneCollider();
+		mSimulationThread = new Thread(this);
+		mGravity = gravity;
 		mOnSceneBodys.add(object);
 		mCollider.add(object.getCollider());
 	}
@@ -67,8 +71,11 @@ public class ScenePhysics implements Runnable {
 	 * Intializes scene with array of objects 
 	 * @param objects array of objects
 	 */
-	public ScenePhysics(PhysicBody[] objects) {
-		this();
+	public ScenePhysics(GravitySource gravity, PhysicBody[] objects) {
+		mOnSceneBodys = new ArrayList<PhysicBody>();
+		mCollider = new SceneCollider();
+		mSimulationThread = new Thread(this);
+		mGravity = gravity;
 		for (PhysicBody object : objects) {
 			mOnSceneBodys.add(object);
 			mCollider.add(object.getCollider());
@@ -141,7 +148,7 @@ public class ScenePhysics implements Runnable {
 			time = System.currentTimeMillis() - lastTime;
 			lastTime = System.currentTimeMillis();
 			for (int i = bodys.size() - 1; i >= 0; i--) {
-				bodys.get(i).applyGravity(new Vector2D(GRAVITY_EARTH).mul(bodys.get(i).getBodyMass()));
+				bodys.get(i).applyGravity(new Vector2D(mGravity).mul(bodys.get(i).getBodyMass()));
 				bodys.get(i).onUpdateBody(time);
 			}
 			mCollider.checkCollisions();

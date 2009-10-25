@@ -33,6 +33,7 @@ import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.objects.AtomicBody;
 import edu.eside.flingbox.physics.ScenePhysics;
+import edu.eside.flingbox.physics.gravity.GravitySource;
 
 public class StaticScene implements OnInputListener {
 	
@@ -91,7 +92,7 @@ public class StaticScene implements OnInputListener {
 		// Create list of objects.
 		mOnSceneBodys = new ArrayList<AtomicBody>();
 		mSceneRenderer = new SceneRenderer();
-		mScenePhysics = new ScenePhysics();
+		mScenePhysics = new ScenePhysics(GravitySource.getAccelerometerBasedGravity(c));
 		
 		mSceneRenderer.add(new BackgroundRender(
 				SCENE_LEFT_BORDER, SCENE_RIGHT_BORDER,
