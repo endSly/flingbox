@@ -113,6 +113,7 @@ public class RenderPolygon extends Render {
 	
 	/**
 	 * Sets object's position to render 
+	 * 
 	 * @param position	Point to current position
 	 * @param rotation	Rotation angle in Radians
 	 */

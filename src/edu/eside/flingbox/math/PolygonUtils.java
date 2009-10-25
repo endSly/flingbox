@@ -221,24 +221,27 @@ public final class PolygonUtils {
 	public static Point polygonCentroid(final Point[] points) {
 		final int pointsCount = points.length;
 		float cx = 0f, cy = 0f;
-		
-		for (Point p : points) {
-			cx += p.x;
-			cy += p.y;
-		}
-		cx /= pointsCount;
-		cy /= pointsCount;
 		/*
+		float cnx = 0f, cny = 0f;
+		for (Point p : points) {
+			cnx += p.x;
+			cny += p.y;
+		}
+		cnx /= pointsCount;
+		cny /= pointsCount;
+		*/
+		
 		for (int i = 0; i < pointsCount; i++) {
 			float p0x = points[i].x, p1x = points[(i + 1) % pointsCount].x;
 			float p0y = points[i].y, p1y = points[(i + 1) % pointsCount].y;
-			cx += (p0x + p1x) * (p0x * p1y - p1x * p0y);
-			cy += (p0y + p1y) * (p0y * p1x - p1y * p0x);
+			final float k = (p0x * p1y - p1x * p0y);
+			cx += (p0x + p1x) * k;
+			cy += (p0y + p1y) * k;
 		}
-		float d = 6f * polygonArea(points);
+		final float d = 6f * polygonArea(points);
 		cx /= d;
 		cy /= d;
-		*/
+
 		return new Point(cx, cy);
 	}
 	

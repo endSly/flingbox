@@ -238,8 +238,9 @@ public class SceneRenderer implements Renderer {
 			// Set background color
 			gl.glClearColor(0f, 0f, 0.2f, 1.0f);
 
-			// Render All objects
-			for (Render r : mGraphicsToRender) {
+			// Render All objectsCount = 
+			final ArrayList<Render> renders = mGraphicsToRender;
+			for (Render r : renders) {
 				// Work with new stacked matrix
 				gl.glPushMatrix();
 				gl.glLoadIdentity();
