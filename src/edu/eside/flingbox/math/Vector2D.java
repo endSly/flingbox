@@ -127,7 +127,7 @@ public class Vector2D {
 	}
 	
 	/**
-	 * Multiplicates vector by scalar
+	 * Multiplies vector by scalar
 	 * 
 	 * @param s	Scalar
 	 * @return	result vector
@@ -159,7 +159,7 @@ public class Vector2D {
 	}
 	
 	/**
-	 * Computes angle formad by current vector and other vector.
+	 * Computes angle formed by current vector and other vector.
 	 * 
 	 * @param v Vector
 	 * @return angle formed [0..PI]
@@ -170,7 +170,7 @@ public class Vector2D {
 	}
 	
 	/**
-	 * Multiplicates vector by matrix
+	 * Multiplies vector by matrix
 	 * 
 	 * @param m	Matrix
 	 * @return	New vector with result
@@ -219,7 +219,7 @@ public class Vector2D {
 	}
 	
 	/**
-	 * Resturn string with the vector
+	 * Returns string with the vector
 	 */
 	public String toString() {
 		return "Vector(" + this.i + "i + " + this.j + "j)";

@@ -31,7 +31,7 @@ public final class Point {
 	public Point() { }
 	
 	/**
-	 * Dafult constructor for a point
+	 * Default constructor for a point
 	 * 
 	 * @param x	x component of the point
 	 * @param y	y component of the point

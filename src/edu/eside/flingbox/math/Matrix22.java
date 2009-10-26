@@ -69,7 +69,7 @@ public final class Matrix22 {
 	}
 	
 	/**
-	 * Computes determinat
+	 * Computes determinant
 	 * @return	determinant
 	 */
 	public float determinant() {
@@ -78,7 +78,7 @@ public final class Matrix22 {
 	
 	/**
 	 * Computes matrix invert
-	 * @return	New matrix with inverted current matrix or null if determinat is Zero
+	 * @return	New matrix with inverted current matrix or null if determinant is Zero
 	 */
 	public Matrix22 invert() {
 		final float det = determinant();

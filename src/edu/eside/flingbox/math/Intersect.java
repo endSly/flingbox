@@ -28,7 +28,7 @@ public class Intersect {
 	// Stores point of the intersection
 	public final Vector2D intersectionPoint;
 	
-	// Stores first point of segmets that intersect
+	// Stores first point of segments that intersect
 	public Vector2D intersectionASegment;
 	public Vector2D intersectionBSegment;
 	
@@ -81,7 +81,7 @@ public class Intersect {
 		return intersect;
 	}
 	/**
-	 * Computes intersction between two traces.
+	 * Computes intersection between two traces.
 	 *
 	 * @param traceA first trace array
 	 * @param a0 first point to check
@@ -119,7 +119,7 @@ public class Intersect {
 	
 	
 	/**
-	 * Computes intersction between two traces.
+	 * Computes intersection between two traces.
 	 * 
 	 * @param traceA First trace
 	 * @param traceB Second trace
