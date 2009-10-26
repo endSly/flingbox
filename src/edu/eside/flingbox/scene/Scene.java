@@ -24,6 +24,7 @@ import java.io.IOException;
 import edu.eside.flingbox.ObjectSettingsDialog;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 import edu.eside.flingbox.math.Point;
+import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.objects.AtomicBody;
 
 import android.content.Context;
@@ -120,10 +121,13 @@ public class Scene extends DrawableScene implements OnInputListener {
 			float distanceY) {
 		boolean handled = false;
 		if (mSelectedBody != null) {
-			final float onDownX = mCamera.left + (e.getX() * mCamera.getWidth() / mDisplayWidth);
-			final float onDownY = mCamera.top - (e.getY() * mCamera.getHeight() / mDisplayHeight);
-			
-			mSelectedBody.getPhysics().setPosition(onDownX, onDownY);
+			final float px = mCamera.left + (e.getX() * mCamera.getWidth() / mDisplayWidth);
+			final float py = mCamera.top - (e.getY() * mCamera.getHeight() / mDisplayHeight);
+			// Apply force to the position
+			Vector2D movementForce = new Vector2D(px, py);
+			movementForce.sub(mSelectedBody.getPhysics().getPosition()).mul(1000f);
+
+			mSelectedBody.getPhysics().applyForce(movementForce);
 			handled = true;
 		}
 

@@ -236,7 +236,7 @@ public class SceneRenderer implements Renderer {
 			gl.glLoadIdentity();
 
 			// Set background color
-			gl.glClearColor(0f, 0f, 0.2f, 1.0f);
+			gl.glClearColor(0.4f, 0.4f, 0.8f, 1.0f);
 
 			// Render All objectsCount = 
 			final ArrayList<Render> renders = mGraphicsToRender;

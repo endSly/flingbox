@@ -30,6 +30,21 @@ import edu.eside.flingbox.math.Vector2D;
  *
  */
 public class GravitySource extends Vector2D implements SensorEventListener {
+	
+	public static final float GRAVITY_SUN = 275.0f;
+	
+	public static final float GRAVITY_MERCURY = 3.7f;
+	public static final float GRAVITY_VENUS = 8.87f;
+	public static final float GRAVITY_EARTH = 9.80665f;
+	public static final float GRAVITY_MARS = 3.71f;
+	public static final float GRAVITY_JUPITER = 23.12f;
+	public static final float GRAVITY_SATURN = 8.96f;
+	public static final float GRAVITY_NEPTUNE = 11.0f;
+	public static final float GRAVITY_PLUTO = 0.6f;
+	
+	public static final float GRAVITY_MOON = 1.6f;
+	public static final float GRAVITY_DEATH_STAR = 3.5303614E-7f;
+	
 
 	public static GravitySource getAccelerometerBasedGravity(Context c) {
 		// Get Manager from context
@@ -71,8 +86,8 @@ public class GravitySource extends Vector2D implements SensorEventListener {
 
 	@Override
 	public void onSensorChanged(SensorEvent event) {
-		this.i = -event.values[0] * 10;
-		this.j = -event.values[1] * 10;
+		this.i = -event.values[SensorManager.DATA_X] * 80;
+		this.j = -event.values[SensorManager.DATA_Y] * 80;
 		
 	}
 }

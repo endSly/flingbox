@@ -140,6 +140,16 @@ public abstract class PhysicBody implements OnCollideListener {
 	}
 	
 	/**
+	 * Applies force to the object at centroid
+	 * 
+	 * @param force Force
+	 */
+	public synchronized void applyForce(Vector2D force) {
+		// Acomulate force
+		mAppliedForce.add(force);
+	}
+	
+	/**
 	 * Check if point is contained by the polygon
 	 * 
 	 * @param p point to check

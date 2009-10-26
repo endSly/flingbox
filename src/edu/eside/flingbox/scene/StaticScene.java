@@ -26,18 +26,16 @@ import android.opengl.GLSurfaceView.Renderer;
 import android.os.Vibrator;
 import android.view.MotionEvent;
 
-import edu.eside.flingbox.graphics.RenderPolygon;
 import edu.eside.flingbox.graphics.SceneRenderer;
 import edu.eside.flingbox.graphics.SceneRenderer.Camera;
 import edu.eside.flingbox.input.SceneGestureDetector;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
-import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.objects.AtomicBody;
 import edu.eside.flingbox.physics.ScenePhysics;
 import edu.eside.flingbox.physics.gravity.GravitySource;
 
 public class StaticScene implements OnInputListener {
-	
+	/*
 	protected final class BackgroundRender extends RenderPolygon {
 		
 		private final static float BACKGROUND_COLOR_R = 0.6f;
@@ -59,7 +57,7 @@ public class StaticScene implements OnInputListener {
 		}
 
 	}
-	
+	*/
 	// Constant limits for the Scene borders
 	final static float SCENE_LEFT_BORDER = -1024f;
 	final static float SCENE_RIGHT_BORDER = 1024f;
@@ -102,11 +100,11 @@ public class StaticScene implements OnInputListener {
 		mOnSceneBodys = new ArrayList<AtomicBody>();
 		mSceneRenderer = new SceneRenderer();
 		mScenePhysics = new ScenePhysics(gravity);
-		
+		/*
 		mSceneRenderer.add(new BackgroundRender(
 				SCENE_LEFT_BORDER, SCENE_RIGHT_BORDER,
 				SCENE_TOP_BORDER, SCENE_BOTTOM_BORDER));
-		
+		*/
 		mGestureDetector = new SceneGestureDetector(c, this);
 		
 		mCamera = mSceneRenderer.getCamera();
