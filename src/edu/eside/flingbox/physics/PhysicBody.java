@@ -55,7 +55,7 @@ public abstract class PhysicBody implements OnCollideListener {
 	
 	/** Restitution Coeficient is a fractional value representing the ratio 
 	 * of velocities before and after an impact */
-	protected float mRestitutionCoeficient = 0.8f;
+	protected float mRestitutionCoeficient = 1.0f;
 	
 	/** Object's current position */
 	protected final Vector2D mPosition;
@@ -97,6 +97,8 @@ public abstract class PhysicBody implements OnCollideListener {
 	/**
 	 * Called to refresh object's position
 	 * @param time time in ms since las update
+	 * 
+	 * @deprecated
 	 */
 	public abstract void onUpdateBody(float time);
 	
@@ -119,6 +121,8 @@ public abstract class PhysicBody implements OnCollideListener {
 	 /**
 	  * Adds force of gravity.
 	  * @param gravityForce
+	  * 
+	  * @deprecated
 	  */
 	public synchronized void applyGravity(Vector2D gravityForce) {
 		if (mIsMoveable)
@@ -130,6 +134,8 @@ public abstract class PhysicBody implements OnCollideListener {
 	 * 
 	 * @param force Force
 	 * @param applicationPoint relative point in wich force is applied
+	 * 
+	 * @deprecated
 	 */
 	public synchronized void applyForce(Vector2D force, Vector2D applicationPoint) {
 		// Acomulate force
@@ -140,9 +146,20 @@ public abstract class PhysicBody implements OnCollideListener {
 	}
 	
 	/**
+	 * Applies force to the object
+	 * 
+	 * @param force Force
+	 * @param applicationPoint relative point in wich force is applied
+	 * @param dt time period while force is applied
+	 */
+	public abstract void applyForce(Vector2D force, Vector2D applicationPoint, float dt);
+	
+	/**
 	 * Applies force to the object at centroid
 	 * 
 	 * @param force Force
+	 * 
+	 * @deprecated
 	 */
 	public synchronized void applyForce(Vector2D force) {
 		// Acomulate force

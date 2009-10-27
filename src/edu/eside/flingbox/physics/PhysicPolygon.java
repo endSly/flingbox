@@ -36,8 +36,6 @@ public class PhysicPolygon extends PhysicBody implements OnCollideListener {
 	// Some physical values needed
 	private final Vector2D[] mPolygonContour;
 	
-	//private float mDensity = 1.0f;
-	
 	/**
 	 * Constructor physics for default polygon.
 	 * 
@@ -165,6 +163,12 @@ public class PhysicPolygon extends PhysicBody implements OnCollideListener {
 		*/
 		this.applyForce(collision.sense, collision.position);
 		return;
+		
+	}
+
+	@Override
+	public void applyForce(Vector2D force, Vector2D applicationPoint, float dt) {
+		// TODO Auto-generated method stub
 		
 	}
 	
