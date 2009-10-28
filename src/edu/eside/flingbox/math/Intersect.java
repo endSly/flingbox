@@ -82,6 +82,8 @@ public class Intersect {
 	}
 	/**
 	 * Computes intersection between two traces.
+	 * TODO: this migth crash if there are more intersections than segments. yes,
+	 *  it can be possible if floats overflows.
 	 *
 	 * @param traceA first trace array
 	 * @param a0 first point to check
@@ -94,11 +96,12 @@ public class Intersect {
 	public static Intersect[] intersectionsOfTrace(Vector2D[] traceA, int a0 , int a1, 
 			Vector2D[] traceB, int b0, int b1) { 
 		final int aLen = traceA.length, bLen = traceB.length;
-		Intersect[] intersects = new Intersect[aLen > bLen ? bLen : aLen];
+		Intersect[] intersects = new Intersect[aLen > bLen ? aLen : bLen];
 		int intersecitonsCount = 0;
 		 // We are going to probe each segment.
-		int i = a0, j = b0;
+		int i = a0, j;
 		do {
+			j = b0;
 			do {
 				Intersect intersect = intersectionOfSegments(
 						traceA[i], traceA[(i + 1) % aLen], 

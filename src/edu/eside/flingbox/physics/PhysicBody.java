@@ -21,13 +21,12 @@ package edu.eside.flingbox.physics;
 import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.collisions.Collider;
-import edu.eside.flingbox.physics.collisions.Collider.OnCollideListener;
 
 /**
  * Abstract class with handles all properties that any 
  * physical body should have.
  */
-public abstract class PhysicBody implements OnCollideListener {
+public abstract class PhysicBody {
 	
 	/**
 	 * Implements on move callback.
@@ -42,9 +41,9 @@ public abstract class PhysicBody implements OnCollideListener {
 	}
 	
 	/** Objects with INFINITE_MASS should be impossible to move */
-	protected final static float INFINITE_MASS = Float.POSITIVE_INFINITY;
+	public final static float INFINITE_MASS = Float.POSITIVE_INFINITY;
 	/** Objects with INFINITE_ANGULAR_MASS should be imposible to rotate */
-	protected final static float INFINITE_ANGULAR_MASS = Float.POSITIVE_INFINITY;
+	public final static float INFINITE_ANGULAR_MASS = Float.POSITIVE_INFINITY;
 	
 	/** Sets if objects can be moved */
 	protected boolean mIsMoveable = true;
@@ -70,10 +69,6 @@ public abstract class PhysicBody implements OnCollideListener {
 	protected final Vector2D mVelocity = new Vector2D();
 	/** Body's current angular Velocity */
 	protected float mAngularVelocity = 0.0f;
-	/** Current applied force to the body */
-	protected Vector2D mAppliedForce = new Vector2D();
-	/** Current applied moment to he body*/
-	protected float mAppliedMoment = 0.0f;
 	
 	/** Collider for this body */
 	protected Collider mCollider;
@@ -118,32 +113,14 @@ public abstract class PhysicBody implements OnCollideListener {
 		mAngularMass = INFINITE_ANGULAR_MASS;
 		
 	}
-	 /**
-	  * Adds force of gravity.
-	  * @param gravityForce
-	  * 
-	  * @deprecated
-	  */
-	public synchronized void applyGravity(Vector2D gravityForce) {
-		if (mIsMoveable)
-			mAppliedForce.add(gravityForce);
-	}
 	
 	/**
 	 * Applies force to the object
 	 * 
 	 * @param force Force
-	 * @param applicationPoint relative point in wich force is applied
-	 * 
-	 * @deprecated
+	 * @param dt time period while force is applied
 	 */
-	public synchronized void applyForce(Vector2D force, Vector2D applicationPoint) {
-		// Acomulate force
-		mAppliedForce.add(force);
-		
-		// Calculate moment
-		mAppliedMoment += applicationPoint.crossProduct(force);
-	}
+	public abstract void applyForce(Vector2D force, float dt);
 	
 	/**
 	 * Applies force to the object
@@ -153,18 +130,7 @@ public abstract class PhysicBody implements OnCollideListener {
 	 * @param dt time period while force is applied
 	 */
 	public abstract void applyForce(Vector2D force, Vector2D applicationPoint, float dt);
-	
-	/**
-	 * Applies force to the object at centroid
-	 * 
-	 * @param force Force
-	 * 
-	 * @deprecated
-	 */
-	public synchronized void applyForce(Vector2D force) {
-		// Acomulate force
-		mAppliedForce.add(force);
-	}
+
 	
 	/**
 	 * Check if point is contained by the polygon
@@ -189,6 +155,13 @@ public abstract class PhysicBody implements OnCollideListener {
 	 */
 	public float getAngularMass() {
 		return mAngularMass;
+	}
+	
+	/**
+	 * @return body's Restitution Coeficient
+	 */
+	public float getRestitutionCoeficient() {
+		return mRestitutionCoeficient;
 	}
 	
 	/**

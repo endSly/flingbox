@@ -138,7 +138,7 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 	 * Drawable scene creates the polygon for drawing pattern.
 	 */
 	public boolean onUp(MotionEvent ev) {
-		if (!mIsDrawing) 
+		if (!mIsDrawing || mDrawingPattern == null) 
 			return false;
 		
 		new Thread(new Runnable() { 

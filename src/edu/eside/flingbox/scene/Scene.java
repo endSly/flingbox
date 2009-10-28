@@ -126,8 +126,8 @@ public class Scene extends DrawableScene implements OnInputListener {
 			// Apply force to the position
 			Vector2D movementForce = new Vector2D(px, py);
 			movementForce.sub(mSelectedBody.getPhysics().getPosition()).mul(1000f);
-
-			mSelectedBody.getPhysics().applyForce(movementForce);
+			// TODO: Fix time here
+			mSelectedBody.getPhysics().applyForce(movementForce, 20f);
 			handled = true;
 		}
 

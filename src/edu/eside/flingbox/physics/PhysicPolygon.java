@@ -24,17 +24,16 @@ import edu.eside.flingbox.math.PolygonUtils;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.collisions.Collider;
 import edu.eside.flingbox.physics.collisions.ColliderPolygon;
-import edu.eside.flingbox.physics.collisions.Collision;
-import edu.eside.flingbox.physics.collisions.Collider.OnCollideListener;
 
 /**
  * Implements physics properties for polygols.
  *
  */
-public class PhysicPolygon extends PhysicBody implements OnCollideListener {
+public class PhysicPolygon extends PhysicBody {
 
-	// Some physical values needed
 	private final Vector2D[] mPolygonContour;
+
+	private final Vector2D[] mRotatedPolygonContour;
 	
 	/**
 	 * Constructor physics for default polygon.
@@ -50,17 +49,21 @@ public class PhysicPolygon extends PhysicBody implements OnCollideListener {
 		
 		final int pointsCount = points.length;
 		final Vector2D[] polygonVectors = new Vector2D[pointsCount];
+		final Vector2D[] rotatedPolygonContour = new Vector2D[pointsCount];
 		
 		
 		// Stroes points into Vector array.
-		for (int i = 0; i < pointsCount; i++) 
+		for (int i = 0; i < pointsCount; i++) {
 			polygonVectors[i] = new Vector2D(points[i].x, points[i].y);
-		
+			rotatedPolygonContour[i] = new Vector2D(polygonVectors[i]);
+		}
+			
 		// Sets polygon's properties
 		mPolygonContour = polygonVectors;
+		mRotatedPolygonContour = rotatedPolygonContour;
 		
 		mListener = listener;
-		mCollider = new ColliderPolygon(mPolygonContour, this);
+		mCollider = new ColliderPolygon(mRotatedPolygonContour, this);
 		
 		mListener.onMovement(mPosition, 0f);
 		mCollider.setPosition(mPosition);
@@ -91,85 +94,70 @@ public class PhysicPolygon extends PhysicBody implements OnCollideListener {
 		return PolygonUtils.polygonConatinsPoint(mPolygonContour, new Point(p.x - mPosition.i, p.y - mPosition.j));
 	}
 	
+
+	@Override
+	public void applyForce(Vector2D force, Vector2D applicationPoint, float dt) {
+		if (!mIsEnabled)
+			return;
+		
+		if (mIsMoveable) {
+			// Sets velocity and position
+			mVelocity.add((new Vector2D(force)).mul((dt / 1000f) / mMass));
+			mPosition.add((new Vector2D(mVelocity)).mul(dt / 1000f));
+		}
+		
+		if (mIsRotable) {
+			// Sets angular velocity and rotation
+			mAngularVelocity += applicationPoint.crossProduct(force) * (dt / 1000f) / mAngularMass;
+			mAngle += mAngularVelocity * dt / 1000f;
+		}
+		
+	}
+
+	@Override
+	public void applyForce(Vector2D force, float dt) {
+		if (!mIsEnabled)
+			return;
+		
+		if (mIsMoveable) {
+			// Sets velocity and position
+			mVelocity.add((new Vector2D(force)).mul((dt / 1000f) / mMass));
+			mPosition.add((new Vector2D(mVelocity)).mul(dt / 1000f));
+		}
+	}
+	
 	/**
 	 * Called when object has been updated
+	 * 
+	 * @deprecated
 	 */
 	public synchronized void onUpdateBody(float time) {
-		// Sets velocity and position
-		mVelocity.add((new Vector2D(mAppliedForce)).mul((time / 1000f) / mMass));
-		mPosition.add((new Vector2D(mVelocity)).mul(time / 1000f));
 		
-		// Sets angular velocity and rotation
-		mAngularVelocity += mAppliedMoment * (time / 1000f) / mAngularMass;
-		float angleToRotate = mAngularVelocity * time / 1000f;
-		if (angleToRotate != 0) {
-			final Matrix22 rotationMatrix = Matrix22.rotationMatrix(angleToRotate);
-			final Vector2D[] contour = mPolygonContour;
-			for (int i = contour.length -1; i >= 0; i-- )
-				contour[i].set(contour[i].mul(rotationMatrix));
 		
-			mAngle += angleToRotate;
-			while (mAngle > 2 * Math.PI)
-				mAngle -= 2 * Math.PI;
-			while (mAngle < 0)
-				mAngle += 2 * Math.PI;
-		}
+		rotatePolygonContour(mPolygonContour, mRotatedPolygonContour, mAngle);
 		
 		// Updates positions
 		mCollider.setPosition(mPosition);
 		
-		mAppliedForce.set(0f, 0f);
-		mAppliedMoment = 0f;
 		
 		mListener.onMovement(mPosition, mAngle);
 	}
-
+	
 	/**
-	 * Called when collision occurs
+	 * Rotates a enteir polygon
+	 * 
+	 * @param source polygon to be rotated
+	 * @param dest polygon to store rotated polygon
+	 * @param angle angle to be rotated
 	 */
-	@Override
-	public void onCollide(Collision collision) {
-		/*
-		final PhysicBody otherBody = collision.collidingBody;
+	private static void rotatePolygonContour(final Vector2D[] source, Vector2D[] dest, float angle) {
+		final int pointsCount = source.length;
+		if (angle == 0f)
+			return;	// Nothing to do
 		
-		final float vax = mVelocity.i, vay = mVelocity.j, vbx = otherBody.mVelocity.i, vby = otherBody.mVelocity.j,
-			ma = mMass, mb = otherBody.mMass, ia = mAngularMass, ib = otherBody.mAngularMass,
-			rax = collision.position.i, ray = collision.position.j, 
-			rbx = collision.otherBodyCollisionPoint.i, rby = collision.otherBodyCollisionPoint.j;
-		
-		final float k = 
-			1 / (ma * ma) + 2 / (ma * mb) + 1 / (mb * mb)
-			- rax * rax / (ma * ia) - rbx * rbx / (ma * ib)
-			- ray * ray / (ma * ia) - ray * ray / (mb * ia)
-			- rbx * rbx / (mb * ib) - rax * rax / (mb * ia)
-			- rby * rby / (ma * ib) - rby * rby / (mb * ib) 
-			+ rax * rax * rby * rby / (ia * ib)
-			+ ray * ray * rbx * rbx / (ia * ib)
-			- 2 * rax * ray * rbx * rby / (ia * ib);
-		
-		final float e = (mRestitutionCoeficient + 1) / k;
-		
-		final float jx = 
-			e * (vax - vbx) * (1 / ma - rax * rax / ia + 1 / mb - rbx * rbx / ib)
-			- e * (vay - vby) * (rax * ray / ia + rbx * rby / ib);
-		final float jy = 
-			e * (vay - vby) * (1 / ma - ray * ray / ia + 1 / mb - rby * rby / ib)
-			- e * (vax - vbx) * (rax * ray / ia + rbx * rby / ib) ;
-		
-		mVelocity.i -= jx / ma;
-		mVelocity.j -= jy / ma;
-		
-		mAngularVelocity -= (jx * ray - jy * rax) / ia;
-		*/
-		this.applyForce(collision.sense, collision.position);
-		return;
-		
-	}
-
-	@Override
-	public void applyForce(Vector2D force, Vector2D applicationPoint, float dt) {
-		// TODO Auto-generated method stub
-		
+		final Matrix22 rotationMatrix = Matrix22.rotationMatrix(angle);
+		for (int i = 0; i < pointsCount; i++) 
+			dest[i] = source[i].mul(rotationMatrix);
 	}
 	
 }

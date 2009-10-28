@@ -26,11 +26,7 @@ import edu.eside.flingbox.physics.PhysicBody;
  */
 public final class Collision {
 	
-	public PhysicBody collidingBody;
-	/** Collision's relative poition */
-	public Vector2D otherBodyCollisionPoint;
-	
-	/** Collision's relative poition */
+	/** Collision's absolute poition */
 	public final Vector2D position;
 	/** Collision's sense */
 	public final Vector2D sense;
@@ -44,7 +40,6 @@ public final class Collision {
 	public Collision(Vector2D position, Vector2D sense) {
 		this.position = new Vector2D(position);
 		this.sense = new Vector2D(sense);
-		this.collidingBody = null;
 	}
 	
 	/**
@@ -57,7 +52,6 @@ public final class Collision {
 	public Collision(Vector2D position, Vector2D sense, PhysicBody collidingBody) {
 		this.position = new Vector2D(position);
 		this.sense = new Vector2D(sense);
-		this.collidingBody = collidingBody;
 	}
 	
 }

@@ -26,24 +26,9 @@ import edu.eside.flingbox.physics.PhysicBody;
  */
 public abstract class Collider {
 	
-	/**
-	 * Implements callback for collision
-	 */
-	public interface OnCollideListener {
-		/**
-		 * Called when collision occurs
-		 * 
-		 * @param collision collision
-		 */
-		public void onCollide(Collision collision);
-	}
-	
 	/** bounding circle radius, needed to discartd quickly collisions */
 	protected float mRadius; 
-	
-	/** Listener to notify when collide occurs */
-	protected final OnCollideListener mCollisionListener;
-	
+
 	/** Objects position. needs to be updated */
 	protected final Vector2D mPosition;
 	 
@@ -56,21 +41,8 @@ public abstract class Collider {
 	 */
 	public Collider(PhysicBody physicBody) {
 		mPosition = new Vector2D();
-		mCollisionListener = physicBody;
 		mPhysicBody = physicBody;
 	}
-	
-	/**
-	 * Local constructor for any collider.
-	 * 
-	 * @param listener Collision listener
-	 */
-	public Collider(OnCollideListener listener, PhysicBody physicBody) {
-		mPosition = new Vector2D();
-		mCollisionListener = listener;
-		mPhysicBody = physicBody;
-	}
-
 	
 	/**
 	 * Checks if objects can collide
