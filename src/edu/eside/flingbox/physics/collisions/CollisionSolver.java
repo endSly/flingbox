@@ -30,7 +30,7 @@ public class CollisionSolver {
 		final Vector2D collisionNormal = collisionSense.normalVector();
 		final Vector2D collisionPosition = collision.position;
 		
-		final float restit = (bodyA.getRestitutionCoeficient() + bodyA.getRestitutionCoeficient()) / 2f;
+		final float restit = (bodyA.getRestitutionCoeficient() + bodyB.getRestitutionCoeficient()) / 2f;
 		
 		// Separate velocity into collision components
 		final float vA = bodyA.getVelocity().dotProduct(collisionSense);
@@ -41,33 +41,33 @@ public class CollisionSolver {
 		final float vNormalB = bodyB.getVelocity().dotProduct(collisionNormal);
 		final float mB = bodyB.getBodyMass();
 		
-		float forceToApplyMod;
 		if (mA >= Float.MAX_VALUE) {
-			// We have now resultant A velocity in parallel to collision 
 			float vFinalB = -vB * restit;
-			// Now, compute force to be applied to the object to generate this velocity
-			forceToApplyMod = (vFinalB - vB) * mB / DIFFERENTIAL_TIME;
+			float forceToApply = (vFinalB - vB) * mB * 1000  / DIFFERENTIAL_TIME;
+			
+			bodyB.applyForce(new Vector2D(collisionSense).mul(forceToApply), 
+					new Vector2D(bodyB.getPosition()).sub(collisionPosition),
+					DIFFERENTIAL_TIME);
 		} else if (mB >= Float.MAX_VALUE) {
-			// We have now resultant A velocity in parallel to collision 
 			float vFinalA = -vA * restit;
-			// Now, compute force to be applied to the object to generate this velocity
-			forceToApplyMod = (vFinalA - vA) * mA / DIFFERENTIAL_TIME;
+			float forceToApply = (vFinalA - vA) * mA *1000 / DIFFERENTIAL_TIME;
+			
+			bodyA.applyForce(new Vector2D(collisionSense).mul(forceToApply), 
+					new Vector2D(bodyA.getPosition()).sub(collisionPosition),
+					DIFFERENTIAL_TIME);
 		} else  {
-			// We have now resultant A velocity in parallel to collision 
+			// TODO: Bad code
 			float vFinalA = ((1 + restit) * mB * vB + vA * (mA + restit * mB)) / (mA + mB);
-			// Now, compute force to be applied to the object to generate this velocity
-			forceToApplyMod = (vFinalA - vA) * mA / DIFFERENTIAL_TIME;
+			Vector2D finalVelocityA = new Vector2D(collisionSense).mul(vFinalA);
+			finalVelocityA.add(new Vector2D(collisionNormal).mul(vNormalA));
+			bodyA.setVelocity(finalVelocityA.i, finalVelocityA.j);
+			
+			float vFinalB = ((1 + restit) * mA * vA + vB * (mB + restit * mA)) / (mA + mB);
+			Vector2D finalVelocityB = new Vector2D(collisionSense).mul(vFinalB);
+			finalVelocityB.add(new Vector2D(collisionNormal).mul(vNormalB));
+			bodyB.setVelocity(finalVelocityB.i, finalVelocityB.j);
 		}
-		
-		
-		Vector2D forceToApply = new Vector2D(collisionSense).mul(forceToApplyMod);
-		
-		bodyB.applyForce(forceToApply, 
-				new Vector2D(collisionPosition).sub(bodyB.getPosition()), 
-				DIFFERENTIAL_TIME);
-		bodyA.applyForce(forceToApply.negate(), 
-				new Vector2D(collisionPosition).sub(bodyA.getPosition()), 
-				DIFFERENTIAL_TIME);
+
 		
 	}
 	

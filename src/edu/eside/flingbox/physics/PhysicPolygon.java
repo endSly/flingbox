@@ -103,13 +103,13 @@ public class PhysicPolygon extends PhysicBody {
 		if (mIsMoveable) {
 			// Sets velocity and position
 			mVelocity.add((new Vector2D(force)).mul((dt / 1000f) / mMass));
-			mPosition.add((new Vector2D(mVelocity)).mul(dt / 1000f));
+			//mPosition.add((new Vector2D(mVelocity)).mul(dt / 1000f));
 		}
 		
 		if (mIsRotable) {
 			// Sets angular velocity and rotation
 			mAngularVelocity += applicationPoint.crossProduct(force) * (dt / 1000f) / mAngularMass;
-			mAngle += mAngularVelocity * dt / 1000f;
+			//mAngle += mAngularVelocity * dt / 1000f;
 		}
 		
 	}
@@ -132,7 +132,8 @@ public class PhysicPolygon extends PhysicBody {
 	 * @deprecated
 	 */
 	public synchronized void onUpdateBody(float time) {
-		
+		mPosition.add((new Vector2D(mVelocity)).mul(time / 1000f));
+		mAngle += mAngularVelocity * time / 1000f;
 		
 		rotatePolygonContour(mPolygonContour, mRotatedPolygonContour, mAngle);
 		

@@ -18,6 +18,7 @@
 
 package edu.eside.flingbox.physics;
 
+import edu.eside.flingbox.Preferences;
 import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.collisions.Collider;
@@ -54,7 +55,9 @@ public abstract class PhysicBody {
 	
 	/** Restitution Coeficient is a fractional value representing the ratio 
 	 * of velocities before and after an impact */
-	protected float mRestitutionCoeficient = 1.0f;
+	protected float mRestitutionCoeficient;
+	
+	protected float mDensity;
 	
 	/** Object's current position */
 	protected final Vector2D mPosition;
@@ -85,7 +88,8 @@ public abstract class PhysicBody {
 	protected PhysicBody(final float bodyMass, final Point position) {
 		mMass = bodyMass;
 		mAngularMass = 0.0f;
-		
+		mRestitutionCoeficient = Preferences.defaultRestitutionCoeficient;
+		mDensity = Preferences.defaultDensity;
 		mPosition = new Vector2D(position.x, position.y);
 	}
 	

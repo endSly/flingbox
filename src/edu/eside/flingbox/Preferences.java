@@ -19,11 +19,12 @@
 package edu.eside.flingbox;
 
 public class Preferences {
-	public float[] backgroundColor = new float[] {0.4f, 0.4f, 0.8f, 1.0f };
+	public static float[] backgroundColor = new float[] {0.4f, 0.4f, 0.8f, 1.0f };
 	
-	public boolean useAcelerometerBasedGravity = true;
-	public float gravity;
+	public static boolean useAcelerometerBasedGravity = true;
+	public static float gravity;
 	
-	
+	public static float defaultDensity = 1.0f;
+	public static float defaultRestitutionCoeficient = 0.85f;
 	
 }

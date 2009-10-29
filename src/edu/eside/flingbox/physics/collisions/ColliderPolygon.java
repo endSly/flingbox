@@ -153,7 +153,7 @@ public class ColliderPolygon extends Collider {
 				.add(outgoingIntersect)
 				.mul(0.5f);
 			
-			CollisionSolver.solveCollision(new Collision(sense, collisonPosition), mPhysicBody, collider.mPhysicBody);
+			CollisionSolver.solveCollision(new Collision(collisonPosition, sense), mPhysicBody, collider.mPhysicBody);
 		}
 		return doCollide;
 	}
