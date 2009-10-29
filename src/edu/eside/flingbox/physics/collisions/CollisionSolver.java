@@ -30,33 +30,28 @@ public class CollisionSolver {
 		final Vector2D collisionNormal = collisionSense.normalVector();
 		final Vector2D collisionPosition = collision.position;
 		
-		final float restit = (bodyA.getRestitutionCoeficient() + bodyB.getRestitutionCoeficient()) / 2f;
-		
-		// Separate velocity into collision components
-		final float vA = bodyA.getVelocity().dotProduct(collisionSense);
-		final float vNormalA = bodyA.getVelocity().dotProduct(collisionNormal);
+		final float restit = bodyA.getRestitutionCoeficient() * bodyB.getRestitutionCoeficient();
 		final float mA = bodyA.getBodyMass();
-		
-		final float vB = bodyB.getVelocity().dotProduct(collisionSense);
-		final float vNormalB = bodyB.getVelocity().dotProduct(collisionNormal);
 		final float mB = bodyB.getBodyMass();
 		
 		if (mA >= Float.MAX_VALUE) {
-			float vFinalB = -vB * restit;
-			float forceToApply = (vFinalB - vB) * mB * 1000  / DIFFERENTIAL_TIME;
+			Vector2D velB = getVelocityIntoCollisionAxis(collision, bodyB);
+			float vFinalB = -velB.i * restit;
+			float forceToApply = (vFinalB - velB.i) * mB * 1000  / DIFFERENTIAL_TIME;
 			
 			bodyB.applyForce(new Vector2D(collisionSense).mul(forceToApply), 
 					new Vector2D(bodyB.getPosition()).sub(collisionPosition),
 					DIFFERENTIAL_TIME);
 		} else if (mB >= Float.MAX_VALUE) {
-			float vFinalA = -vA * restit;
-			float forceToApply = (vFinalA - vA) * mA *1000 / DIFFERENTIAL_TIME;
+			Vector2D velA = getVelocityIntoCollisionAxis(collision, bodyA);
+			float vFinalA = -velA.i * restit;
+			float forceToApply = (vFinalA - velA.i) * mA * 1000  / DIFFERENTIAL_TIME;
 			
-			bodyA.applyForce(new Vector2D(collisionSense).mul(forceToApply), 
-					new Vector2D(bodyA.getPosition()).sub(collisionPosition),
+			bodyB.applyForce(new Vector2D(collisionSense).mul(forceToApply), 
+					new Vector2D(bodyB.getPosition()).sub(collisionPosition),
 					DIFFERENTIAL_TIME);
 		} else  {
-			// TODO: Bad code
+			/* TODO: Bad code, it won't work
 			float vFinalA = ((1 + restit) * mB * vB + vA * (mA + restit * mB)) / (mA + mB);
 			Vector2D finalVelocityA = new Vector2D(collisionSense).mul(vFinalA);
 			finalVelocityA.add(new Vector2D(collisionNormal).mul(vNormalA));
@@ -66,9 +61,36 @@ public class CollisionSolver {
 			Vector2D finalVelocityB = new Vector2D(collisionSense).mul(vFinalB);
 			finalVelocityB.add(new Vector2D(collisionNormal).mul(vNormalB));
 			bodyB.setVelocity(finalVelocityB.i, finalVelocityB.j);
+			*/
 		}
 
 		
+	}
+	
+	private static Vector2D getVelocityIntoCollisionAxis(Collision collision, PhysicBody body) {
+		final Vector2D collisionSense = collision.sense.normalize();
+		final Vector2D collisionNormal = collisionSense.normalVector();
+		
+		/*
+		 *  Get vector from Polygon's center to collision point
+		 */
+		final Vector2D relativeCollisionPoint = new Vector2D(collision.position).sub(body.getPosition());
+		final Vector2D velocityByAngularRotation = 
+			relativeCollisionPoint
+			.normalVector() // This returns new Vector2D, so don't copy
+			.normalize()
+			.mul(relativeCollisionPoint.length() 
+					* body.getAngularVelocity());
+		
+		/*
+		 * Get total body's total velocity at collision point 
+		 * NOTE: velocityByAngularRotation is not duplicated since it won't be longer used.
+		 */
+		final Vector2D totalVelocity = velocityByAngularRotation.add(body.getVelocity()); 
+		final float velAgainstCollision = totalVelocity.dotProduct(collisionSense);
+		final float velAlongCollision = totalVelocity.dotProduct(collisionNormal);
+		
+		return new Vector2D(velAgainstCollision, velAlongCollision);
 	}
 	
 }

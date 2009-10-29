@@ -186,6 +186,13 @@ public abstract class PhysicBody {
 	}
 	
 	/**
+	 * @return Body's angular velocity
+	 */
+	public float getAngularVelocity() {
+		return mAngularVelocity;
+	}
+	
+	/**
 	 * @return Body's absolute position
 	 */
 	public Vector2D getPosition() {
@@ -232,5 +239,7 @@ public abstract class PhysicBody {
 	public Collider getCollider() {
 		return mCollider;
 	}
+
+	
 
 }
