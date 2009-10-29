@@ -108,7 +108,7 @@ public class PhysicPolygon extends PhysicBody {
 		
 		if (mIsRotable) {
 			// Sets angular velocity and rotation
-			mAngularVelocity += applicationPoint.crossProduct(force) * (dt / 1000f) / mAngularMass;
+			mAngularVelocity += force.crossProduct(applicationPoint) * (dt / 1000f) / mAngularMass;
 			//mAngle += mAngularVelocity * dt / 1000f;
 		}
 		
