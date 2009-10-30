@@ -98,7 +98,7 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 			
 				// Draw it to OpenGL's space
 				try {
-					gl.glColor4f(0.0f, 0.0f, 0.8f, 1.0f);
+					gl.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 					gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
 					gl.glDrawElements(GL10.GL_LINES, 2 * (pointsCount - 1), 
 							GL10.GL_UNSIGNED_SHORT, indexBuffer);

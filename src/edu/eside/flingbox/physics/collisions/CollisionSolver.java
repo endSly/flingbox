@@ -87,7 +87,11 @@ public class CollisionSolver {
 		 * NOTE: velocityByAngularRotation is not duplicated since it won't be longer used.
 		 */
 		final Vector2D totalVelocity = velocityByAngularRotation.add(body.getVelocity()); 
-		final float velAgainstCollision = totalVelocity.dotProduct(collisionSense);
+		// Discompose into components
+		float velAgainstCollision = 0f;
+		if (totalVelocity.dotProduct(relativeCollisionPoint) > 0)
+			velAgainstCollision = totalVelocity.dotProduct(collisionSense);
+		
 		final float velAlongCollision = totalVelocity.dotProduct(collisionNormal);
 		
 		return new Vector2D(velAgainstCollision, velAlongCollision);

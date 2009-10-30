@@ -199,7 +199,7 @@ public class Vector2D {
 	 * @return New vector with the normal.
 	 */
 	public Vector2D normalVector() {
-		return new Vector2D(this.j, -this.i);
+		return new Vector2D(-this.j, this.i);
 	}
 	
 	/**
