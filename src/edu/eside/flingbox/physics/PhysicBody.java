@@ -57,7 +57,12 @@ public abstract class PhysicBody {
 	 * of velocities before and after an impact */
 	protected float mRestitutionCoeficient;
 	
+	/** body's mass by square unit */
 	protected float mDensity;
+	/** friction to be applied when body is moving */
+	protected float mDinamicFrictionCoeficient = 0.25f;
+	/** friction to be applied when body isn's moving */
+	protected float mStaticFrictionCoeficient = 0.33f;
 	
 	/** Object's current position */
 	protected final Vector2D mPosition;
