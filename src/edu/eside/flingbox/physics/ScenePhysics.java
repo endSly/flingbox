@@ -123,9 +123,10 @@ public class ScenePhysics implements Runnable {
 		if (!mIsSimulating)
 			return;
 		mDoKill = true;
-		while (mIsSimulating) { }	// Wait until thread ends.
 		
-		System.gc();
+		System.gc(); // Good moment to call to GC
+		
+		while (mIsSimulating) { }	// Wait until thread ends.
 	}
 	
 	/**

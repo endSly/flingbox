@@ -53,6 +53,8 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 		
 		/** Flag to lock drawing */
 		private boolean mDoRender = true;
+		/** Locks drawingRender deletes until drawing ends */
+		private boolean mLockedMutex = false;
 		
 		/**
 		 * Default constructor.
@@ -71,6 +73,7 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 			if (pointsCount < 2 || !mDoRender)
 				return false;
 			
+			mLockedMutex = true;
 			try {
 				// Fit points to OpenGL 
 				FloatBuffer vertexBuffer = ByteBuffer
@@ -112,11 +115,12 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 			} catch (Exception ex) {
 				// Do nothing. Just skip drawing
 			}
-	    			
+			mLockedMutex = false;
 	    	return true;
 		}
 		
 		public void onDelete() {
+			while (mLockedMutex) { }
 			mDoRender = false;
 		}
 		
