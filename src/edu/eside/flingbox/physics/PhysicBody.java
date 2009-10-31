@@ -74,6 +74,7 @@ public abstract class PhysicBody {
 	/** Body's angular mass */
 	protected float mAngularMass = 0f;
 	/** Body's current velocity */
+	
 	protected final Vector2D mVelocity = new Vector2D();
 	/** Body's current angular Velocity */
 	protected float mAngularVelocity = 0.0f;
@@ -107,23 +108,6 @@ public abstract class PhysicBody {
 	public abstract void onUpdateBody(float time);
 	
 	/**
-	 * Fixs body, making imposible to move mVelocityit
-	 */
-	public void fixObject() {
-		mIsMoveable = false;
-		mIsRotable = false;
-		
-		// Stop current object
-		mVelocity.set(0f, 0f);
-		mAngularVelocity = 0f;
-		
-		//This will make object fixed
-		mMass = INFINITE_MASS;
-		mAngularMass = INFINITE_ANGULAR_MASS;
-		
-	}
-	
-	/**
 	 * Applies force to the object
 	 * 
 	 * @param force Force
@@ -139,7 +123,6 @@ public abstract class PhysicBody {
 	 * @param dt time period while force is applied
 	 */
 	public abstract void applyForce(Vector2D force, Vector2D applicationPoint, float dt);
-
 	
 	/**
 	 * Check if point is contained by the polygon
@@ -151,6 +134,41 @@ public abstract class PhysicBody {
 		return false; // Atomic body cannot be contained
 	}
 	
+	/** Fixs body, making imposible to move  */
+	public void setBodyFixed() {
+		mIsMoveable = false;
+		mIsRotable = false;
+		
+		// Stop current object
+		mVelocity.set(0f, 0f);
+		mAngularVelocity = 0f;
+		
+		//This will make object fixed
+		mMass = INFINITE_MASS;
+		mAngularMass = INFINITE_ANGULAR_MASS;
+		
+	}
+	
+	/** Body can be moved  */
+	public void setBodyMoveable() {
+		mIsMoveable = true;
+		mIsRotable = true;
+	}
+	
+	/** @return true if body can is fixed */
+	public boolean isFixed() {
+		return !(mIsMoveable || mIsRotable);
+	}
+	
+	/** @return true if is enabled */
+	public boolean isEnabled() {
+		return mIsEnabled;
+	}
+	
+	/** Sets if object is enabled or not */
+	public void setEnabled(boolean doEnable) {
+		mIsEnabled = doEnable;
+	}
 	
 	/**
 	 * @return Body's mass
@@ -244,7 +262,5 @@ public abstract class PhysicBody {
 	public Collider getCollider() {
 		return mCollider;
 	}
-
-	
 
 }

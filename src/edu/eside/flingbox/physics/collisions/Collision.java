@@ -19,7 +19,6 @@
 package edu.eside.flingbox.physics.collisions;
 
 import edu.eside.flingbox.math.Vector2D;
-import edu.eside.flingbox.physics.PhysicBody;
 
 /**
  * Class to handle collision.
@@ -28,8 +27,10 @@ public final class Collision {
 	
 	/** Collision's absolute poition */
 	public final Vector2D position;
-	/** Collision's sense */
+	/** Collision's sense. This is a normalized vector */
 	public final Vector2D sense;
+	/** Collision's normal. This is a normalized vector */
+	public final Vector2D normal;
 	
 	/**
 	 * Default constructor for a collsion
@@ -39,19 +40,8 @@ public final class Collision {
 	 */
 	public Collision(Vector2D position, Vector2D sense) {
 		this.position = new Vector2D(position);
-		this.sense = new Vector2D(sense);
-	}
-	
-	/**
-	 * Default constructor for a collsion
-	 * 
-	 * @param position relative position
-	 * @param sense collisio's sense
-	 * @param collidingBody body wich is colliding
-	 */
-	public Collision(Vector2D position, Vector2D sense, PhysicBody collidingBody) {
-		this.position = new Vector2D(position);
-		this.sense = new Vector2D(sense);
+		this.sense = new Vector2D(sense).normalize();
+		this.normal = this.sense.normalVector();
 	}
 	
 }

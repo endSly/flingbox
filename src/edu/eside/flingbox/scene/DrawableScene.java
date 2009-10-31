@@ -48,7 +48,11 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 	 */
 	private class DrawingRender extends Render {
 
+		/** Array of points to be drawed */
 		private final ArrayList<Point> mDrawingPattern;
+		
+		/** Flag to lock drawing */
+		private boolean mDoRender = true;
 		
 		/**
 		 * Default constructor.
@@ -64,7 +68,7 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 		public boolean onRender(GL10 gl) {
 			// We need two or more points to render
 			final int pointsCount = mDrawingPattern.size();
-			if (pointsCount < 2)
+			if (pointsCount < 2 || !mDoRender)
 				return false;
 			
 			try {
@@ -112,6 +116,10 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 	    	return true;
 		}
 		
+		public void onDelete() {
+			mDoRender = false;
+		}
+		
 	}
 	
 	private DrawingRender mDrawingRender;
@@ -148,6 +156,7 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 				mIsDrawingLocked = false;
 				
 				// Remove drawing line
+				mDrawingRender.onDelete();
 				mSceneRenderer.remove(mDrawingRender);
 				mDrawingRender = null;
 					

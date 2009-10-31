@@ -96,8 +96,9 @@ public class ColliderPolygon extends Collider {
 	 */
 	private static float computeBoundingCircleRadius(final Vector2D[] contour) {
 		float radiusSquare = 0.0f;
-		for (Vector2D v : contour) {
-			float vRadSquare = (v.i * v.i) + (v.j * v.i);
+		for (int i = contour.length - 1; i >= 0; i--) {	// Do not use fast enumaration since performance issues
+			final Vector2D v = contour[i];
+			float vRadSquare = (v.i * v.i) + (v.j * v.j);
 			if (vRadSquare > radiusSquare)
 				radiusSquare = vRadSquare;
 		}
@@ -153,7 +154,7 @@ public class ColliderPolygon extends Collider {
 				.add(outgoingIntersect)
 				.mul(0.5f);
 			
-			CollisionSolver.solveCollision(new Collision(collisonPosition, sense), mPhysicBody, collider.mPhysicBody);
+		CollisionSolver.solveCollision(new Collision(collisonPosition, sense), mPhysicBody, collider.mPhysicBody);
 		}
 		return doCollide;
 	}

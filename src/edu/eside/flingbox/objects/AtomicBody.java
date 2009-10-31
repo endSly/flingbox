@@ -72,6 +72,6 @@ public abstract class AtomicBody {
 	 * Fixes object into scene.
 	 */
 	public void fixObject() {
-		mPhysics.fixObject();
+		mPhysics.setBodyFixed();
 	}
 }

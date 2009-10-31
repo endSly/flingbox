@@ -132,6 +132,7 @@ public class SceneRenderer implements Renderer {
 		public float getHeight() {
 			return mHeight;
 		}
+		
 	}
 	
 	// Stores objects that will be renderized

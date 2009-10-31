@@ -57,11 +57,11 @@ public abstract class Collider {
 		final float radiusLength = mRadius + collider.mRadius;
 		final float thisX = mPosition.i, thisY = mPosition.j, 
 			otherX = collider.mPosition.i, otherY = collider.mPosition.j;
-		final float distanceSqr = ((thisX - otherX) * (thisX - otherX) 
-				+ (thisY - otherY) * (thisY - otherY));
+		final float distanceSqr = (thisX - otherX) * (thisX - otherX) 
+				+ (thisY - otherY) * (thisY - otherY);
 		
 		if (distanceSqr > (radiusLength * radiusLength))
-			return false;	// No collision
+			return false;	// No collision possible
 
 		return true;
 		
