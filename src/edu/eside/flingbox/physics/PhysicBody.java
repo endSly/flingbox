@@ -102,8 +102,6 @@ public abstract class PhysicBody {
 	/**
 	 * Called to refresh object's position
 	 * @param time time in ms since las update
-	 * 
-	 * @deprecated
 	 */
 	public abstract void onUpdateBody(float time);
 	

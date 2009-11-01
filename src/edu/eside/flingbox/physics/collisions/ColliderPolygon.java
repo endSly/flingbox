@@ -19,8 +19,10 @@
 package edu.eside.flingbox.physics.collisions;
 
 import edu.eside.flingbox.math.Intersect;
+import edu.eside.flingbox.math.Matrix22;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.PhysicBody;
+import edu.eside.flingbox.physics.PhysicBody.OnMovementListener;
 
 /**
  * Collider for a polygon. it handles all functions needed by 
@@ -34,12 +36,9 @@ import edu.eside.flingbox.physics.PhysicBody;
  * in other circle region.
  *
  */
-public class ColliderPolygon extends Collider {
+public class ColliderPolygon extends Collider implements OnMovementListener {
 	
 	//private float mRotationAngle;
-	
-	@SuppressWarnings("unused")
-	private final Vector2D[] mPolygonNormals;
 	
 	/** Handled in Physics, only pointer */
 	private final Vector2D[] mPolygonContour;
@@ -60,32 +59,12 @@ public class ColliderPolygon extends Collider {
 		final int pointsCount = contour.length;
 		mPolygonContour = contour;
 		mRadius = computeBoundingCircleRadius(contour);
-		mPolygonNormals = computePolygonNormals(contour);
 		
 		// Stores all point's angles
 		mVertexAngle = new float[pointsCount];
 		for (int i = 0 ; i < pointsCount; i++) 
 			mVertexAngle[i] = (float) Math.atan(contour[i].j / contour[i].i);
 
-	}
-	
-	/**
-	 * Computes Polygon normals.  
-	 * Needed to descart polygon's segments quickly.
-	 * 
-	 * @param contour Counterclockwise polygon points
-	 * @return Polygon's normals
-	 */
-	private static Vector2D[] computePolygonNormals(final Vector2D[] contour) {
-		final int pointsCount = contour.length;
-		Vector2D[] normals = new Vector2D[pointsCount];
-		
-		for (int i = 0; i < pointsCount; i++) {
-			final Vector2D p0 = contour[i], p1 = contour[i == pointsCount - 1 ? 0 : i ]; 
-			normals[i] = new Vector2D((p1.j - p0.j), (p0.i - p1.i));//.normalize();
-		}
-		
-		return normals;
 	}
 
 	/**
@@ -106,14 +85,18 @@ public class ColliderPolygon extends Collider {
 	}
 	
 	/**
-	 * Moves polygon to determinate point
+	 * Moves polygon to determinate point and rotates it
 	 * @return New translated polygon
 	 */
-	private static Vector2D[] translatePolygon(Vector2D[] polygon, Vector2D position) {
+	private static Vector2D[] translateAndRotatePolygon(Vector2D[] polygon, Vector2D position, float angle) {
 		final int pointsCount = polygon.length;
 		final Vector2D[] locatedPolygon = new Vector2D[pointsCount];
-		for (int i = 0; i < pointsCount; i++) 
-			locatedPolygon[i] = new Vector2D(polygon[i]).add(position);
+		
+		final Matrix22 rotationMatrix = Matrix22.rotationMatrix(angle);
+		
+		for (int i = pointsCount - 1; i >= 0; i--) 
+			locatedPolygon[i] = polygon[i].mul(rotationMatrix).add(position);
+		
 		return locatedPolygon;
 	}
 	
@@ -125,8 +108,9 @@ public class ColliderPolygon extends Collider {
 			return false;
 		
 		boolean doCollide = false;
-		final Vector2D[] polygon = translatePolygon(mPolygonContour, mPosition);
-		final Vector2D[] otherPolygon = translatePolygon(((ColliderPolygon) collider).mPolygonContour, ((ColliderPolygon) collider).mPosition);
+		final Vector2D[] polygon = translateAndRotatePolygon(mPolygonContour, mPosition, mAngle);
+		final Vector2D[] otherPolygon = translateAndRotatePolygon(((ColliderPolygon) collider).mPolygonContour, 
+				((ColliderPolygon) collider).mPosition, ((ColliderPolygon) collider).mAngle);
 		
 		/*
 		 * Find intersections

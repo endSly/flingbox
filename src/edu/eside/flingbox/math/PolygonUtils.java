@@ -245,6 +245,25 @@ public final class PolygonUtils {
 		return new Point(cx, cy);
 	}
 	
+	
+	/**
+	 * Computes Polygon normals.  
+	 * 
+	 * @param contour Counterclockwise polygon points
+	 * @return Polygon's normals
+	 */
+	public static Vector2D[] computePolygonNormals(final Vector2D[] contour) {
+		final int pointsCount = contour.length;
+		Vector2D[] normals = new Vector2D[pointsCount];
+		
+		for (int i = 0; i < pointsCount; i++) {
+			final Vector2D p0 = contour[i], p1 = contour[i == pointsCount - 1 ? 0 : i ]; 
+			normals[i] = new Vector2D((p1.j - p0.j), (p0.i - p1.i));//.normalize();
+		}
+		
+		return normals;
+	}
+	
 	/**
 	 * Computes minimum distance from line to point
 	 */

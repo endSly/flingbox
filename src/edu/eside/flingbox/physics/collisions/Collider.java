@@ -20,17 +20,19 @@ package edu.eside.flingbox.physics.collisions;
 
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.PhysicBody;
+import edu.eside.flingbox.physics.PhysicBody.OnMovementListener;
 
 /**
  * Abstract collision manager for any object.
  */
-public abstract class Collider {
+public abstract class Collider implements OnMovementListener {
 	
 	/** bounding circle radius, needed to discartd quickly collisions */
 	protected float mRadius; 
 
 	/** Objects position. needs to be updated */
 	protected final Vector2D mPosition;
+	protected float mAngle = 0f;
 	 
 	protected final PhysicBody mPhysicBody;
 	
@@ -39,7 +41,7 @@ public abstract class Collider {
 	 * 
 	 * @param listener Collision listener
 	 */
-	public Collider(PhysicBody physicBody) {
+	public Collider(final PhysicBody physicBody) {
 		mPosition = new Vector2D();
 		mPhysicBody = physicBody;
 	}
@@ -50,7 +52,7 @@ public abstract class Collider {
 	 * @param collider other objects collider.
 	 * @return true if objects can collide
 	 */
-	public boolean checkCollision(Collider collider) {
+	public boolean checkCollision(final Collider collider) {
 		/*
 		 *  Start checking bounding circle
 		 */
@@ -68,12 +70,11 @@ public abstract class Collider {
 	}
 	
 	/**
-	 * Sets objetc's position
-	 * 
-	 * @param position position
+	 * Called when a movement occurs
 	 */
-	public void setPosition(Vector2D position) {
-		mPosition.set(position);
+	public void onMovement(final Vector2D newPosition, float newAngle) {
+		mPosition.set(newPosition);
+		mAngle = newAngle;
 	}
 	
 	/**

@@ -18,7 +18,6 @@
 
 package edu.eside.flingbox.physics;
 
-import edu.eside.flingbox.math.Matrix22;
 import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.math.PolygonUtils;
 import edu.eside.flingbox.math.Vector2D;
@@ -66,7 +65,7 @@ public class PhysicPolygon extends PhysicBody {
 		mCollider = new ColliderPolygon(mRotatedPolygonContour, this);
 		
 		mListener.onMovement(mPosition, 0f);
-		mCollider.setPosition(mPosition);
+		mCollider.onMovement(mPosition, 0f);
 
 		mAngularMass = computeAngularMass(bodyMass, mCollider);
 
@@ -128,37 +127,13 @@ public class PhysicPolygon extends PhysicBody {
 	
 	/**
 	 * Called when object has been updated
-	 * 
-	 * @deprecated
 	 */
 	public synchronized void onUpdateBody(float time) {
 		mPosition.add((new Vector2D(mVelocity)).mul(time / 1000f));
 		mAngle += mAngularVelocity * time / 1000f;
-		
-		rotatePolygonContour(mPolygonContour, mRotatedPolygonContour, mAngle);
-		
-		// Updates positions
-		mCollider.setPosition(mPosition);
-		
-		
+
+		mCollider.onMovement(mPosition, mAngle);
 		mListener.onMovement(mPosition, mAngle);
-	}
-	
-	/**
-	 * Rotates a enteir polygon
-	 * 
-	 * @param source polygon to be rotated
-	 * @param dest polygon to store rotated polygon
-	 * @param angle angle to be rotated
-	 */
-	private static void rotatePolygonContour(final Vector2D[] source, Vector2D[] dest, float angle) {
-		final int pointsCount = source.length;
-		if (angle == 0f)
-			return;	// Nothing to do
-		
-		final Matrix22 rotationMatrix = Matrix22.rotationMatrix(angle);
-		for (int i = 0; i < pointsCount; i++) 
-			dest[i] = source[i].mul(rotationMatrix);
 	}
 	
 }
