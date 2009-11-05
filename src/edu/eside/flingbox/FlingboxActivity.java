@@ -70,10 +70,16 @@ public class FlingboxActivity extends Activity {
      * Creates the menu items 
      */
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, MENU_PLAY_PAUSE, 0, R.string.simulate);
-        menu.add(1, MENU_PREFERENCES, 1, R.string.preferences);
-        menu.add(10, MENU_LOAD_SCENE, 2, R.string.load_scene);
-        menu.add(10, MENU_SAVE_SCENE, 3, R.string.save_scene);
+        menu
+        	.add(0, MENU_PLAY_PAUSE, 0, R.string.simulate);
+        menu
+        	.add(1, MENU_PREFERENCES, 1, R.string.preferences)
+        	.setIcon(android.R.drawable.ic_menu_preferences);
+        menu
+        	.add(10, MENU_LOAD_SCENE, 2, R.string.load_scene);
+        menu
+        	.add(10, MENU_SAVE_SCENE, 3, R.string.save_scene)
+        	.setIcon(android.R.drawable.ic_menu_save);
         return true;
     }
     

@@ -18,38 +18,24 @@
 
 package edu.eside.flingbox;
 
-import android.app.Dialog;
-import android.content.Context;
-import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
+import org.xmlpull.v1.XmlSerializer;
 
-public class ObjectSettingsDialog extends Dialog implements OnClickListener {
+import android.util.Xml;
+import edu.eside.flingbox.scene.Scene;
 
-	Context mContext;
-
-	public ObjectSettingsDialog(Context context) {
-		super(context);
-		mContext = context;
+public class XmlSceneExporter {
+	
+	public interface XmlExportable {
+		
 	}
 	
-    /** 
-     * Called when the dialog is first created. 
-     */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-    	// Set dialog content
-    	setContentView(R.layout.body_settings);
+	public static void exportScene(String file, Scene sceneToExport) {
+		XmlSerializer serializer = Xml.newSerializer();
 
-    	// Sets dialog title
-		setTitle(R.string.body_settings_name);
-
-    }
-
-	@Override
-	public void onClick(View v) {
-		
-		
+		try {
+			
+		} catch (Exception ex) {
+			
+		}
 	}
-
 }

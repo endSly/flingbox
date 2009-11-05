@@ -93,7 +93,6 @@ public abstract class PhysicBody {
 	 */
 	protected PhysicBody(final float bodyMass, final Point position) {
 		mMass = bodyMass;
-		mAngularMass = 0.0f;
 		mRestitutionCoeficient = Preferences.defaultRestitutionCoeficient;
 		mDensity = Preferences.defaultDensity;
 		mPosition = new Vector2D(position.x, position.y);
@@ -190,6 +189,13 @@ public abstract class PhysicBody {
 	}
 	
 	/**
+	 * Sets body's Restitution Coeficient
+	 */
+	public void setRestitutionCoeficient(float restCoef) {
+		mRestitutionCoeficient = restCoef;
+	}
+	
+	/**
 	 * @return velocity
 	 */
 	public Vector2D getVelocity() {
@@ -229,6 +235,14 @@ public abstract class PhysicBody {
 	}
 	
 	/**
+	 * @param position new postion of the object
+	 */
+	public void setPosition(Vector2D v) {
+		mPosition.set(v);
+		onUpdateBody(0);
+	}
+	
+	/**
 	 * @return Body's angle
 	 */
 	public float getAngle() {
@@ -240,6 +254,7 @@ public abstract class PhysicBody {
 	 */
 	public void setAngle(float angle) {
 		mAngle = angle;
+		onUpdateBody(0);
 	}
 	
 	/**
