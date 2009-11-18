@@ -78,11 +78,12 @@ public class CollisionSolver {
 			final Vector2D bodyProyectedVelocity) {
 		float parallelVel = bodyProyectedVelocity.j;
 		
-		if (parallelVel == 0) {
+		if (parallelVel == 0.0f) {
 			float FrictionCoef = body.getStaticFrictionCoeficient();
 			
 		} else {
 			float FrictionCoef = body.getDinamicFrictionCoeficient();
+			
 		}
 	}
 	
