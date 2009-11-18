@@ -40,44 +40,50 @@ public class CollisionSolver {
 		final float mA = bodyA.getBodyMass();
 		final float mB = bodyB.getBodyMass();
 		
-		if (mA >= Float.MAX_VALUE) { // Body A can't be moved
-			Vector2D velB = getVelocityIntoCollisionAxis(collision, bodyB);
-			final float vFinalB = -velB.i * restit;
-			final float forceToApply = (vFinalB - velB.i) * mB * 1000  / DIFFERENTIAL_TIME;
+		Vector2D velA = getVelocityIntoCollisionAxis(collision, bodyA);
+		Vector2D velB = getVelocityIntoCollisionAxis(collision, bodyB);
+		
+		if (!bodyA.isFixed()) { 
+			final float vFinalA = mB < Float.MAX_VALUE  
+						? ((1 + restit) * mB * velB.i + velA.i * (mA + restit * mB)) / (mA + mB)
+						: -velA.i * restit;
+						
+			final float normalModule = (vFinalA - velA.i) * mA * 1000  / DIFFERENTIAL_TIME;
 			
-			bodyB.applyForce(new Vector2D(collisionSense).mul(forceToApply), 
-					new Vector2D(bodyB.getPosition()).sub(collisionPosition),
-					DIFFERENTIAL_TIME);
-		} else if (mB >= Float.MAX_VALUE) { // Body B can't be moved
-			Vector2D velA = getVelocityIntoCollisionAxis(collision, bodyA);
-			final float vFinalA = -velA.i * restit;
-			final float forceToApply = (vFinalA - velA.i) * mA * 1000  / DIFFERENTIAL_TIME;
+			final Vector2D normal = new Vector2D(collisionSense).mul(normalModule);
+			final Vector2D collisionRelativePoint = new Vector2D(bodyA.getPosition()).sub(collisionPosition);
 			
-			bodyA.applyForce(new Vector2D(collisionSense).mul(forceToApply), 
-					new Vector2D(bodyA.getPosition()).sub(collisionPosition),
-					DIFFERENTIAL_TIME);
-		} else  {
-			Vector2D velA = getVelocityIntoCollisionAxis(collision, bodyA);
-			Vector2D velB = getVelocityIntoCollisionAxis(collision, bodyB);
-			
-			final float vFinalA = ((1 + restit) * mB * velB.i + velA.i * (mA + restit * mB)) / (mA + mB);
-			final float vFinalB = ((1 + restit) * mA * velA.i + velB.i * (mB + restit * mA)) / (mA + mB);
-			
-			final float forceToApplyA = (vFinalA - velA.i) * mA * (1000f  / DIFFERENTIAL_TIME);
-			final float forceToApplyB = (vFinalB - velB.i) * mB * (1000f  / DIFFERENTIAL_TIME);
-			
-			bodyA.applyForce(new Vector2D(collisionSense).mul(forceToApplyA), 
-					new Vector2D(bodyA.getPosition()).sub(collisionPosition),
-					DIFFERENTIAL_TIME);
-			bodyB.applyForce(new Vector2D(collisionSense).mul(forceToApplyB), 
-					new Vector2D(bodyB.getPosition()).sub(collisionPosition),
-					DIFFERENTIAL_TIME);
+			bodyA.applyForce(normal, collisionRelativePoint, DIFFERENTIAL_TIME);
+			solveFrictions(bodyA, normalModule, collision, velA);
 		}
+		
+		if (!bodyB.isFixed()) { 
+			final float vFinalB = mA < Float.MAX_VALUE 
+						? ((1 + restit) * mA * velA.i + velB.i * (mB + restit * mA)) / (mA + mB)
+						: -velB.i * restit;
+						
+			final float normalModule = (vFinalB - velB.i) * mB * 1000  / DIFFERENTIAL_TIME;
+			
+			final Vector2D normal = new Vector2D(collisionSense).mul(normalModule);
+			final Vector2D collisionRelativePoint = new Vector2D(bodyB.getPosition()).sub(collisionPosition);
+			
+			bodyB.applyForce(normal, collisionRelativePoint, DIFFERENTIAL_TIME);
+			solveFrictions(bodyB, normalModule, collision, velB);
+		} 
 		
 	}
 	
-	public static void solveFrictions(final Collision collision, final PhysicBody bodyA, final PhysicBody bodyB) {
+	private static void solveFrictions(final PhysicBody body, 
+			final float normal, final Collision collision, 
+			final Vector2D bodyProyectedVelocity) {
+		float parallelVel = bodyProyectedVelocity.j;
 		
+		if (parallelVel == 0) {
+			float FrictionCoef = body.getStaticFrictionCoeficient();
+			
+		} else {
+			float FrictionCoef = body.getDinamicFrictionCoeficient();
+		}
 	}
 	
 	/**

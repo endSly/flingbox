@@ -180,6 +180,22 @@ public abstract class PhysicBody {
 		return mAngularMass;
 	}
 	
+	public float getDinamicFrictionCoeficient() {
+		return mDinamicFrictionCoeficient;
+	}
+	
+	public void setDinamicFrictionCoeficient(float f) {
+		mDinamicFrictionCoeficient = f;
+	}
+	
+	public float getStaticFrictionCoeficient() {
+		return mStaticFrictionCoeficient;
+	}
+	
+	public void setStaticFrictionCoeficient(float f) {
+		mStaticFrictionCoeficient = f;
+	}
+	
 	/**
 	 * @return body's Restitution Coeficient
 	 */
