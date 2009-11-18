@@ -20,6 +20,7 @@ public final class R {
     }
     public static final class layout {
         public static final int body_settings=0x7f030000;
+        public static final int object_settings=0x7f030001;
     }
     public static final class string {
         public static final int app_name=0x7f040000;

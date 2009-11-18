@@ -125,7 +125,7 @@ public class Scene extends DrawableScene implements OnInputListener {
 			final float py = mCamera.top - (e.getY() * mCamera.getHeight() / mDisplayHeight);
 			// Apply force to the position
 			Vector2D movementForce = new Vector2D(px, py);
-			movementForce.sub(mSelectedBody.getPhysics().getPosition()).mul(1000f);
+			movementForce.sub(mSelectedBody.getPhysics().getPosition()).mul(100000f);
 			// TODO: Fix time here
 			mSelectedBody.getPhysics().applyForce(movementForce, 20f);
 			handled = true;
