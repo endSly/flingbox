@@ -25,15 +25,17 @@ import edu.eside.flingbox.math.Vector2D;
  */
 public final class Collision {
 	
-	/** Collision's absolute poition */
+	/** Collision's absolute position */
 	public final Vector2D position;
 	/** Collision's sense. This is a normalized vector */
 	public final Vector2D sense;
 	/** Collision's normal. This is a normalized vector */
 	public final Vector2D normal;
 	
+	public final Vector2D[] intersectionContour;
+	
 	/**
-	 * Default constructor for a collsion
+	 * Default constructor for a collision
 	 * 
 	 * @param position relative position
 	 * @param sense collisio's sense
@@ -42,6 +44,7 @@ public final class Collision {
 		this.position = new Vector2D(position);
 		this.sense = new Vector2D(sense).normalize();
 		this.normal = this.sense.normalVector();
+		this.intersectionContour = null;
 	}
 	
 }

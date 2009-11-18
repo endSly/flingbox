@@ -26,7 +26,7 @@ import java.nio.ShortBuffer;
 import javax.microedition.khronos.opengles.GL10;
 
 import edu.eside.flingbox.graphics.Render;
-import edu.eside.flingbox.math.Point;
+import edu.eside.flingbox.math.Vector2D;
 
 /**
  * {@link RenderPolygon} handles functions to render {@link Polygon}
@@ -43,7 +43,7 @@ public class RenderPolygon extends Render {
 	private final short mTrianglesCount;
 	
 	// Storage polygon's position and angle
-	private final Point mPosition;
+	private final Vector2D mPosition;
 	private float mAngle;
 	
 	// Stores polygon's color
@@ -55,7 +55,7 @@ public class RenderPolygon extends Render {
 	 * 
 	 * @param points	Polygon's points
 	 */
-	public RenderPolygon(final Point[] points, final short[] triangulationIndexes)
+	public RenderPolygon(final Vector2D[] points, final short[] triangulationIndexes)
 	throws IllegalArgumentException{
 		if (points == null || points.length < 3 || triangulationIndexes == null)
 			throw new IllegalArgumentException();
@@ -65,15 +65,15 @@ public class RenderPolygon extends Render {
 			0f, 0f, 0f, 1f
 		};
 		
-		mPosition = new Point();
+		mPosition = new Vector2D();
 	
 		final int pointsCount = points.length;
 		
 		// Fill 2D polygon into 3D space
 		float[] points3D = new float[3 * pointsCount];
 		for (int i = 0; i < pointsCount; i++) {
-			points3D[3 * i + 0] = points[i].x;			// x
-			points3D[3 * i + 1] = points[i].y;		// y
+			points3D[3 * i + 0] = points[i].i;			// x
+			points3D[3 * i + 1] = points[i].j;		// y
 			points3D[3 * i + 2] = 0.0f;				// z
 		}
 
@@ -117,7 +117,7 @@ public class RenderPolygon extends Render {
 	 * @param position	Point to current position
 	 * @param rotation	Rotation angle in Radians
 	 */
-	public void setPosition(final Point position, final float rotation) {
+	public void setPosition(final Vector2D position, final float rotation) {
 		// Copy point. Avoid objects creation
 		mPosition.set(position);
 		
@@ -133,7 +133,7 @@ public class RenderPolygon extends Render {
 		gl.glColor4f(mColor[0], mColor[1], mColor[2], mColor[3]);
 		
 		// First translate object for it's position
-		gl.glTranslatef(mPosition.x, mPosition.y, 0f);
+		gl.glTranslatef(mPosition.i, mPosition.j, 0f);
 		// Then rotate it
 		gl.glRotatef(((int) mAngle) % 360, 0f, 0f, 1.0f);
 		try {

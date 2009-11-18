@@ -23,7 +23,6 @@ import java.io.IOException;
 
 import edu.eside.flingbox.ObjectSettingsDialog;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
-import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.objects.AtomicBody;
 
@@ -99,7 +98,7 @@ public class Scene extends DrawableScene implements OnInputListener {
 	public boolean onDown(MotionEvent e) {
 		final float onDownX = mCamera.left + (e.getX() * mCamera.getWidth() / mDisplayWidth);
 		final float onDownY = mCamera.top - (e.getY() * mCamera.getHeight() / mDisplayHeight);
-		final Point p = new Point(onDownX, onDownY);
+		final Vector2D p = new Vector2D(onDownX, onDownY);
 		
 		for (AtomicBody object : mOnSceneBodys)
 			if (object.getPhysics().contains(p)) {

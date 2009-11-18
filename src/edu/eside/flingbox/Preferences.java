@@ -25,7 +25,7 @@ public class Preferences {
 	public static float gravity;
 	
 	public static float defaultDensity = 1.0f;
-	public static float defaultRestitutionCoeficient = 0.95f;
+	public static float defaultRestitutionCoeficient = 0.67f;
 	
 	/**
 	 * Preferences can't be created. It's static

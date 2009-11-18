@@ -19,7 +19,6 @@
 package edu.eside.flingbox.physics;
 
 import edu.eside.flingbox.Preferences;
-import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.collisions.Collider;
 
@@ -91,11 +90,11 @@ public abstract class PhysicBody {
 	 * @param bodyMass body's mass
 	 * @param position body's position
 	 */
-	protected PhysicBody(final float bodyMass, final Point position) {
+	protected PhysicBody(final float bodyMass, final Vector2D position) {
 		mMass = bodyMass;
 		mRestitutionCoeficient = Preferences.defaultRestitutionCoeficient;
 		mDensity = Preferences.defaultDensity;
-		mPosition = new Vector2D(position.x, position.y);
+		mPosition = new Vector2D(position.i, position.j);
 	}
 	
 	/**
@@ -127,7 +126,7 @@ public abstract class PhysicBody {
 	 * @param p point to check
 	 * @return true if is containded
 	 */
-	public boolean contains(Point p) {
+	public boolean contains(Vector2D p) {
 		return false; // Atomic body cannot be contained
 	}
 	

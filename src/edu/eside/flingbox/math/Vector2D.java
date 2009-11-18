@@ -54,16 +54,6 @@ public class Vector2D {
 	}
 	
 	/**
-	 * Constructs vector to point
-	 * 
-	 * @param p point
-	 */
-	public Vector2D(Point p) {
-		this.i = p.x;
-		this.j = p.y;
-	}
-	
-	/**
 	 * Copys values form other vector
 	 * 
 	 * @param v vector to be copied

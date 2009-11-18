@@ -33,8 +33,8 @@ import android.view.MotionEvent;
 import edu.eside.flingbox.graphics.Render;
 import edu.eside.flingbox.input.SceneMTGestureDetector;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
-import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.math.PolygonUtils;
+import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.objects.Polygon;
 
 /**
@@ -49,7 +49,7 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 	private class DrawingRender extends Render {
 
 		/** Array of points to be drawed */
-		private final ArrayList<Point> mDrawingPattern;
+		private final ArrayList<Vector2D> mDrawingPattern;
 		
 		/** Flag to lock drawing */
 		private boolean mDoRender = true;
@@ -60,7 +60,7 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 		 * Default constructor.
 		 * @param drawingPattern	Actual drawing patter.
 		 */
-		public DrawingRender(final ArrayList<Point> drawingPattern) {
+		public DrawingRender(final ArrayList<Vector2D> drawingPattern) {
 			mDrawingPattern = drawingPattern;
 		}
 		
@@ -87,17 +87,17 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 					.asShortBuffer();
 			
 				// Fit 2D points into 3D space
-				ArrayList<Point> pattern = mDrawingPattern;
+				ArrayList<Vector2D> pattern = mDrawingPattern;
 				for (short i = 0; i < (pointsCount - 1); ) {
-					vertexBuffer.put(pattern.get(i).x);
-					vertexBuffer.put(pattern.get(i).y);
+					vertexBuffer.put(pattern.get(i).i);
+					vertexBuffer.put(pattern.get(i).j);
 					vertexBuffer.put(0.0f);
 				
 					indexBuffer.put(i++);	// Set indexes
 					indexBuffer.put(i);
 				}
-				vertexBuffer.put(pattern.get(pointsCount - 1).x);	// Put also 
-				vertexBuffer.put(pattern.get(pointsCount - 1).y);	// last point.
+				vertexBuffer.put(pattern.get(pointsCount - 1).i);	// Put also 
+				vertexBuffer.put(pattern.get(pointsCount - 1).j);	// last point.
 				vertexBuffer.put(0.0f);
 
 				vertexBuffer.position(0);
@@ -127,7 +127,7 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 	}
 	
 	private DrawingRender mDrawingRender;
-	private ArrayList<Point> mDrawingPattern;
+	private ArrayList<Vector2D> mDrawingPattern;
 	
 	private boolean mIsDrawing = false;
 	private boolean mIsDrawingLocked = false;	// Drawing can be locked
@@ -169,7 +169,7 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 				if (pointsCount >= 3) {
 					mDrawingPattern.trimToSize();
 					// Optimize points by Douglas-Peucker algorithm s 
-					Point[] optimizedPoints = PolygonUtils.douglasPeuckerReducer(mDrawingPattern.toArray(new Point[0]), 5.0f);
+					Vector2D[] optimizedPoints = PolygonUtils.douglasPeuckerReducer(mDrawingPattern.toArray(new Vector2D[0]), 5.0f);
 					if (optimizedPoints.length >= 3) {
 						Polygon drawedPolygon = new Polygon(optimizedPoints);
 						drawedPolygon.setRandomColor();
@@ -227,19 +227,19 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 			
 			mIsDrawing = true;
 			
-			mDrawingPattern = new ArrayList<Point>(40);
+			mDrawingPattern = new ArrayList<Vector2D>(40);
 			mDrawingRender = new DrawingRender(mDrawingPattern);
 			
 			final float onDownX = mCamera.left + (downEv.getX() * mCamera.getWidth() / mDisplayWidth);
 			final float onDownY = mCamera.top - (downEv.getY() * mCamera.getHeight() / mDisplayHeight);
 
-			mDrawingPattern.add(new Point(onDownX, onDownY));
+			mDrawingPattern.add(new Vector2D(onDownX, onDownY));
 
 			// We only need render, no physics
 			mSceneRenderer.add(mDrawingRender);
 		}
 		
-		mDrawingPattern.add(new Point(x, y));
+		mDrawingPattern.add(new Vector2D(x, y));
 		return true;
 	}
 	
@@ -256,13 +256,13 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 		// Start drawing
 		mIsDrawing = true;
 		
-		mDrawingPattern = new ArrayList<Point>(40);
+		mDrawingPattern = new ArrayList<Vector2D>(40);
 		mDrawingRender = new DrawingRender(mDrawingPattern);
 		
 		final float onDownX = mCamera.left + (e.getX() * mCamera.getWidth() / mDisplayWidth);
 		final float onDownY = mCamera.top - (e.getY() * mCamera.getHeight() / mDisplayHeight);
 
-		mDrawingPattern.add(new Point(onDownX, onDownY));
+		mDrawingPattern.add(new Vector2D(onDownX, onDownY));
 
 		mSceneRenderer.add(mDrawingRender);
 		

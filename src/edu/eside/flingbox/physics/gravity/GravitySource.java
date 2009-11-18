@@ -72,11 +72,11 @@ public class GravitySource extends Vector2D implements SensorEventListener {
 	}
 	
 	private GravitySource(Vector2D v) {
-		super(v);
+		super(v.mul(32f));
 	}
 	
 	private GravitySource(float i, float j) {
-		super(i, j);
+		super(i * 32f, j * 32f);
 	}
 
 	@Override

@@ -21,7 +21,6 @@ package edu.eside.flingbox.objects;
 import java.util.Random;
 
 import edu.eside.flingbox.graphics.RenderPolygon;
-import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.math.PolygonUtils;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.PhysicPolygon;
@@ -33,7 +32,7 @@ import edu.eside.flingbox.physics.PhysicBody.OnMovementListener;
  *
  */
 public final class Polygon extends AtomicBody implements OnMovementListener {
-	private final Point[] mPoints;
+	private final Vector2D[] mPoints;
 	private final short mPointsCount;
 
 	/**
@@ -41,7 +40,7 @@ public final class Polygon extends AtomicBody implements OnMovementListener {
 	 * @param points	Array of Polygon's point
 	 * @throws IllegalArgumentException		If not enough points
 	 */
-	public Polygon(final Point[] polygonPoints) throws IllegalArgumentException {
+	public Polygon(final Vector2D[] polygonPoints) throws IllegalArgumentException {
 		super();
 		
 		// Get passed points count
@@ -60,7 +59,7 @@ public final class Polygon extends AtomicBody implements OnMovementListener {
 			 * will be negative.
 			 */
 			for (int i = 0, j = polygonPoints.length - 1; j >= 0; --j, ++i) {
-				Point temp = polygonPoints[i];
+				Vector2D temp = polygonPoints[i];
 				polygonPoints[i] = polygonPoints[j];
 				polygonPoints[j] = temp;
 			}	
@@ -69,12 +68,12 @@ public final class Polygon extends AtomicBody implements OnMovementListener {
 		
 		
 		short[] triangulationIndexes = PolygonUtils.triangulatePolygon(polygonPoints);
-		Point centroid = PolygonUtils.polygonCentroid(polygonPoints);
+		Vector2D centroid = PolygonUtils.polygonCentroid(polygonPoints);
 		
 		// Relocate polygon to fin centroid with point (0, 0)
-		for (Point p : polygonPoints) {
-			p.x -= centroid.x;
-			p.y -= centroid.y;
+		for (Vector2D p : polygonPoints) {
+			p.i -= centroid.i;
+			p.j -= centroid.j;
 		}
 		
 		mPoints = polygonPoints;
@@ -88,7 +87,7 @@ public final class Polygon extends AtomicBody implements OnMovementListener {
 	 * @return Polygon points
 	 * NOTE: THIS COULD NOT MATCH WITH points IN CONSTRUCTOR!!
 	 */
-	public Point[] getPoints() {
+	public Vector2D[] getPoints() {
 		return mPoints;
 	}
 
@@ -114,7 +113,7 @@ public final class Polygon extends AtomicBody implements OnMovementListener {
 	public void onMovement(Vector2D position, float rotation) {
 		if (mRender != null && mRender instanceof RenderPolygon)
 			((RenderPolygon) mRender).setPosition(
-					new Point(position.i, position.j), rotation);
+					new Vector2D(position.i, position.j), rotation);
 	}
 
 }

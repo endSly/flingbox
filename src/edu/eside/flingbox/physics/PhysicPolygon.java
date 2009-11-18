@@ -18,7 +18,6 @@
 
 package edu.eside.flingbox.physics;
 
-import edu.eside.flingbox.math.Point;
 import edu.eside.flingbox.math.PolygonUtils;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.collisions.Collider;
@@ -42,8 +41,8 @@ public class PhysicPolygon extends PhysicBody {
 	 * @param position Polygon's start position
 	 * @param listener Lister to be called when movement occurs
 	 */
-	public PhysicPolygon(final Point[] points, final float bodyMass, 
-			final Point position, final OnMovementListener listener) {
+	public PhysicPolygon(final Vector2D[] points, final float bodyMass, 
+			final Vector2D position, final OnMovementListener listener) {
 		super(bodyMass, position);
 		
 		final int pointsCount = points.length;
@@ -53,7 +52,7 @@ public class PhysicPolygon extends PhysicBody {
 		
 		// Stroes points into Vector array.
 		for (int i = 0; i < pointsCount; i++) {
-			polygonVectors[i] = new Vector2D(points[i].x, points[i].y);
+			polygonVectors[i] = new Vector2D(points[i].i, points[i].j);
 			rotatedPolygonContour[i] = new Vector2D(polygonVectors[i]);
 		}
 			
@@ -89,8 +88,8 @@ public class PhysicPolygon extends PhysicBody {
 	 * @param p point to check
 	 * @return true if is containded
 	 */
-	public boolean contains(Point p) {
-		return PolygonUtils.polygonConatinsPoint(mPolygonContour, new Point(p.x - mPosition.i, p.y - mPosition.j));
+	public boolean contains(Vector2D p) {
+		return PolygonUtils.polygonConatinsPoint(mPolygonContour, new Vector2D(p.i - mPosition.i, p.j - mPosition.j));
 	}
 	
 

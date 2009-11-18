@@ -38,12 +38,12 @@ public final class PolygonUtils {
 	 * @param epsilon	Max distance to ignore a point
 	 * @return			New array with optimized points
 	 */
-	public static Point[] douglasPeuckerReducer(final Point[] points, final float epsilon) {
+	public static Vector2D[] douglasPeuckerReducer(final Vector2D[] points, final float epsilon) {
 		final int pointsCount = points.length;
 		if (pointsCount < 4 || epsilon <= 0.0f)
 			return points;	// No reduction possible
 		
-		final ArrayList<Point> reducedPolygon = new ArrayList<Point>(pointsCount);
+		final ArrayList<Vector2D> reducedPolygon = new ArrayList<Vector2D>(pointsCount);
 		
 		reducedPolygon.add(points[0]);	// First point will not be include
 		// Call recursively to algorithm
@@ -51,14 +51,14 @@ public final class PolygonUtils {
 		if (points[0].distanceToPoint(points[pointsCount - 1]) > epsilon)
 			reducedPolygon.add(points[pointsCount - 1]); // Last point neither
 
-		return (Point[]) reducedPolygon.toArray(new Point[0]);
+		return (Vector2D[]) reducedPolygon.toArray(new Vector2D[0]);
 	}
 	
 	/**
 	 * Recursively Calculation of DouglasPeucker Algorithm
 	 */
-	private static void douglasPeucker(final Point[] points, final float epsilon, 
-			final int first, final int last, final ArrayList<Point> resultPoints) {
+	private static void douglasPeucker(final Vector2D[] points, final float epsilon, 
+			final int first, final int last, final ArrayList<Vector2D> resultPoints) {
 		
 		float maxDistance = 0.0f;
 		int maxDistanceIndex = 0;
@@ -96,17 +96,17 @@ public final class PolygonUtils {
 	 * @return			Will return n-2 group of 3 points, for n sides polygon
 	 * 					or null if not enough points
 	 */
-	public static short[] triangulatePolygon(final Point[] points) {
-		final int pointsCount = points.length;
-		if (pointsCount < 3)
+	public static short[] triangulatePolygon(final Vector2D[] Vector2Ds) {
+		final int Vector2DsCount = Vector2Ds.length;
+		if (Vector2DsCount < 3)
 			return null;
 		
-		// n-2 group of 3 points, for n sides polygon 
-		short[] triangules = new short[3 * (pointsCount - 2)];
-		boolean[] included = new boolean [pointsCount];
+		// n-2 group of 3 Vector2Ds, for n sides polygon 
+		short[] triangules = new short[3 * (Vector2DsCount - 2)];
+		boolean[] included = new boolean [Vector2DsCount];
 
 		// Call to recursive function witch will calculate triangulation
-		triangulatePolygon(points, triangules, included, pointsCount, 0);
+		triangulatePolygon(Vector2Ds, triangules, included, Vector2DsCount, 0);
 		
 		return triangules;
 	}
@@ -114,65 +114,65 @@ public final class PolygonUtils {
 	/**
 	 * Recursively compute triangulation
 	 */
-	private static void triangulatePolygon(final Point[] points, short[] indexes, 
-			boolean[] included, final int pointsCount, final int trianglesCount) {
-		int topPointIndex = 0;
-		float topPoint = Float.NEGATIVE_INFINITY;
+	private static void triangulatePolygon(final Vector2D[] Vector2Ds, short[] indexes, 
+			boolean[] included, final int Vector2DsCount, final int trianglesCount) {
+		int topVector2DIndex = 0;
+		float topVector2D = Float.NEGATIVE_INFINITY;
 		
-		// Find top point to find triangle
-		for (int i = 0; i < pointsCount; i++) {
-			// Find top point
-			if (!included[i] && (points[i].x > topPoint)) {
-				topPoint = points[i].x;
-				topPointIndex = i;
+		// Find top Vector2D to find triangle
+		for (int i = 0; i < Vector2DsCount; i++) {
+			// Find top Vector2D
+			if (!included[i] && (Vector2Ds[i].i > topVector2D)) {
+				topVector2D = Vector2Ds[i].i;
+				topVector2DIndex = i;
 			}
 		}
 		
-		// Exclude point for next iteration
-		included[topPointIndex] = true;
+		// Exclude Vector2D for next iteration
+		included[topVector2DIndex] = true;
 		
 		// Save triangle
-		int prevPoint = topPointIndex; // Find previous point
+		int prevVector2D = topVector2DIndex; // Find previous Vector2D
 		do {
-			if (--prevPoint < 0)
-				prevPoint = pointsCount - 1;
-		} while (included[prevPoint]);
+			if (--prevVector2D < 0)
+				prevVector2D = Vector2DsCount - 1;
+		} while (included[prevVector2D]);
 		
-		int nextPoint = topPointIndex; // Find next point
+		int nextVector2D = topVector2DIndex; // Find next Vector2D
 		do {
-			if (++nextPoint >= pointsCount)
-				nextPoint = 0;
-		} while (included[nextPoint]);
+			if (++nextVector2D >= Vector2DsCount)
+				nextVector2D = 0;
+		} while (included[nextVector2D]);
 		
 		// Store triangle
-		indexes[trianglesCount * 3] = (short)prevPoint;	// Store into array
-		indexes[trianglesCount * 3 + 1] = (short)topPointIndex;
-		indexes[trianglesCount * 3 + 2] = (short)nextPoint;
+		indexes[trianglesCount * 3] = (short)prevVector2D;	// Store into array
+		indexes[trianglesCount * 3 + 1] = (short)topVector2DIndex;
+		indexes[trianglesCount * 3 + 2] = (short)nextVector2D;
 
 		// If there are more triangles iterate one more time
-		if (trianglesCount < (pointsCount - 3))
-			triangulatePolygon(points, indexes, included, pointsCount, trianglesCount + 1);
+		if (trianglesCount < (Vector2DsCount - 3))
+			triangulatePolygon(Vector2Ds, indexes, included, Vector2DsCount, trianglesCount + 1);
 	}
 	
 	/**
-	 * Checks if a Point is contained by a polygon. It is bassed on 
+	 * Checks if a Vector2D is contained by a polygon. It is bassed on 
 	 * Winding number algorithm.
 	 * More info at {@link http://en.wikipedia.org/wiki/Winding_number}
 	 * 
-	 * @param polygon polygon's points
-	 * @param point point to be checked
+	 * @param polygon polygon's Vector2Ds
+	 * @param Vector2D Vector2D to be checked
 	 */
-	public static boolean polygonConatinsPoint(Vector2D[] polygon, Point point) {
-		final int pointsCount = polygon.length;
-		final float px = point.x, py = point.y;
+	public static boolean polygonConatinsPoint(Vector2D[] polygon, Vector2D Vector2D) {
+		final int Vector2DsCount = polygon.length;
+		final float px = Vector2D.i, py = Vector2D.j;
 		int c = 0;
-		for (int i = 0; i < pointsCount; i++) {
+		for (int i = 0; i < Vector2DsCount; i++) {
 			Vector2D v1 = polygon[i];
-			Vector2D v2 = polygon[(i + 1) % pointsCount] ;
+			Vector2D v2 = polygon[(i + 1) % Vector2DsCount] ;
 			if ((v1.j < py) && (v2.j > py)) {  
 				if (v1.i > px || v2.i > px)
 					c++;
-				// Check if point is at left or at rigth of the object
+				// Check if Vector2D is at left or at rigth of the object
 				//final float segmentAtX = ((v2.i - v1.i) / (v2.j - v1.j)) * (py - v1.j) + v1.i;
 				//if (segmentAtX > px) 
 				//	c++;
@@ -181,7 +181,7 @@ public final class PolygonUtils {
 			} else if ((v1.j > py) && (v2.j < py)) {
 				if (v1.i > px || v2.i > px)
 					c--;
-				// Check if point is at left or at rigth of the object
+				// Check if Vector2D is at left or at rigth of the object
 				//final float segmentAtX = ((v2.i - v1.i) / (v2.j - v1.j)) * (py - v1.j) + v1.i;
 				//if (segmentAtX > px) 
 				//	c--;
@@ -194,20 +194,20 @@ public final class PolygonUtils {
 	
 	/**
 	 * Computes area of polygon.
-	 * @param points Polygon's points
-	 * @return Polygon's area. if points are counter-clockwise the 
+	 * @param Vector2Ds Polygon's Vector2Ds
+	 * @return Polygon's area. if Vector2Ds are counter-clockwise the 
 	 * result will be positive, else it'll be negative
 	 */
-	public static float polygonArea(final Point[] points) {
-		final int lastPoint = points.length - 1;
+	public static float polygonArea(final Vector2D[] Vector2Ds) {
+		final int lastVector2D = Vector2Ds.length - 1;
 		
-		float area = points[lastPoint].x * points[0].y 
-			- points[0].x * points[lastPoint].y;
+		float area = Vector2Ds[lastVector2D].i * Vector2Ds[0].j 
+			- Vector2Ds[0].i * Vector2Ds[lastVector2D].j;
 		
-		for (int i = 0; i < lastPoint; i++) {
-			Point point = points[i];
-			Point nextPoint = points[i + 1];
-			area += point.x * nextPoint.y - nextPoint.x * point.y;
+		for (int i = 0; i < lastVector2D; i++) {
+			Vector2D Vector2D = Vector2Ds[i];
+			Vector2D nextVector2D = Vector2Ds[i + 1];
+			area += Vector2D.i * nextVector2D.j - nextVector2D.i * Vector2D.j;
 		}
 		return area / 2f;
 	}
@@ -215,49 +215,49 @@ public final class PolygonUtils {
 	/**
 	 * Computes polygon centroid
 	 * 
-	 * @param points Polygon's points
-	 * @return centroid point
+	 * @param Vector2Ds Polygon's Vector2Ds
+	 * @return centroid Vector2D
 	 */
-	public static Point polygonCentroid(final Point[] points) {
-		final int pointsCount = points.length;
+	public static Vector2D polygonCentroid(final Vector2D[] Vector2Ds) {
+		final int Vector2DsCount = Vector2Ds.length;
 		float cx = 0f, cy = 0f;
 		/*
 		float cnx = 0f, cny = 0f;
-		for (Point p : points) {
+		for (Vector2D p : Vector2Ds) {
 			cnx += p.x;
 			cny += p.y;
 		}
-		cnx /= pointsCount;
-		cny /= pointsCount;
+		cnx /= Vector2DsCount;
+		cny /= Vector2DsCount;
 		*/
 		
-		for (int i = 0; i < pointsCount; i++) {
-			float p0x = points[i].x, p1x = points[(i + 1) % pointsCount].x;
-			float p0y = points[i].y, p1y = points[(i + 1) % pointsCount].y;
+		for (int i = 0; i < Vector2DsCount; i++) {
+			float p0x = Vector2Ds[i].i, p1x = Vector2Ds[(i + 1) % Vector2DsCount].i;
+			float p0y = Vector2Ds[i].j, p1y = Vector2Ds[(i + 1) % Vector2DsCount].j;
 			final float k = (p0x * p1y - p1x * p0y);
 			cx += (p0x + p1x) * k;
 			cy += (p0y + p1y) * k;
 		}
-		final float d = 6f * polygonArea(points);
+		final float d = 6f * polygonArea(Vector2Ds);
 		cx /= d;
 		cy /= d;
 
-		return new Point(cx, cy);
+		return new Vector2D(cx, cy);
 	}
 	
 	
 	/**
 	 * Computes Polygon normals.  
 	 * 
-	 * @param contour Counterclockwise polygon points
+	 * @param contour Counterclockwise polygon Vector2Ds
 	 * @return Polygon's normals
 	 */
 	public static Vector2D[] computePolygonNormals(final Vector2D[] contour) {
-		final int pointsCount = contour.length;
-		Vector2D[] normals = new Vector2D[pointsCount];
+		final int Vector2DsCount = contour.length;
+		Vector2D[] normals = new Vector2D[Vector2DsCount];
 		
-		for (int i = 0; i < pointsCount; i++) {
-			final Vector2D p0 = contour[i], p1 = contour[i == pointsCount - 1 ? 0 : i ]; 
+		for (int i = 0; i < Vector2DsCount; i++) {
+			final Vector2D p0 = contour[i], p1 = contour[i == Vector2DsCount - 1 ? 0 : i ]; 
 			normals[i] = new Vector2D((p1.j - p0.j), (p0.i - p1.i));//.normalize();
 		}
 		
@@ -265,13 +265,13 @@ public final class PolygonUtils {
 	}
 	
 	/**
-	 * Computes minimum distance from line to point
+	 * Computes minimum distance from line to Vector2D
 	 */
-	private static float distanceFromLineToPoint(final Point p0, final Point p1, final Point p) {
-		float area = (p0.x * p1.y + p1.x * p.y + p.x * p0.y 
-				- p1.x * p0.y - p.x * p1.y - p0.x * p.y) / 2f;
-		float base = (float) Math.sqrt((p1.x - p0.x) * (p1.x - p0.x) 
-				+ (p1.y - p0.y) * (p1.y - p0.y));
+	private static float distanceFromLineToPoint(final Vector2D p0, final Vector2D p1, final Vector2D p) {
+		float area = (p0.i * p1.j + p1.i * p.j + p.i * p0.j 
+				- p1.i * p0.j - p.i * p1.j - p0.i * p.j) / 2f;
+		float base = (float) Math.sqrt((p1.i - p0.i) * (p1.i - p0.i) 
+				+ (p1.j - p0.j) * (p1.j - p0.j));
 		return (float) Math.abs(2f * area / base);
 	}
 	
