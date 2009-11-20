@@ -18,15 +18,25 @@
 
 package edu.eside.flingbox;
 
+import android.os.Bundle;
+
 public class Preferences {
 	public static float[] backgroundColor = new float[] {0.4f, 0.4f, 0.8f, 1.0f };
+	
 	
 	public static boolean useAcelerometerBasedGravity = true;
 	public static float gravity;
 	
+	private static final String KEY_DENSITY = "PREFERENCES_DENSITY";
 	public static float defaultDensity = 1.0f;
+	private static final String KEY_RESTIT_COEF = "PREFERENCES_RESTIT_COEF";
 	public static float defaultRestitutionCoeficient = 0.67f;
 	
+	private static final String KEY_DINAMIC_FRICTION = "PREFERENCES_DINAMIC_FRICTION";
+	public static float defaultDinamicFrictionCoeficient = 0.25f;
+	public static float defaultStaticFrictionCoeficient = 0.33f;
+	
+	/** Haptic feedback will be performed by Preferences */
 	public static long hapticFeedbackTime = 50;
 	public static boolean doHapticFeedback = true;
 	
@@ -35,12 +45,15 @@ public class Preferences {
 	 */
 	private Preferences() { }
 	
-	public void savePreferences() {
+	public void onSavePreferences() {
 		
 	}
 	
-	public void loadPreferences() {
+	public void onLoadPreferences(Bundle savedPreferences) {
+		defaultDensity = savedPreferences.getFloat(KEY_DENSITY);
+		defaultRestitutionCoeficient = savedPreferences.getFloat(KEY_RESTIT_COEF);
 		
+		defaultDinamicFrictionCoeficient = savedPreferences.getFloat(KEY_DINAMIC_FRICTION);
 	}
 	
 }

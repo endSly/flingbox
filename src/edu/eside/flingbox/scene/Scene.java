@@ -24,7 +24,7 @@ import java.io.IOException;
 import edu.eside.flingbox.ObjectSettingsDialog;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 import edu.eside.flingbox.math.Vector2D;
-import edu.eside.flingbox.objects.AtomicBody;
+import edu.eside.flingbox.objects.Body;
 
 import android.content.Context;
 import android.os.Environment;
@@ -33,7 +33,7 @@ import android.view.MotionEvent;
 
 public class Scene extends DrawableScene implements OnInputListener {
 	
-	private AtomicBody mSelectedBody = null;
+	private Body mSelectedBody = null;
 
 	/**
 	 * Default constructor for an scene
@@ -86,7 +86,7 @@ public class Scene extends DrawableScene implements OnInputListener {
 	public void onLongPress(MotionEvent e) {
 		if (mSelectedBody != null) {
 			mVibrator.vibrate(50); // vibrate as haptic feedback
-			ObjectSettingsDialog dialog = new ObjectSettingsDialog(mContext);
+			ObjectSettingsDialog dialog = new ObjectSettingsDialog(mContext, mSelectedBody);
 			dialog.show();
 			
 			mSelectedBody.fixObject();
@@ -100,7 +100,7 @@ public class Scene extends DrawableScene implements OnInputListener {
 		final float onDownY = mCamera.top - (e.getY() * mCamera.getHeight() / mDisplayHeight);
 		final Vector2D p = new Vector2D(onDownX, onDownY);
 		
-		for (AtomicBody object : mOnSceneBodys)
+		for (Body object : mOnSceneBodys)
 			if (object.getPhysics().contains(p)) {
 				mSelectedBody = object;
 				return true;
@@ -134,7 +134,7 @@ public class Scene extends DrawableScene implements OnInputListener {
 		
 	}
 	
-	public boolean onDragObject(MotionEvent e, AtomicBody o) {
+	public boolean onDragObject(MotionEvent e, Body o) {
 		
 		return false;
 	}

@@ -31,7 +31,7 @@ import edu.eside.flingbox.physics.PhysicBody.OnMovementListener;
  * a Polygonal Body
  *
  */
-public final class Polygon extends AtomicBody implements OnMovementListener {
+public final class Polygon extends Body implements OnMovementListener {
 	private final Vector2D[] mPoints;
 	private final short mPointsCount;
 

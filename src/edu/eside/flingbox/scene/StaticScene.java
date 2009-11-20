@@ -30,7 +30,7 @@ import edu.eside.flingbox.graphics.SceneRenderer;
 import edu.eside.flingbox.graphics.SceneRenderer.Camera;
 import edu.eside.flingbox.input.SceneGestureDetector;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
-import edu.eside.flingbox.objects.AtomicBody;
+import edu.eside.flingbox.objects.Body;
 import edu.eside.flingbox.physics.ScenePhysics;
 import edu.eside.flingbox.physics.gravity.GravitySource;
 
@@ -81,7 +81,7 @@ public class StaticScene implements OnInputListener {
 	protected final ScenePhysics mScenePhysics;
 	protected final SceneGestureDetector mGestureDetector;
 	
-	protected final ArrayList<AtomicBody> mOnSceneBodys;
+	protected final ArrayList<Body> mOnSceneBodys;
 	
 	protected final Context mContext;
 	
@@ -98,7 +98,7 @@ public class StaticScene implements OnInputListener {
 		}
 		
 		// Create list of objects.
-		mOnSceneBodys = new ArrayList<AtomicBody>();
+		mOnSceneBodys = new ArrayList<Body>();
 		mSceneRenderer = new SceneRenderer();
 		mScenePhysics = new ScenePhysics(gravity);
 		/*
@@ -115,7 +115,7 @@ public class StaticScene implements OnInputListener {
 		System.gc();	// This is a good moment to call to Garbage Collector.
 	}
 	
-	public void add(AtomicBody body) {
+	public void add(Body body) {
 		mOnSceneBodys.add(body);
 		mSceneRenderer.add(body.getRender());
 		mScenePhysics.add(body.getPhysics());

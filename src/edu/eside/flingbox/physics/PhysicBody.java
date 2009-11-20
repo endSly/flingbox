@@ -94,7 +94,9 @@ public abstract class PhysicBody {
 		mMass = bodyMass;
 		mRestitutionCoeficient = Preferences.defaultRestitutionCoeficient;
 		mDensity = Preferences.defaultDensity;
-		mPosition = new Vector2D(position.i, position.j);
+		mPosition = new Vector2D(position);
+		mDinamicFrictionCoeficient = Preferences.defaultDinamicFrictionCoeficient;
+		mStaticFrictionCoeficient = Preferences.defaultStaticFrictionCoeficient;
 	}
 	
 	/**
