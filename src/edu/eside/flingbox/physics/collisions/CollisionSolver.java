@@ -51,12 +51,14 @@ public class CollisionSolver {
 						: -velA.i * restit;
 						
 			final float normalModule = (vFinalA - velA.i) * mA / DIFFERENTIAL_TIME;
+			final float frictionModule = solveFrictions(bodyA, normalModule, velA.j);
 			
-			final Vector2D normal = new Vector2D(collisionSense).mul(normalModule);
+			final Vector2D normalForce = new Vector2D(collisionSense).mul(normalModule);
+			final Vector2D frictionForce = new Vector2D(collisionSense).mul(frictionModule);
+			
 			final Vector2D collisionRelativePoint = new Vector2D(bodyA.getPosition()).sub(collisionPosition);
 			
-			bodyA.applyForce(normal, collisionRelativePoint, DIFFERENTIAL_TIME);
-			solveFrictions(bodyA, normalModule, collision, collisionRelativePoint, velA);
+			bodyA.applyForce(normalForce.add(frictionForce), collisionRelativePoint, DIFFERENTIAL_TIME);
 		}
 		
 		if (!bodyB.isFixed()) { 
@@ -65,34 +67,38 @@ public class CollisionSolver {
 						: -velB.i * restit;
 						
 			final float normalModule = (vFinalB - velB.i) * mB / DIFFERENTIAL_TIME;
-			
-			final Vector2D normal = new Vector2D(collisionSense).mul(normalModule);
+			final float frictionModule = solveFrictions(bodyB, normalModule, velB.j);
+						
+			final Vector2D normalForce = new Vector2D(collisionSense).mul(normalModule);
+			final Vector2D frictionForce = new Vector2D(collisionSense).mul(frictionModule);
+						
 			final Vector2D collisionRelativePoint = new Vector2D(bodyB.getPosition()).sub(collisionPosition);
-			
-			bodyB.applyForce(normal, collisionRelativePoint, DIFFERENTIAL_TIME);
-			solveFrictions(bodyB, normalModule, collision, collisionRelativePoint, velB);
+						
+			bodyB.applyForce(normalForce.add(frictionForce), collisionRelativePoint, DIFFERENTIAL_TIME);
 		} 
 		
 	}
 	
-	private static void solveFrictions(final PhysicBody body, 
-			final float normal, final Collision collision, final Vector2D collidingPoint,
-			final Vector2D bodyProyectedVelocity) {
-		final float parallelVel = bodyProyectedVelocity.j;
+	/**
+	 * 
+	 * @param body
+	 * @param normal
+	 * @param bodyVelocity
+	 * @return
+	 */
+	private static float solveFrictions(PhysicBody body, float normal, float bodyVelocity) {
+		float staticFrictionForce = body.getStaticFrictionCoeficient() * normal;
 		
-		float frictionForce = body.getStaticFrictionCoeficient() * normal;
-		
-		final float currentVel = Math.abs(parallelVel) ;
-		final float frictionAppliedVel = Math.abs(frictionForce * DIFFERENTIAL_TIME / body.getBodyMass());
-		
-		if (currentVel < frictionAppliedVel) {
-			frictionForce = - parallelVel * body.getBodyMass() / DIFFERENTIAL_TIME;
-		} else
-			frictionForce = - body.getDinamicFrictionCoeficient() * normal;
-			
-		Vector2D forceToApply = collision.sense.normalVector().mul(frictionForce);
-		body.applyForce(forceToApply, collidingPoint, DIFFERENTIAL_TIME);
+		final float currentVel = Math.abs(bodyVelocity) ;
+		final float staticFrictionVelDiff = Math.abs(staticFrictionForce * DIFFERENTIAL_TIME / body.getBodyMass());
 
+		/* Check if friction makes too much forces */
+		if (currentVel < staticFrictionVelDiff) 
+			/* Friction force stops body */
+			return -Math.signum(currentVel) * bodyVelocity * body.getBodyMass() / DIFFERENTIAL_TIME;
+		else
+			/* Friction force can't stop body, and this is constant */
+			return -Math.signum(currentVel) * body.getDinamicFrictionCoeficient() * normal;
 	}
 	
 	/**
