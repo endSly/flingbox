@@ -60,21 +60,6 @@ public class Intersect {
 	}
 	
 	public static Intersect[] intersectPolygons(Vector2D[] polygonA, Vector2D[] polygonB) {
-		/* find smaller polygon */
-		Vector2D[] smallerPolygon, largerPolygon;
-		if (polygonA.length > polygonB.length) {
-			smallerPolygon = polygonA;
-			largerPolygon = polygonB;
-		} else {
-			smallerPolygon = polygonB;
-			largerPolygon = polygonA;
-		}
-		
-		/* Check if first point is inside the other polygon */
-		int firstSegment = 0, lastSegment = smallerPolygon.length - 1;
-		
-		if (PolygonUtils.polygonConatinsPoint(polygonB, polygonA[0])) {
-		}
 		
 		return null;
 	}

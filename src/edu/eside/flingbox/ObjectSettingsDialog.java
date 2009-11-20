@@ -18,15 +18,22 @@
 
 package edu.eside.flingbox;
 
+import edu.eside.flingbox.objects.AtomicBody;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.CheckBox;
 
 public class ObjectSettingsDialog extends Dialog implements OnClickListener {
 
-	Context mContext;
+	private Context mContext;
+	
+	protected AtomicBody mBody;
+	
+	private CheckBox mLocked;
 
 	public ObjectSettingsDialog(Context context) {
 		super(context);
@@ -43,12 +50,14 @@ public class ObjectSettingsDialog extends Dialog implements OnClickListener {
 
     	// Sets dialog title
 		setTitle(R.string.body_settings_name);
-
+		
+		mLocked = (CheckBox)findViewById(R.id.checkbox_lock_body);
+		mLocked.setOnClickListener(this);
     }
 
 	@Override
 	public void onClick(View v) {
-		
+
 		
 	}
 

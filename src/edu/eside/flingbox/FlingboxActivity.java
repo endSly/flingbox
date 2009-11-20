@@ -38,9 +38,11 @@ public class FlingboxActivity extends Activity {
 	// TODO Play and pause two menus separated
 	private final static int MENU_PLAY_PAUSE = 0;
 	private final static int MENU_PREFERENCES = 1;
+	private final static int MENU_HELP = 2;
 	
-	private final static int MENU_LOAD_SCENE = 10;
-	private final static int MENU_SAVE_SCENE = 11;
+	private final static int MENU_NEW_SCENE = 10;
+	private final static int MENU_LOAD_SCENE = 11;
+	private final static int MENU_SAVE_SCENE = 12;
 	
 	
 	private GLSurfaceView mSurface;
@@ -76,10 +78,16 @@ public class FlingboxActivity extends Activity {
         	.add(1, MENU_PREFERENCES, 1, R.string.preferences)
         	.setIcon(android.R.drawable.ic_menu_preferences);
         menu
-        	.add(10, MENU_LOAD_SCENE, 2, R.string.load_scene);
+    		.add(1, MENU_HELP, 3, R.string.help)
+    		.setIcon(android.R.drawable.ic_menu_help);
         menu
-        	.add(10, MENU_SAVE_SCENE, 3, R.string.save_scene)
+    		.add(10, MENU_NEW_SCENE, 4, R.string.new_scene);
+        menu
+        	.add(10, MENU_LOAD_SCENE, 5, R.string.load_scene);
+        menu
+        	.add(10, MENU_SAVE_SCENE, 6, R.string.save_scene)
         	.setIcon(android.R.drawable.ic_menu_save);
+        
         return true;
     }
     

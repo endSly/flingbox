@@ -1,7 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ListView
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:id="@+id/settings_list"
-  android:layout_width="wrap_content"
-  android:layout_height="wrap_content"/>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+	android:orientation="vertical" 
+	android:stretchColumns="0" 
+	android:layout_gravity="center_vertical|center_horizontal" 
+ 	android:layout_height="wrap_content" 
+	android:layout_width="wrap_content"> 
+
+	<!-- Lock Body -->
+	<TableRow> 
+		<TextView android:textColor="#ffffff" 
+			android:text="@string/body_settings_lock_body" 
+			android:textSize="16px" 
+			android:layout_marginLeft="6dip"/> 
+		<CheckBox android:id="@+id/checkbox_lock_body" 
+			android:layout_gravity="right|top" /> 
+	</TableRow> 
+     
+     <!-- Density -->
+	<TableRow> 
+		<TextView android:textColor="#ffffff" 
+			android:text="@string/body_settings_density" 
+			android:textSize="16px" 
+			android:layout_marginLeft="6dip"/>     
+	</TableRow> 
+	<SeekBar android:id="@+id/seek_bodys_density" 
+			android:layout_width="fill_parent" 
+			android:layout_height="wrap_content"
+			android:layout_gravity="right|top" 
+			android:layout_marginLeft="6dip"
+			android:layout_marginRight="6dip"/>     
+
+
+</TableLayout> 

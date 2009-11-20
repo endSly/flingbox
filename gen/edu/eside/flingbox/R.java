@@ -16,7 +16,9 @@ public final class R {
         public static final int text_stone=0x7f020002;
     }
     public static final class id {
-        public static final int settings_list=0x7f050000;
+        public static final int checkbox_lock_body=0x7f050000;
+        public static final int seek_bodys_density=0x7f050001;
+        public static final int settings_list=0x7f050002;
     }
     public static final class layout {
         public static final int body_settings=0x7f030000;
@@ -24,16 +26,18 @@ public final class R {
     }
     public static final class string {
         public static final int app_name=0x7f040000;
-        public static final int body_settings_density=0x7f040008;
-        public static final int body_settings_kinetic_friction=0x7f04000b;
-        public static final int body_settings_lock_body=0x7f040007;
-        public static final int body_settings_name=0x7f040006;
-        public static final int body_settings_restitution=0x7f040009;
-        public static final int body_settings_static_friction=0x7f04000a;
+        public static final int body_settings_density=0x7f04000a;
+        public static final int body_settings_kinetic_friction=0x7f04000d;
+        public static final int body_settings_lock_body=0x7f040009;
+        public static final int body_settings_name=0x7f040008;
+        public static final int body_settings_restitution=0x7f04000b;
+        public static final int body_settings_static_friction=0x7f04000c;
         public static final int end_simulation=0x7f040002;
-        public static final int load_scene=0x7f040003;
-        public static final int preferences=0x7f040005;
-        public static final int save_scene=0x7f040004;
+        public static final int help=0x7f040006;
+        public static final int load_scene=0x7f040004;
+        public static final int new_scene=0x7f040003;
+        public static final int preferences=0x7f040007;
+        public static final int save_scene=0x7f040005;
         public static final int simulate=0x7f040001;
     }
 }

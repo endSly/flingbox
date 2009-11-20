@@ -22,7 +22,9 @@ import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.PhysicBody;
 
 public class CollisionSolver {
-	
+	/**
+	 * Minimal time unit
+	 */
 	private final static float DIFFERENTIAL_TIME = 10.0f;
 	
 	/**
@@ -76,17 +78,21 @@ public class CollisionSolver {
 	private static void solveFrictions(final PhysicBody body, 
 			final float normal, final Collision collision, 
 			final Vector2D bodyProyectedVelocity) {
-		float parallelVel = bodyProyectedVelocity.j;
+		final float parallelVel = bodyProyectedVelocity.j;
 		
-		if (parallelVel == 0.0f) {
-			float frictionForce = - body.getStaticFrictionCoeficient() * normal;
-			Vector2D forceToApply = collision.sense.normalVector().mul(frictionForce);
-			body.applyForce(forceToApply, DIFFERENTIAL_TIME);
-		} else {
-			float frictionForce = - body.getDinamicFrictionCoeficient() * normal;
-			Vector2D forceToApply = collision.sense.normalVector().mul(frictionForce);
-			body.applyForce(forceToApply, DIFFERENTIAL_TIME);
-		}
+		float frictionForce = - body.getStaticFrictionCoeficient() * normal;
+		
+		final float currentVel = Math.abs(parallelVel) ;
+		final float frictionAppliedVel = Math.abs(frictionForce * (DIFFERENTIAL_TIME / 1000f) / body.getBodyMass());
+		
+		if (currentVel < frictionAppliedVel) {
+			frictionForce = - parallelVel * body.getBodyMass() / (DIFFERENTIAL_TIME / 1000f);
+		} else
+			frictionForce = body.getDinamicFrictionCoeficient() * normal;
+			
+		Vector2D forceToApply = collision.sense.normalVector().mul(frictionForce);
+		body.applyForce(forceToApply, DIFFERENTIAL_TIME);
+
 	}
 	
 	/**

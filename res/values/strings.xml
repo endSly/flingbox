@@ -4,12 +4,14 @@
 	
 <string name="simulate">Simulate</string>
 <string name="end_simulation">End simulation</string>
-<string name="load_scene">Load scene</string>
-<string name="save_scene">Save scene</string>
+<string name="new_scene">New Scene</string><string name="load_scene">Load scene</string>
+<string name="save_scene">Save scene</string><string name="help">Help</string>
 <string name="preferences">Preferences</string><string name="body_settings_name">Object Settings</string>
 <string name="body_settings_lock_body">Lock Body</string><string name="body_settings_density">Density</string>
 <string name="body_settings_restitution">Restitution Coeficient</string>
 
 <string name="body_settings_static_friction">Static Friction</string>
 <string name="body_settings_kinetic_friction">Kinetic Friction</string>
+
+
 </resources>
