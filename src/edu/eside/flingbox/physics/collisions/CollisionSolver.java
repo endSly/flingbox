@@ -56,7 +56,7 @@ public class CollisionSolver {
 			final Vector2D collisionRelativePoint = new Vector2D(bodyA.getPosition()).sub(collisionPosition);
 			
 			bodyA.applyForce(normal, collisionRelativePoint, DIFFERENTIAL_TIME);
-			solveFrictions(bodyA, normalModule, collision, velA);
+			solveFrictions(bodyA, normalModule, collision, collisionRelativePoint, velA);
 		}
 		
 		if (!bodyB.isFixed()) { 
@@ -70,28 +70,28 @@ public class CollisionSolver {
 			final Vector2D collisionRelativePoint = new Vector2D(bodyB.getPosition()).sub(collisionPosition);
 			
 			bodyB.applyForce(normal, collisionRelativePoint, DIFFERENTIAL_TIME);
-			solveFrictions(bodyB, normalModule, collision, velB);
+			solveFrictions(bodyB, normalModule, collision, collisionRelativePoint, velB);
 		} 
 		
 	}
 	
 	private static void solveFrictions(final PhysicBody body, 
-			final float normal, final Collision collision, 
+			final float normal, final Collision collision, final Vector2D collidingPoint,
 			final Vector2D bodyProyectedVelocity) {
 		final float parallelVel = bodyProyectedVelocity.j;
 		
-		float frictionForce = - body.getStaticFrictionCoeficient() * normal;
+		float frictionForce = body.getStaticFrictionCoeficient() * normal;
 		
 		final float currentVel = Math.abs(parallelVel) ;
 		final float frictionAppliedVel = Math.abs(frictionForce * (DIFFERENTIAL_TIME / 1000f) / body.getBodyMass());
 		
 		if (currentVel < frictionAppliedVel) {
-			frictionForce = - parallelVel * body.getBodyMass() / (DIFFERENTIAL_TIME / 1000f);
+			frictionForce = parallelVel * body.getBodyMass() / (DIFFERENTIAL_TIME / 1000f);
 		} else
 			frictionForce = body.getDinamicFrictionCoeficient() * normal;
 			
 		Vector2D forceToApply = collision.sense.normalVector().mul(frictionForce);
-		body.applyForce(forceToApply, DIFFERENTIAL_TIME);
+		body.applyForce(forceToApply, collidingPoint, DIFFERENTIAL_TIME);
 
 	}
 	

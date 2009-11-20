@@ -59,9 +59,9 @@ public abstract class PhysicBody {
 	/** body's mass by square unit */
 	protected float mDensity;
 	/** friction to be applied when body is moving */
-	protected float mDinamicFrictionCoeficient = 0.25f;
+	protected float mDinamicFrictionCoeficient;
 	/** friction to be applied when body isn's moving */
-	protected float mStaticFrictionCoeficient = 0.33f;
+	protected float mStaticFrictionCoeficient;
 	
 	/** Object's current position */
 	protected final Vector2D mPosition;

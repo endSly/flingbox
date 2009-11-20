@@ -21,7 +21,7 @@ package edu.eside.flingbox.scene;
 import java.io.File;
 import java.io.IOException;
 
-import edu.eside.flingbox.ObjectSettingsDialog;
+import edu.eside.flingbox.BodySettingsDialog;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.objects.Body;
@@ -86,7 +86,7 @@ public class Scene extends DrawableScene implements OnInputListener {
 	public void onLongPress(MotionEvent e) {
 		if (mSelectedBody != null) {
 			mVibrator.vibrate(50); // vibrate as haptic feedback
-			ObjectSettingsDialog dialog = new ObjectSettingsDialog(mContext, mSelectedBody);
+			BodySettingsDialog dialog = new BodySettingsDialog(mContext, mSelectedBody);
 			dialog.show();
 			
 			mSelectedBody.fixObject();
