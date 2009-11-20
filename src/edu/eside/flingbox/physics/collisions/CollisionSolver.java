@@ -25,7 +25,7 @@ public class CollisionSolver {
 	/**
 	 * Minimal time unit
 	 */
-	private final static float DIFFERENTIAL_TIME = 10.0f;
+	private final static float DIFFERENTIAL_TIME = 10f / 1000f;
 	
 	/**
 	 * Computes collisions efects to body's
@@ -50,7 +50,7 @@ public class CollisionSolver {
 						? ((1 + restit) * mB * velB.i + velA.i * (mA + restit * mB)) / (mA + mB)
 						: -velA.i * restit;
 						
-			final float normalModule = (vFinalA - velA.i) * mA * 1000  / DIFFERENTIAL_TIME;
+			final float normalModule = (vFinalA - velA.i) * mA / DIFFERENTIAL_TIME;
 			
 			final Vector2D normal = new Vector2D(collisionSense).mul(normalModule);
 			final Vector2D collisionRelativePoint = new Vector2D(bodyA.getPosition()).sub(collisionPosition);
@@ -64,7 +64,7 @@ public class CollisionSolver {
 						? ((1 + restit) * mA * velA.i + velB.i * (mB + restit * mA)) / (mA + mB)
 						: -velB.i * restit;
 						
-			final float normalModule = (vFinalB - velB.i) * mB * 1000  / DIFFERENTIAL_TIME;
+			final float normalModule = (vFinalB - velB.i) * mB / DIFFERENTIAL_TIME;
 			
 			final Vector2D normal = new Vector2D(collisionSense).mul(normalModule);
 			final Vector2D collisionRelativePoint = new Vector2D(bodyB.getPosition()).sub(collisionPosition);
@@ -83,12 +83,12 @@ public class CollisionSolver {
 		float frictionForce = body.getStaticFrictionCoeficient() * normal;
 		
 		final float currentVel = Math.abs(parallelVel) ;
-		final float frictionAppliedVel = Math.abs(frictionForce * (DIFFERENTIAL_TIME / 1000f) / body.getBodyMass());
+		final float frictionAppliedVel = Math.abs(frictionForce * DIFFERENTIAL_TIME / body.getBodyMass());
 		
 		if (currentVel < frictionAppliedVel) {
-			frictionForce = parallelVel * body.getBodyMass() / (DIFFERENTIAL_TIME / 1000f);
+			frictionForce = - parallelVel * body.getBodyMass() / DIFFERENTIAL_TIME;
 		} else
-			frictionForce = body.getDinamicFrictionCoeficient() * normal;
+			frictionForce = - body.getDinamicFrictionCoeficient() * normal;
 			
 		Vector2D forceToApply = collision.sense.normalVector().mul(frictionForce);
 		body.applyForce(forceToApply, collidingPoint, DIFFERENTIAL_TIME);

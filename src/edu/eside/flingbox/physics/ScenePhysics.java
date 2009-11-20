@@ -151,8 +151,8 @@ public class ScenePhysics implements Runnable {
 			for (int i = bodys.size() - 1; i >= 0; i--) {
 				// Apply gravity
 				bodys.get(i).applyForce(new Vector2D(mGravity).mul(bodys.get(i).getBodyMass()),
-						time);
-				bodys.get(i).onUpdateBody(time);
+						(float) time / 1000f);
+				bodys.get(i).onUpdateBody((float) time / 1000f);
 			}
 			mCollider.checkCollisions();
 			try {

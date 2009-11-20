@@ -98,17 +98,13 @@ public class PhysicPolygon extends PhysicBody {
 		if (!mIsEnabled)
 			return;
 		
-		if (mIsMoveable) {
+		if (mIsMoveable) 
 			// Sets velocity and position
-			mVelocity.add((new Vector2D(force)).mul((dt / 1000f) / mMass));
-			//mPosition.add((new Vector2D(mVelocity)).mul(dt / 1000f));
-		}
+			mVelocity.add((new Vector2D(force)).mul(dt / mMass));
 		
-		if (mIsRotable) {
+		if (mIsRotable) 
 			// Sets angular velocity and rotation
-			mAngularVelocity += force.crossProduct(applicationPoint) * (dt / 1000f) / mAngularMass;
-			//mAngle += mAngularVelocity * dt / 1000f;
-		}
+			mAngularVelocity += force.crossProduct(applicationPoint) * dt / mAngularMass;
 		
 	}
 
@@ -119,8 +115,8 @@ public class PhysicPolygon extends PhysicBody {
 		
 		if (mIsMoveable) {
 			// Sets velocity and position
-			mVelocity.add((new Vector2D(force)).mul((dt / 1000f) / mMass));
-			mPosition.add((new Vector2D(mVelocity)).mul(dt / 1000f));
+			mVelocity.add((new Vector2D(force)).mul(dt / mMass));
+			//mPosition.add((new Vector2D(mVelocity)).mul(dt));
 		}
 	}
 	
@@ -128,8 +124,8 @@ public class PhysicPolygon extends PhysicBody {
 	 * Called when object has been updated
 	 */
 	public synchronized void onUpdateBody(float time) {
-		mPosition.add((new Vector2D(mVelocity)).mul(time / 1000f));
-		mAngle += mAngularVelocity * time / 1000f;
+		mPosition.add((new Vector2D(mVelocity)).mul(time));
+		mAngle += mAngularVelocity * time;
 
 		mCollider.onMovement(mPosition, mAngle);
 		mListener.onMovement(mPosition, mAngle);
