@@ -27,6 +27,9 @@ public class Preferences {
 	public static float defaultDensity = 1.0f;
 	public static float defaultRestitutionCoeficient = 0.67f;
 	
+	public static long hapticFeedbackTime = 50;
+	public static boolean doHapticFeedback = true;
+	
 	/**
 	 * Preferences can't be created. It's static
 	 */

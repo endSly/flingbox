@@ -20,18 +20,32 @@ package edu.eside.flingbox.math;
 
 /**
  * Handles functions to compute and storage intersections between 
- * two or more Vectors.
+ * two traces.
  *
  */
 public class Intersect {
 	
 	// Stores point of the intersection
+	/**
+	 * @deprecated
+	 */
 	public final Vector2D intersectionPoint;
 	
 	// Stores first point of segments that intersect
+	/**
+	 * @deprecated
+	 */
 	public Vector2D intersectionASegment;
+	/**
+	 * @deprecated
+	 */
 	public Vector2D intersectionBSegment;
 	
+	public Vector2D[] intersectionContour; 
+	
+	/**
+	 * @deprecated
+	 */
 	public boolean isIngoingIntersection;
 	
 	/**
@@ -43,6 +57,46 @@ public class Intersect {
 	 */
 	private Intersect(Vector2D collisionPoint) {
 		this.intersectionPoint = collisionPoint;
+	}
+	
+	public static Intersect[] intersectPolygons(Vector2D[] polygonA, Vector2D[] polygonB) {
+		/* find smaller polygon */
+		Vector2D[] smallerPolygon, largerPolygon;
+		if (polygonA.length > polygonB.length) {
+			smallerPolygon = polygonA;
+			largerPolygon = polygonB;
+		} else {
+			smallerPolygon = polygonB;
+			largerPolygon = polygonA;
+		}
+		
+		/* Check if first point is inside the other polygon */
+		int firstSegment = 0, lastSegment = smallerPolygon.length - 1;
+		
+		if (PolygonUtils.polygonConatinsPoint(polygonB, polygonA[0])) {
+		}
+		
+		return null;
+	}
+	
+	private static Vector2D computeIntersectionOfSegments(Vector2D segA0, Vector2D segA1, 
+			Vector2D segB0, Vector2D segB1) {
+		// Get components to local variables. Just for performance
+		final float a0x = segA0.i, a0y = segA0.j, a1x = segA1.i, a1y = segA1.j, 
+			b0x = segB0.i, b0y = segB0.j, b1x = segB1.i, b1y = segB1.j;
+		
+		final float d = (b1y - b0y) * (a1x - a0x) - (b1x - b0x) * (a1y - a0y);
+		
+		if (d == 0.0f)
+			return null;	// Parallel lines
+		
+		final float uA = ((b1x - b0x) * (a0y - b0y) - (b1y - b0y) * (a0x - b0x)) / d;
+		final float uB = ((a1x - a0x) * (a0y - b0y) - (a1y - a0y) * (a0x - b0x)) / d;
+
+		if (uA < 0 || uA > 1 || uB < 0 || uB > 1) 
+			return null; 	// lines can't intersect
+		
+		return new Vector2D(a0x + uA * (a1x - a0x), a0y + uA * (a1y - a0y));
 	}
 	
 	/**
@@ -80,6 +134,7 @@ public class Intersect {
 		
 		return intersect;
 	}
+	
 	/**
 	 * Computes intersection between two traces.
 	 * TODO: this migth crash if there are more intersections than segments. yes,

@@ -79,11 +79,13 @@ public class CollisionSolver {
 		float parallelVel = bodyProyectedVelocity.j;
 		
 		if (parallelVel == 0.0f) {
-			float FrictionCoef = body.getStaticFrictionCoeficient();
-			
+			float frictionForce = - body.getStaticFrictionCoeficient() * normal;
+			Vector2D forceToApply = collision.sense.normalVector().mul(frictionForce);
+			body.applyForce(forceToApply, DIFFERENTIAL_TIME);
 		} else {
-			float FrictionCoef = body.getDinamicFrictionCoeficient();
-			
+			float frictionForce = - body.getDinamicFrictionCoeficient() * normal;
+			Vector2D forceToApply = collision.sense.normalVector().mul(frictionForce);
+			body.applyForce(forceToApply, DIFFERENTIAL_TIME);
 		}
 	}
 	
