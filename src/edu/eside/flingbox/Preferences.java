@@ -32,8 +32,8 @@ public class Preferences {
 	private static final String KEY_RESTIT_COEF = "PREFERENCES_RESTIT_COEF";
 	public static float defaultRestitutionCoeficient = 0.67f;
 	
-	private static final String KEY_DINAMIC_FRICTION = "PREFERENCES_DINAMIC_FRICTION";
-	public static float defaultDinamicFrictionCoeficient = 0.25f;
+	private static final String KEY_DYNAMIC_FRICTION = "PREFERENCES_DYNAMIC_FRICTION";
+	public static float defaultDynamicFrictionCoeficient = 0.25f;
 	public static float defaultStaticFrictionCoeficient = 0.33f;
 	
 	/** Haptic feedback will be performed by Preferences */
@@ -53,7 +53,7 @@ public class Preferences {
 		defaultDensity = savedPreferences.getFloat(KEY_DENSITY);
 		defaultRestitutionCoeficient = savedPreferences.getFloat(KEY_RESTIT_COEF);
 		
-		defaultDinamicFrictionCoeficient = savedPreferences.getFloat(KEY_DINAMIC_FRICTION);
+		defaultDynamicFrictionCoeficient = savedPreferences.getFloat(KEY_DYNAMIC_FRICTION);
 	}
 	
 }

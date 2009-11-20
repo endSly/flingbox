@@ -59,7 +59,7 @@ public abstract class PhysicBody {
 	/** body's mass by square unit */
 	protected float mDensity;
 	/** friction to be applied when body is moving */
-	protected float mDinamicFrictionCoeficient;
+	protected float mDynamicFrictionCoeficient;
 	/** friction to be applied when body isn's moving */
 	protected float mStaticFrictionCoeficient;
 	
@@ -95,7 +95,7 @@ public abstract class PhysicBody {
 		mRestitutionCoeficient = Preferences.defaultRestitutionCoeficient;
 		mDensity = Preferences.defaultDensity;
 		mPosition = new Vector2D(position);
-		mDinamicFrictionCoeficient = Preferences.defaultDinamicFrictionCoeficient;
+		mDynamicFrictionCoeficient = Preferences.defaultDynamicFrictionCoeficient;
 		mStaticFrictionCoeficient = Preferences.defaultStaticFrictionCoeficient;
 	}
 	
@@ -182,12 +182,12 @@ public abstract class PhysicBody {
 		return mAngularMass;
 	}
 	
-	public float getDinamicFrictionCoeficient() {
-		return mDinamicFrictionCoeficient;
+	public float getDynamicFrictionCoeficient() {
+		return mDynamicFrictionCoeficient;
 	}
 	
-	public void setDinamicFrictionCoeficient(float f) {
-		mDinamicFrictionCoeficient = f;
+	public void setDynamicFrictionCoeficient(float f) {
+		mDynamicFrictionCoeficient = f;
 	}
 	
 	public float getStaticFrictionCoeficient() {
