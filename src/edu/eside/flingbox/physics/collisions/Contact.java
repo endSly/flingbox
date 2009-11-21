@@ -20,15 +20,18 @@ package edu.eside.flingbox.physics.collisions;
 
 import edu.eside.flingbox.math.Intersect;
 import edu.eside.flingbox.math.Vector2D;
-import edu.eside.flingbox.objects.Body;
+import edu.eside.flingbox.physics.PhysicBody;
 
 /**
- * Class to handle collision.
+ * Class to handle contact description.
  */
-public final class Contact {
-	
-	public Intersect intersection;
-	public Body[] bodysInContact;
+public class Contact {
+	/** Description of intersection */
+	public Intersect intersect;
+	/** First body in contact */
+	public PhysicBody bodyInContactA;
+	/** Second body in contact */
+	public PhysicBody bodyInContactB;
 	
 	/** Collision's absolute position */
 	public final Vector2D position;
@@ -37,19 +40,29 @@ public final class Contact {
 	/** Collision's normal. This is a normalized vector */
 	public final Vector2D normal;
 	
-	public final Vector2D[] intersectionContour;
+	
+	public Contact(PhysicBody bodyA, PhysicBody bodyB, Intersect intersect) {
+		this.intersect = intersect;
+		this.bodyInContactA = bodyA;
+		this.bodyInContactB = bodyB;
+		this.position = new Vector2D(intersect.ingoingPoint)
+			.add(intersect.outgoingPoint).mul(0.5f);
+		this.normal = new Vector2D(intersect.outgoingPoint)
+			.sub(intersect.ingoingPoint).normalize();
+		this.sense = Vector2D.normalVector(normal);
+	}
 	
 	/**
 	 * Default constructor for a collision
 	 * 
 	 * @param position relative position
 	 * @param sense collisio's sense
+	 * @deprecated
 	 */
 	public Contact(Vector2D position, Vector2D sense) {
 		this.position = new Vector2D(position);
 		this.sense = new Vector2D(sense).normalize();
 		this.normal = Vector2D.normalVector(this.sense);
-		this.intersectionContour = null;
 	}
 	
 }

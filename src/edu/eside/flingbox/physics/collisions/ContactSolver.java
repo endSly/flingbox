@@ -81,6 +81,10 @@ public class ContactSolver {
 		
 	}
 	
+	private static float computeCollisionForce() {
+		return 0f;
+	}
+	
 	
 	/**
 	 * Computes friction force's module for a given contact normal.
