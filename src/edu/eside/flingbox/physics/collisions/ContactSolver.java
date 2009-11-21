@@ -21,11 +21,13 @@ package edu.eside.flingbox.physics.collisions;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.PhysicBody;
 
-public class CollisionSolver {
+public class ContactSolver {
 	/**
 	 * Minimal time unit
 	 */
 	private final static float DIFFERENTIAL_TIME = 10f / 1000f;
+	
+	private ContactSolver() { } 
 	
 	/**
 	 * Computes collisions efects to body's
@@ -34,7 +36,7 @@ public class CollisionSolver {
 	 * @param bodyA first colliding body
 	 * @param bodyB second colliding body
 	 */
-	public static void solveCollision(final Collision collision, final PhysicBody bodyA, final PhysicBody bodyB) {
+	public static void solveContact(final Collision collision, final PhysicBody bodyA, final PhysicBody bodyB) {
 		final Vector2D collisionSense = collision.sense;
 		final Vector2D collisionPosition = collision.position;
 		
