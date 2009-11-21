@@ -56,13 +56,13 @@ public class BodySettingsDialog extends Dialog implements OnClickListener {
 		
 		mLockBodyCheckbox = (CheckBox)findViewById(R.id.checkbox_lock_body);
 		mLockBodyCheckbox.setOnClickListener(this);
+		mLockBodyCheckbox.setChecked(mBody.getPhysics().isFixed());
     }
 
 	@Override
 	public void onClick(View v) {
-		if (v == mLockBodyCheckbox) {
-			
-		}
+		if (v == mLockBodyCheckbox) 
+			mBody.getPhysics().setBodyFixed(mLockBodyCheckbox.isChecked());
 		
 	}
 

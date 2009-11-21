@@ -135,6 +135,7 @@ public class CollisionSolver {
 		final Vector2D totalVelocity = velocityByAngularRotation.add(body.getVelocity()); 
 		// Discompose into components
 		float velAgainstCollision = 0f;
+		// Check if body moving away
 		if (totalVelocity.dotProduct(relativeCollisionPoint) > 0)
 			velAgainstCollision = totalVelocity.dotProduct(collisionSense);
 		

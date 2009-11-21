@@ -82,7 +82,8 @@ public class FlingboxActivity extends Activity {
     		.add(1, MENU_HELP, 3, R.string.help)
     		.setIcon(android.R.drawable.ic_menu_help);
         menu
-    		.add(10, MENU_NEW_SCENE, 4, R.string.new_scene);
+    		.add(10, MENU_NEW_SCENE, 4, R.string.new_scene)
+    		.setIcon(this.getResources().getDrawable(R.drawable.ic_menu_globe));
         menu
         	.add(10, MENU_LOAD_SCENE, 5, R.string.load_scene);
         menu

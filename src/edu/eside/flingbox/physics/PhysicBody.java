@@ -56,8 +56,7 @@ public abstract class PhysicBody {
 	 * of velocities before and after an impact */
 	protected float mRestitutionCoeficient;
 	
-	/** body's mass by square unit */
-	protected float mDensity;
+	
 	/** friction to be applied when body is moving */
 	protected float mDynamicFrictionCoeficient;
 	/** friction to be applied when body isn's moving */
@@ -68,6 +67,10 @@ public abstract class PhysicBody {
 	/** Object's current rotated angle */
 	protected float mAngle = 0f;
 	
+	/** body's mass by square unit */
+	protected float mDensity;
+	/** body's volume */
+	protected final float mVolume;
 	/** Body's mass */
 	protected float mMass;
 	/** Body's angular mass */
@@ -90,13 +93,15 @@ public abstract class PhysicBody {
 	 * @param bodyMass body's mass
 	 * @param position body's position
 	 */
-	protected PhysicBody(final float bodyMass, final Vector2D position) {
-		mMass = bodyMass;
+	protected PhysicBody(final float bodyVolume, final Vector2D position) {
+		mVolume = bodyVolume;
 		mRestitutionCoeficient = Preferences.defaultRestitutionCoeficient;
 		mDensity = Preferences.defaultDensity;
 		mPosition = new Vector2D(position);
 		mDynamicFrictionCoeficient = Preferences.defaultDynamicFrictionCoeficient;
 		mStaticFrictionCoeficient = Preferences.defaultStaticFrictionCoeficient;
+		
+		mMass = bodyVolume * mDensity;
 	}
 	
 	/**
@@ -133,24 +138,17 @@ public abstract class PhysicBody {
 	}
 	
 	/** Fixs body, making imposible to move  */
-	public void setBodyFixed() {
-		mIsMoveable = false;
-		mIsRotable = false;
+	public void setBodyFixed(boolean fixed) {
+		mIsMoveable = !fixed;
+		mIsRotable = !fixed;
+
+		if (fixed) {
+			// Stop current object
+			mVelocity.set(0f, 0f);
+			mAngularVelocity = 0f;
+			//This will make object fixed
+		} 
 		
-		// Stop current object
-		mVelocity.set(0f, 0f);
-		mAngularVelocity = 0f;
-		
-		//This will make object fixed
-		mMass = INFINITE_MASS;
-		mAngularMass = INFINITE_ANGULAR_MASS;
-		
-	}
-	
-	/** Body can be moved  */
-	public void setBodyMoveable() {
-		mIsMoveable = true;
-		mIsRotable = true;
 	}
 	
 	/** @return true if body can is fixed */

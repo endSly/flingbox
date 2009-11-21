@@ -67,11 +67,5 @@ public abstract class Body {
 	public PhysicBody getPhysics() {
 		return mPhysics;
 	}
-	
-	/**
-	 * Fixes object into scene.
-	 */
-	public void fixObject() {
-		mPhysics.setBodyFixed();
-	}
+
 }
