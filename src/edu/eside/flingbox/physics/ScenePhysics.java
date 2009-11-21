@@ -39,7 +39,7 @@ public class ScenePhysics implements Runnable {
 	private final SceneCollider mCollider;
 
 	// Thread for simulation
-	private final Thread mSimulationThread;
+	private Thread mSimulationThread;
 	// Flags for Stopping simulation
 	private boolean mDoKill = false;
 	private boolean mIsSimulating = false;
@@ -50,7 +50,6 @@ public class ScenePhysics implements Runnable {
 	public ScenePhysics(GravitySource gravity) {
 		mOnSceneBodys = new ArrayList<PhysicBody>();
 		mCollider = new SceneCollider();
-		mSimulationThread = new Thread(this);
 		mGravity = gravity;
 	}
 	
@@ -61,7 +60,6 @@ public class ScenePhysics implements Runnable {
 	public ScenePhysics(GravitySource gravity, PhysicBody object) {
 		mOnSceneBodys = new ArrayList<PhysicBody>();
 		mCollider = new SceneCollider();
-		mSimulationThread = new Thread(this);
 		mGravity = gravity;
 		mOnSceneBodys.add(object);
 		mCollider.add(object.getCollider());
@@ -74,7 +72,7 @@ public class ScenePhysics implements Runnable {
 	public ScenePhysics(GravitySource gravity, PhysicBody[] objects) {
 		mOnSceneBodys = new ArrayList<PhysicBody>();
 		mCollider = new SceneCollider();
-		mSimulationThread = new Thread(this);
+		
 		mGravity = gravity;
 		for (PhysicBody object : objects) {
 			mOnSceneBodys.add(object);
@@ -107,6 +105,7 @@ public class ScenePhysics implements Runnable {
 	 */
 	public void startSimulation() {
 		System.gc();
+		mSimulationThread = new Thread(this);
 
 		mDoKill = false;
 		if (mIsSimulating) 
@@ -125,8 +124,9 @@ public class ScenePhysics implements Runnable {
 		mDoKill = true;
 		
 		System.gc(); // Good moment to call to GC
-		
 		while (mIsSimulating) { }	// Wait until thread ends.
+		
+		mSimulationThread = null;
 	}
 	
 	/**
@@ -159,6 +159,7 @@ public class ScenePhysics implements Runnable {
 			/* Last update body */
 			for (PhysicBody body : bodys)
 				body.onUpdateBody((float) time / 1000f);
+			
 			try {
 				if (time < 20)
 					Thread.sleep(20 - time);

@@ -140,9 +140,11 @@ public class Scene extends DrawableScene implements OnInputListener {
 	@Override
 	public boolean onTrackballEvent(MotionEvent ev) {
 		boolean handled = false;
-		if (ev.getAction() == MotionEvent.ACTION_DOWN) {
-			handled |= startSimulation();
-		}
+		if (ev.getAction() == MotionEvent.ACTION_DOWN) 
+			if (mScenePhysics.isSimulating())
+				handled |= stopSimulation();
+			else
+				handled |= startSimulation();
 			
 		return handled ? true : super.onTrackballEvent(ev);
 	}
