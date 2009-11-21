@@ -29,13 +29,12 @@ public class SceneCollider {
 	
 	public SceneCollider(Collider collider) {
 		mInCollisionObjects = new ArrayList<Collider>();
-		mInCollisionObjects.add(collider);
+		this.add(collider);
 	}
 	
 	public SceneCollider(Collider[] colliders) {
 		mInCollisionObjects = new ArrayList<Collider>();
-		for (Collider c : colliders)
-			mInCollisionObjects.add(c);
+		this.add(colliders);
 	}
 	
 	public void add(Collider collider) {

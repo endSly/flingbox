@@ -63,8 +63,7 @@ public class ScenePhysics implements Runnable {
 		mCollider = new SceneCollider();
 		mSimulationThread = new Thread(this);
 		mGravity = gravity;
-		mOnSceneBodys.add(object);
-		mCollider.add(object.getCollider());
+		this.add(object);
 	}
 	
 	/**
@@ -76,10 +75,7 @@ public class ScenePhysics implements Runnable {
 		mCollider = new SceneCollider();
 		mSimulationThread = new Thread(this);
 		mGravity = gravity;
-		for (PhysicBody object : objects) {
-			mOnSceneBodys.add(object);
-			mCollider.add(object.getCollider());
-		}
+		this.add(objects);
 	}
 	
 	/**
