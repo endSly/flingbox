@@ -43,7 +43,7 @@ public final class Collision {
 	public Collision(Vector2D position, Vector2D sense) {
 		this.position = new Vector2D(position);
 		this.sense = new Vector2D(sense).normalize();
-		this.normal = this.sense.normalVector();
+		this.normal = Vector2D.normalVector(this.sense);
 		this.intersectionContour = null;
 	}
 	

@@ -80,7 +80,7 @@ public class Vector2D {
 	 * @return 	Length of vector
 	 */
 	public float length() {
-		return (float) Math.sqrt((i * i) + (j * j));
+		return (float) Math.sqrt((this.i * this.i) + (this.j * this.j));
 	}
 	
 	/**
@@ -165,10 +165,10 @@ public class Vector2D {
 	 * @param m	Matrix
 	 * @return	New vector with result
 	 */
-	public Vector2D mul(Matrix22 m) {
+	public static Vector2D mul(Vector2D v, Matrix22 m) {
 		return new Vector2D(
-				this.i * m.values[0] + this.j * m.values[1],
-				this.i * m.values[2] + this.j * m.values[3]);
+				v.i * m.values[0] + v.j * m.values[1],
+				v.i * m.values[2] + v.j * m.values[3]);
 	}
 	
 	/**
@@ -188,8 +188,8 @@ public class Vector2D {
 	 * 
 	 * @return New vector with the normal.
 	 */
-	public Vector2D normalVector() {
-		return new Vector2D(-this.j, this.i);
+	public static Vector2D normalVector(Vector2D v) {
+		return new Vector2D(-v.j, v.i);
 	}
 	
 	/**

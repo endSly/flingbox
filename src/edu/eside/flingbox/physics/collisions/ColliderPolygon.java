@@ -95,7 +95,7 @@ public class ColliderPolygon extends Collider implements OnMovementListener {
 		final Matrix22 rotationMatrix = Matrix22.rotationMatrix(angle);
 		
 		for (int i = pointsCount - 1; i >= 0; i--) 
-			locatedPolygon[i] = polygon[i].mul(rotationMatrix).add(position);
+			locatedPolygon[i] = Vector2D.mul(polygon[i], rotationMatrix).add(position);
 		
 		return locatedPolygon;
 	}
@@ -131,8 +131,8 @@ public class ColliderPolygon extends Collider implements OnMovementListener {
 				outgoingIntersect = intersections[i + 1].intersectionPoint;
 			
 			Vector2D sense = new Vector2D(outgoingIntersect)
-				.sub(ingoingIntersect)
-				.normalVector();
+				.sub(ingoingIntersect);
+			sense = Vector2D.normalVector(sense);
 			
 			Vector2D collisonPosition = new Vector2D(ingoingIntersect)
 				.add(outgoingIntersect)

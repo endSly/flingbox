@@ -79,6 +79,7 @@ public class CollisionSolver {
 		
 	}
 	
+	
 	/**
 	 * Computes friction force's module for a given collision normal.
 	 * Friction can be static or dynamic, when body's velocity is not enough to exceed
@@ -122,8 +123,7 @@ public class CollisionSolver {
 		 */
 		final Vector2D relativeCollisionPoint = new Vector2D(collision.position).sub(body.getPosition());
 		final Vector2D velocityByAngularRotation = 
-			relativeCollisionPoint
-			.normalVector() // This returns new Vector2D, so don't copy
+			Vector2D.normalVector(relativeCollisionPoint) // This returns new Vector2D, so don't copy
 			.normalize()
 			.mul(relativeCollisionPoint.length() 
 					* body.getAngularVelocity()); // / (float) (2f * Math.PI));
