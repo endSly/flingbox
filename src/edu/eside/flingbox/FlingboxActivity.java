@@ -73,7 +73,8 @@ public class FlingboxActivity extends Activity {
      */
     public boolean onCreateOptionsMenu(Menu menu) {
         menu
-        	.add(0, MENU_PLAY_PAUSE, 0, R.string.simulate);
+        	.add(0, MENU_PLAY_PAUSE, 0, R.string.simulate)
+        	.setIcon(this.getResources().getDrawable(R.drawable.ic_menu_flash));
         menu
         	.add(1, MENU_PREFERENCES, 1, R.string.preferences)
         	.setIcon(android.R.drawable.ic_menu_preferences);
