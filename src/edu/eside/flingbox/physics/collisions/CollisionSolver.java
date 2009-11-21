@@ -54,7 +54,7 @@ public class CollisionSolver {
 			final float frictionModule = computeFrictionForce(bodyA, normalModule, velA.j);
 			
 			final Vector2D normalForce = new Vector2D(collisionSense).mul(normalModule);
-			final Vector2D frictionForce = new Vector2D(collisionSense).mul(frictionModule);
+			final Vector2D frictionForce = new Vector2D(collision.normal).mul(frictionModule);
 			
 			final Vector2D collisionRelativePoint = new Vector2D(bodyA.getPosition()).sub(collisionPosition);
 			
@@ -101,7 +101,7 @@ public class CollisionSolver {
 			/* Friction force stops body */
 			return -Math.signum(bodyVelocity) * bodyVelocity * body.getBodyMass() / DIFFERENTIAL_TIME;
 		else
-			/* Friction force can't stop body, and this is constant */
+			/* Friction force can't stop body, and it is constant */
 			return -Math.signum(bodyVelocity) * body.getDynamicFrictionCoeficient() * normal;
 	}
 	

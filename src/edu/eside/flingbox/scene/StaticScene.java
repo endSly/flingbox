@@ -90,8 +90,8 @@ public class StaticScene implements OnInputListener {
 		
 		GravitySource gravity;
 		try {
-			//gravity = GravitySource.getAccelerometerBasedGravity(c);
-			gravity = GravitySource.getStaticGravity(0f, -SensorManager.GRAVITY_EARTH);
+			gravity = GravitySource.getAccelerometerBasedGravity(c);
+			//gravity = GravitySource.getStaticGravity(0f, -SensorManager.GRAVITY_EARTH);
 		} catch (Exception ex) {
 			// We don't have accelerometers
 			gravity = GravitySource.getStaticGravity(0f, -SensorManager.GRAVITY_EARTH);

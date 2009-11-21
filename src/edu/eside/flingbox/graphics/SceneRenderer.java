@@ -24,6 +24,8 @@ import java.util.ConcurrentModificationException;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import edu.eside.flingbox.Preferences;
+
 import android.opengl.GLSurfaceView.Renderer;
 
 /**
@@ -237,7 +239,8 @@ public class SceneRenderer implements Renderer {
 			gl.glLoadIdentity();
 
 			// Set background color
-			gl.glClearColor(0.4f, 0.4f, 0.8f, 1.0f);
+			gl.glClearColor(Preferences.backgroundColor[0], Preferences.backgroundColor[1], 
+					Preferences.backgroundColor[2], 1.0f);
 
 			// Render All objectsCount = 
 			final ArrayList<Render> renders = mGraphicsToRender;
