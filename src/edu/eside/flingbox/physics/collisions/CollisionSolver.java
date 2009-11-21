@@ -46,9 +46,9 @@ public class CollisionSolver {
 		Vector2D velB = getVelocityIntoCollisionAxis(collision, bodyB);
 		
 		if (!bodyA.isFixed()) { 
-			final float vFinalA = mB < Float.MAX_VALUE  
-						? ((1 + restit) * mB * velB.i + velA.i * (mA + restit * mB)) / (mA + mB)
-						: -velA.i * restit;
+			final float vFinalA = bodyB.isFixed() 
+						? -velA.i * restit
+						: ((1 + restit) * mB * velB.i + velA.i * (mA + restit * mB)) / (mA + mB);
 						
 			final float normalModule = (vFinalA - velA.i) * mA / DIFFERENTIAL_TIME;
 			final float frictionModule = computeFrictionForce(bodyA, normalModule, velA.j);
@@ -62,9 +62,9 @@ public class CollisionSolver {
 		}
 		
 		if (!bodyB.isFixed()) { 
-			final float vFinalB = mA < Float.MAX_VALUE 
-						? ((1 + restit) * mA * velA.i + velB.i * (mB + restit * mA)) / (mA + mB)
-						: -velB.i * restit;
+			final float vFinalB = bodyA.isFixed()
+						? -velB.i * restit
+						: ((1 + restit) * mA * velA.i + velB.i * (mB + restit * mA)) / (mA + mB);
 						
 			final float normalModule = (vFinalB - velB.i) * mB / DIFFERENTIAL_TIME;
 			final float frictionModule = computeFrictionForce(bodyB, normalModule, velB.j);
