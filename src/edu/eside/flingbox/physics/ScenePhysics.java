@@ -144,14 +144,17 @@ public class ScenePhysics implements Runnable {
 		final ArrayList<PhysicBody> bodys = mOnSceneBodys;
 		long lastTime = System.currentTimeMillis();
 		long time;
+		final Vector2D force = new Vector2D();
 		for (; !mDoKill; ) {
 			// Compute time
 			time = System.currentTimeMillis() - lastTime;
 			lastTime = System.currentTimeMillis();
 			/* first apply gravity */
-			for (PhysicBody body : bodys)
-				body.applyForce(new Vector2D(mGravity).mul(body.getBodyMass()),
-						(float) time / 1000f);
+			for (PhysicBody body : bodys) {
+				force.set(mGravity);
+				body.applyForce(force.mul(body.getBodyMass()),
+								(float) time / 1000f);
+			}
 			
 			/* Then apply collisions forces */
 			mCollider.checkCollisions();
