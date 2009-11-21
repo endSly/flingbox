@@ -120,6 +120,12 @@ public class PhysicPolygon extends PhysicBody {
 		}
 	}
 	
+	@Override
+	public void setDensity(float density) {
+		super.setDensity(density);
+		mAngularMass = computeAngularMass(mMass, mCollider);
+	}
+	
 	/**
 	 * Called when object has been updated
 	 */

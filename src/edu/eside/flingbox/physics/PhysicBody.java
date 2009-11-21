@@ -180,6 +180,15 @@ public abstract class PhysicBody {
 		return mAngularMass;
 	}
 	
+	public float getDensity() {
+		return mDensity;
+	}
+	
+	public void setDensity(float density) {
+		mDensity = density;
+		mMass = mVolume * density;
+	}
+	
 	public float getDynamicFrictionCoeficient() {
 		return mDynamicFrictionCoeficient;
 	}
@@ -227,9 +236,7 @@ public abstract class PhysicBody {
 		mVelocity.set(vx, vy);
 	}
 	
-	/**
-	 * @return Body's angular velocity
-	 */
+	/** @return Body's angular velocity */
 	public float getAngularVelocity() {
 		return mAngularVelocity;
 	}
@@ -290,5 +297,7 @@ public abstract class PhysicBody {
 	public Collider getCollider() {
 		return mCollider;
 	}
+
+	
 
 }

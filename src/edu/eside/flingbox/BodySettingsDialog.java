@@ -27,15 +27,17 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.SeekBar;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 
-public class BodySettingsDialog extends Dialog implements OnClickListener {
+public class BodySettingsDialog extends Dialog {
 
 	//private Context mContext;
 	
 	/** Contains Body to change properties */
 	protected Body mBody;
-	
-	private CheckBox mLockBodyCheckbox;
 
 	public BodySettingsDialog(Context context, Body body) {
 		super(context);
@@ -54,16 +56,40 @@ public class BodySettingsDialog extends Dialog implements OnClickListener {
     	// Sets dialog title
 		setTitle(R.string.body_settings_name);
 		
-		mLockBodyCheckbox = (CheckBox)findViewById(R.id.checkbox_lock_body);
-		mLockBodyCheckbox.setOnClickListener(this);
-		mLockBodyCheckbox.setChecked(mBody.getPhysics().isFixed());
+		/*
+		 * Lock Body Checkbox
+		 */
+		CheckBox lockBodyCheckbox = (CheckBox)findViewById(R.id.checkbox_lock_body);
+		lockBodyCheckbox.setChecked(mBody.getPhysics().isFixed());
+		lockBodyCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
+				mBody.getPhysics().setBodyFixed(arg1);
+			}
+			
+		});
+		
+		/*
+		 * Density SeekBar 
+		 */
+		SeekBar densitySeekBar = (SeekBar)findViewById(R.id.seek_bodys_density);
+		densitySeekBar.setMax(400); /* Density is between [-200, 199] */
+		densitySeekBar.setProgress((int) (Math.log( /* Logaritmical progress */
+				mBody.getPhysics().getDensity()) * 10f + 200f));
+
+		densitySeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+				if (!fromUser)
+					return;
+				/* Density is adjusted exponentially */
+				mBody.getPhysics().setDensity((float) Math.exp( 
+						((float) seekBar.getProgress() - 200f) / 10f));
+			}
+			
+			public void onStartTrackingTouch(SeekBar seekBar) { }
+			public void onStopTrackingTouch(SeekBar seekBar) { }
+		});
+		
     }
 
-	@Override
-	public void onClick(View v) {
-		if (v == mLockBodyCheckbox) 
-			mBody.getPhysics().setBodyFixed(mLockBodyCheckbox.isChecked());
-		
-	}
 
 }
