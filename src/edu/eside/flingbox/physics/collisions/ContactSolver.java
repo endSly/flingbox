@@ -36,9 +36,12 @@ public class ContactSolver {
 	 * @param bodyA first colliding body
 	 * @param bodyB second colliding body
 	 */
-	public static void solveContact(final Contact contact, final PhysicBody bodyA, final PhysicBody bodyB) {
+	public static void solveContact(final Contact contact) {
 		final Vector2D contactSense = contact.sense;
 		final Vector2D contactPosition = contact.position;
+		
+		final PhysicBody bodyA = contact.bodyInContactA; 
+		final PhysicBody bodyB = contact.bodyInContactB; 
 		
 		final float restit = (bodyA.getRestitutionCoeficient() + bodyB.getRestitutionCoeficient()) / 2;
 		final float mA = bodyA.getBodyMass();

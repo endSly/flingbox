@@ -107,7 +107,6 @@ public class ColliderPolygon extends Collider implements OnMovementListener {
 		if (!super.checkCollision(collider)) 
 			return false;
 		
-		boolean doCollide = false;
 		final Vector2D[] polygon = translateAndRotatePolygon(mPolygonContour, mPosition, mAngle);
 		final Vector2D[] otherPolygon = translateAndRotatePolygon(((ColliderPolygon) collider).mPolygonContour, 
 				((ColliderPolygon) collider).mPosition, ((ColliderPolygon) collider).mAngle);
@@ -116,31 +115,16 @@ public class ColliderPolygon extends Collider implements OnMovementListener {
 		 * Find intersections
 		 * TODO Optimize this!!
 		 */
-		Intersect[] intersections = Intersect.intersectionsOfTrace(polygon, otherPolygon);
+		Intersect[] intersections = Intersect.intersectPolygons(polygon, otherPolygon);
 		
 		/*
 		 * Compute detected intersections
 		 */
-		final int intersctionsCount = intersections.length;
-		for (int i = 0
-				; i < intersctionsCount - 1 && intersections[i + 1] != null
-				; i += 2) {
-			doCollide = true;
-			
-			final Vector2D ingoingIntersect = intersections[i].intersectionPoint, 
-				outgoingIntersect = intersections[i + 1].intersectionPoint;
-			
-			Vector2D sense = new Vector2D(outgoingIntersect)
-				.sub(ingoingIntersect);
-			sense = Vector2D.normalVector(sense);
-			
-			Vector2D collisonPosition = new Vector2D(ingoingIntersect)
-				.add(outgoingIntersect)
-				.mul(0.5f);
-			
-			ContactSolver.solveContact(new Contact(collisonPosition, sense), mPhysicBody, collider.mPhysicBody);
+		for (Intersect intersect : intersections) {
+			Contact contact = new Contact(this.mPhysicBody, collider.mPhysicBody, intersect);
+			ContactSolver.solveContact(contact);
 		}
-		return doCollide;
+		return intersections.length > 0;
 	}
 	
 }
