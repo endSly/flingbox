@@ -26,75 +26,31 @@ import java.util.ArrayList;
  *
  */
 public class Intersect {
-	
-	// Stores point of the intersection
-	/**
-	 * @deprecated
-	 */
-	public Vector2D intersectionPoint;
-	
-	// Stores first point of segments that intersect
-	/**
-	 * @deprecated
-	 */
-	public Vector2D intersectionASegment;
-	/**
-	 * @deprecated
-	 */
-	public Vector2D intersectionBSegment;
-	
-	
-	
-	/**
-	 * @deprecated
-	 */
-	public boolean isIngoingIntersection;
-	
+	/**  */
 	public final Vector2D[] intersectionContour; 
 	
 	public Vector2D ingoingPoint;
 	public Vector2D outgoingPoint;
 	
-
-	/**
-	 * TODO!!!!
-	 */
-	private Intersect() {
-		this.intersectionPoint = new Vector2D();
-		this.intersectionContour = new Vector2D[2];
-		ingoingPoint = new Vector2D();
-		outgoingPoint = new Vector2D();
-	}
-	
-	/**
-	 * Local constructor. Use {@link intersectionOfSegments} or
-	 * {@link intersectionOfTrace} to create an intersection.
-	 * 
-	 * @param collisionPoint
-	 * @hide
-	 */
-	private Intersect(Vector2D collisionPoint) {
-		this.intersectionPoint = collisionPoint;
-		this.intersectionContour = new Vector2D[2];
-		intersectionContour[0] = new Vector2D();
-		intersectionContour[1] = new Vector2D();
-	}
 	
 	private Intersect(Vector2D[] polygonA, Vector2D[] polygonB, Vector2D ingoing, Vector2D outgoing,
 			int pAIn, int pBIn, int pAOut, int pBOut) {
+		final int pointsCountA = polygonA.length;
+		final int pointsCountB = polygonB.length;
+		
 		final int totalPointsCount = 2 
-			+ ((pAOut - pAIn + polygonA.length) % polygonA.length) + 1
-			+ ((pBOut - pBIn + polygonB.length) % polygonB.length) + 1;
+			+ ((pAOut - pAIn + pointsCountA) % pointsCountA) + 1
+			+ ((pBOut - pBIn + pointsCountB) % pointsCountB) + 1;
 		
 		Vector2D[] contour = new Vector2D[totalPointsCount];
 		
 		contour[0] = ingoing;
 		int contourIndex = 1;
-		for (int i = pAIn; i != pAOut + 1; i = (i + 1) % polygonA.length)
+		for (int i = pAIn; i != (pAOut + 1) % pointsCountA; i = (i + 1) % pointsCountA)
 			contour[contourIndex++] = polygonA[i];
 		
 		contour[contourIndex++] = outgoing;
-		for (int i = pBIn; i != pBOut + 1; i = (i + 1) % polygonB.length)
+		for (int i = pBIn; i != (pBOut + 1) % pointsCountB; i = (i + 1) % pointsCountB)
 			contour[contourIndex++] = polygonB[i];
 		
 		this.intersectionContour = contour;

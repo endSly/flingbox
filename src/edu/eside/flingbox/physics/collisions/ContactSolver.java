@@ -30,7 +30,7 @@ public class ContactSolver {
 	private ContactSolver() { } 
 	
 	/**
-	 * Computes contacts efects to body's
+	 * Computes contacts effects to body's
 	 * 
 	 * @param contact contact descriptor
 	 * @param bodyA first colliding body
@@ -84,9 +84,6 @@ public class ContactSolver {
 		
 	}
 	
-	private static float computeCollisionForce() {
-		return 0f;
-	}
 	
 	
 	/**
