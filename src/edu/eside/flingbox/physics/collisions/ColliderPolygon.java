@@ -138,7 +138,7 @@ public class ColliderPolygon extends Collider implements OnMovementListener {
 				.add(outgoingIntersect)
 				.mul(0.5f);
 			
-		CollisionSolver.solveCollision(new Collision(collisonPosition, sense), mPhysicBody, collider.mPhysicBody);
+			CollisionSolver.solveCollision(new Collision(collisonPosition, sense), mPhysicBody, collider.mPhysicBody);
 		}
 		return doCollide;
 	}
