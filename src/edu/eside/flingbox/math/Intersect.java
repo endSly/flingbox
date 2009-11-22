@@ -26,8 +26,10 @@ import java.util.ArrayList;
  *
  */
 public class Intersect {
-	/** Stores array with intersect contour. Not in order */
-	public final Vector2D[] intersectionContour; 
+	/** Stores array with intersect contour of first polygon */
+	public final Vector2D[] contourA; 
+	/** Stores array with intersect contour of second polygon */
+	public final Vector2D[] contourB; 
 	
 	/** Ingoing point, it's also in contour[0] */
 	public Vector2D ingoingPoint;
@@ -46,32 +48,28 @@ public class Intersect {
 	 * @param pAOut index of the point after outgoing point
 	 * @param pBOut index of the point after outgoing point
 	 */
-	private Intersect(Vector2D[] polygonA, Vector2D[] polygonB, Vector2D ingoing, Vector2D outgoing,
+	private Intersect(Vector2D[] polygonA, Vector2D[] polygonB, 
+			Vector2D ingoing, Vector2D outgoing,
 			int pAIn, int pBIn, int pAOut, int pBOut) {
 		final int pointsCountA = polygonA.length;
 		final int pointsCountB = polygonB.length;
 		
 		/* Calculate total points that will be stored */
-		final int totalPointsCount = 2  /* For ingoing and outgoing */
-			+ ((pAOut - pAIn + pointsCountA) % pointsCountA) + 1	/* For polygon A intersect */
-			+ ((pBOut - pBIn + pointsCountB) % pointsCountB) + 1;	/* For polygon B intersect */
+		final int intContourALen = ((pAOut - pAIn + pointsCountA) % pointsCountA) + 1;	/* For polygon A intersect */
+		final int intContourBLen = ((pBOut - pBIn + pointsCountB) % pointsCountB) + 1;	/* For polygon B intersect */
 		
-		/* Fill space for contour */
-		Vector2D[] contour = new Vector2D[totalPointsCount];
+		/* Copy intersecting contour from A */
+		Vector2D[] contourA = new Vector2D[intContourALen];
+		for (int i = 0; i < intContourALen; i++)
+			contourA[i] = polygonA[(pAIn + i) % pointsCountA];
 		
-		contour[0] = ingoing;
-		int contourIndex = 1;
-		for (int i = pAIn; i != (pAOut + 1) % pointsCountA; i = (i + 1) % pointsCountA)
-			contour[contourIndex++] = polygonA[i];
+		/* Copy intersecting contour from B */
+		Vector2D[] contourB = new Vector2D[intContourBLen];
+		for (int i = 0; i < intContourBLen; i++)
+			contourB[i] = polygonB[(pBIn + i) % pointsCountB];
 		
-		contour[contourIndex++] = outgoing;
-		for (int i = pBIn; i != (pBOut + 1) % pointsCountB; i = (i + 1) % pointsCountB)
-			contour[contourIndex++] = polygonB[i];
-		
-		/* all points should be stored */
-		assert (contourIndex == totalPointsCount);
-		
-		this.intersectionContour = contour;
+		this.contourA = contourA;
+		this.contourB = contourB;
 		this.ingoingPoint = ingoing;
 		this.outgoingPoint = outgoing;
 	}
@@ -84,10 +82,10 @@ public class Intersect {
 	 * @return an array with all intersect. if no intersects, an empty arra returned
 	 */
 	public static Intersect[] intersectPolygons(Vector2D[] polygonA, Vector2D[] polygonB) {
-		ArrayList<Intersect> intersections = new ArrayList<Intersect>();
+		final ArrayList<Intersect> intersections = new ArrayList<Intersect>();
 		
-		int pointsCountA = polygonA.length;
-		int pointsCountB = polygonB.length;
+		final int pointsCountA = polygonA.length;
+		final int pointsCountB = polygonB.length;
 		
 		/* We are waiting for an ingoing intersection */
 		Vector2D ingoingIntersect = null;
