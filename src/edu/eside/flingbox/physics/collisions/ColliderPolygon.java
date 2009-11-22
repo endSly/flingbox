@@ -26,7 +26,7 @@ import edu.eside.flingbox.physics.PhysicBody.OnMovementListener;
 
 /**
  * Collider for a polygon. it handles all functions needed by 
- * collition system
+ * Collision system
  * NOTE This class should only be created by {@link PhisicPolygon}.
  * 
  * How collision detector optimizer works:
@@ -49,7 +49,7 @@ public class ColliderPolygon extends Collider implements OnMovementListener {
 	 * Default constructor for a polygon collider.
 	 * 
 	 * @param contour Polygon's points. It handles pointer in order to 
-	 * preserve recurses, so mPolygonContour should be automaticaly rotated.
+	 * preserve recurses, so mPolygonContour should be automatically rotated.
 	 * NOTE It has to be in counterclockwise ordering!!!
 	 * 
 	 * @return
@@ -117,9 +117,7 @@ public class ColliderPolygon extends Collider implements OnMovementListener {
 		 */
 		Intersect[] intersections = Intersect.intersectPolygons(polygon, otherPolygon);
 		
-		/*
-		 * Compute detected intersections
-		 */
+		/* Compute detected intersections */
 		for (Intersect intersect : intersections) {
 			Contact contact = new Contact(this.mPhysicBody, collider.mPhysicBody, intersect);
 			ContactSolver.solveContact(contact);

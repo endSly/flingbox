@@ -20,6 +20,10 @@ package edu.eside.flingbox.physics.collisions;
 
 import java.util.ArrayList;
 
+/**
+ * SceneCollider manages collisions of the scene
+ *
+ */
 public class SceneCollider {
 	private final ArrayList<Collider> mInCollisionObjects;
 	

@@ -39,12 +39,14 @@ public class ScenePhysics implements Runnable {
 	/** Collision manager for current scene */
 	private final SceneCollider mCollider;
 	
+	/** Semaphore for lock writing on mOnSceneBodys */
 	private Semaphore mLockOnSceneBodys = new Semaphore(1, false);
 
 	/** Thread for simulation */
 	private Thread mSimulationThread;
-	/** Flags for Stopping simulation */
+	/** Flag for kill simulation */
 	private boolean mDoKill = false;
+	/** Flag indicating if thread is running */
 	private boolean mIsSimulating = false;
 	
 	/**
