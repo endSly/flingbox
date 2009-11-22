@@ -20,6 +20,7 @@
 package edu.eside.flingbox.physics;
 
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.collisions.SceneCollider;
@@ -33,14 +34,16 @@ import edu.eside.flingbox.physics.gravity.GravitySource;
 public class ScenePhysics implements Runnable {
 	public GravitySource mGravity;
 	
-	// List of physical objects on scene
+	/** List of physical bodys on scene */
 	private final ArrayList<PhysicBody> mOnSceneBodys;
-	// Collision manager for current scene
+	/** Collision manager for current scene */
 	private final SceneCollider mCollider;
+	
+	private Semaphore mLockOnSceneBodys = new Semaphore(1, false);
 
-	// Thread for simulation
+	/** Thread for simulation */
 	private Thread mSimulationThread;
-	// Flags for Stopping simulation
+	/** Flags for Stopping simulation */
 	private boolean mDoKill = false;
 	private boolean mIsSimulating = false;
 	
@@ -81,7 +84,15 @@ public class ScenePhysics implements Runnable {
 	 * @param object object to be added
 	 */
 	public void add(PhysicBody object) {
-		mOnSceneBodys.add(object);
+		try {
+			mLockOnSceneBodys.acquire();
+			mOnSceneBodys.add(object);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} finally {
+			mLockOnSceneBodys.release();
+		}
+		
 		mCollider.add(object.getCollider());
 	}
 	
@@ -90,10 +101,8 @@ public class ScenePhysics implements Runnable {
 	 * @param objects array of objects to be added
 	 */
 	public void add(PhysicBody[] objects) {
-		for (PhysicBody object : objects) {
-			mOnSceneBodys.add(object);
-			mCollider.add(object.getCollider());
-		}
+		for (PhysicBody object : objects)
+			add(object);
 	}
 	
 	/**
@@ -142,28 +151,45 @@ public class ScenePhysics implements Runnable {
 		long time;
 		final Vector2D force = new Vector2D();
 		for (; !mDoKill; ) {
-			// Compute time
+			/* Compute time */
 			time = System.currentTimeMillis() - lastTime;
 			lastTime = System.currentTimeMillis();
-			/* first apply gravity */
-			for (PhysicBody body : bodys) {
-				force.set(mGravity);
-				body.applyForce(force.mul(body.getBodyMass()),
-								(float) time / 1000f);
+			
+			/* We need a semaphore here */
+			try {
+				mLockOnSceneBodys.acquire();
+				/* first apply gravity */
+				for (PhysicBody body : bodys) {
+					force.set(mGravity);
+					body.applyForce(force.mul(body.getBodyMass()),
+									(float) time / 1000f);
+				}
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			} finally {
+				mLockOnSceneBodys.release();
 			}
 			
 			/* Then apply collisions forces */
 			mCollider.checkCollisions();
 			
-			/* Last update body */
-			for (PhysicBody body : bodys)
-				body.onUpdateBody((float) time / 1000f);
-			
+			try {
+				mLockOnSceneBodys.acquire();
+				/* Last update body */
+				for (PhysicBody body : bodys)
+					body.onUpdateBody((float) time / 1000f);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
+
+			/* Keep max frame-rate */
 			try {
 				if (time < 20)
 					Thread.sleep(20 - time);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
+			} finally {
+				mLockOnSceneBodys.release();
 			}
 		}
 		mDoKill = false;

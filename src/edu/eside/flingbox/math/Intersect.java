@@ -26,22 +26,37 @@ import java.util.ArrayList;
  *
  */
 public class Intersect {
-	/**  */
+	/** Stores array with intersect contour. Not in order */
 	public final Vector2D[] intersectionContour; 
 	
+	/** Ingoing point, it's also in contour[0] */
 	public Vector2D ingoingPoint;
+	/** Outgoing point, also in contour*/
 	public Vector2D outgoingPoint;
 	
-	
+	/**
+	 * Local constructor for an intersection. Computes intersectionContour
+	 * 
+	 * @param polygonA first Polygon
+	 * @param polygonB second polygon
+	 * @param ingoing first intersecting point
+	 * @param outgoing last intersectiong point
+	 * @param pAIn index of the point after ingoing point
+	 * @param pBIn index of the point after ingoing point
+	 * @param pAOut index of the point after outgoing point
+	 * @param pBOut index of the point after outgoing point
+	 */
 	private Intersect(Vector2D[] polygonA, Vector2D[] polygonB, Vector2D ingoing, Vector2D outgoing,
 			int pAIn, int pBIn, int pAOut, int pBOut) {
 		final int pointsCountA = polygonA.length;
 		final int pointsCountB = polygonB.length;
 		
-		final int totalPointsCount = 2 
-			+ ((pAOut - pAIn + pointsCountA) % pointsCountA) + 1
-			+ ((pBOut - pBIn + pointsCountB) % pointsCountB) + 1;
+		/* Calculate total points that will be stored */
+		final int totalPointsCount = 2  /* For ingoing and outgoing */
+			+ ((pAOut - pAIn + pointsCountA) % pointsCountA) + 1	/* For polygon A intersect */
+			+ ((pBOut - pBIn + pointsCountB) % pointsCountB) + 1;	/* For polygon B intersect */
 		
+		/* Fill space for contour */
 		Vector2D[] contour = new Vector2D[totalPointsCount];
 		
 		contour[0] = ingoing;
@@ -53,47 +68,67 @@ public class Intersect {
 		for (int i = pBIn; i != (pBOut + 1) % pointsCountB; i = (i + 1) % pointsCountB)
 			contour[contourIndex++] = polygonB[i];
 		
+		/* all points should be stored */
+		assert (contourIndex == totalPointsCount);
+		
 		this.intersectionContour = contour;
 		this.ingoingPoint = ingoing;
 		this.outgoingPoint = outgoing;
 	}
 	
+	/**
+	 * Computes all intersects between two polygons
+	 * 
+	 * @param polygonA first polygon
+	 * @param polygonB second polygon
+	 * @return an array with all intersect. if no intersects, an empty arra returned
+	 */
 	public static Intersect[] intersectPolygons(Vector2D[] polygonA, Vector2D[] polygonB) {
 		ArrayList<Intersect> intersections = new ArrayList<Intersect>();
 		
 		int pointsCountA = polygonA.length;
 		int pointsCountB = polygonB.length;
 		
+		/* We are waiting for an ingoing intersection */
 		Vector2D ingoingIntersect = null;
 		int ingoingPointA = 0;
 		int ingoingPointB = 0;
 		
 		for (int i = 0; i < pointsCountA; i++) 
 			for (int j = 0; j < pointsCountB; j++) {
+				/* Check each point */
 				Vector2D intersect = computeIntersectionOfSegments(polygonA[i], polygonA[(i + 1) % pointsCountA], 
 						polygonB[j], polygonB[(j + 1) % pointsCountB]);
-				if (intersect == null)
+				if (intersect == null) // No intersect 
 					continue;
-				if (ingoingIntersect == null) {
-					/* We have an in-going intersection */
+				
+				if (ingoingIntersect == null) { 	// We have an in-going intersection 
 					ingoingIntersect = intersect;
 					ingoingPointA = (i + 1) % pointsCountA;
 					ingoingPointB = (j + 1) % pointsCountB;
-				} else {
-					/* We have an outgoing Intersection */
+				} else { 	// We have an outgoing Intersection 
 					intersections.add(new Intersect(polygonA, polygonB, 
 							ingoingIntersect, intersect, ingoingPointA, ingoingPointB, 
 							(i + 1) % pointsCountA, (j + 1) % pointsCountB));
-					ingoingIntersect = null;
+					ingoingIntersect = null; // wait for another intersection
 				}
 			}
 
 		return intersections.toArray(new Intersect[0]);
 	}
 	
+	/**
+	 * Computes intersect between two segments
+	 * 
+	 * @param segA0 first segment point
+	 * @param segA1 first segment point
+	 * @param segB0 second segment point
+	 * @param segB1 second segment point
+	 * @return
+	 */
 	private static Vector2D computeIntersectionOfSegments(Vector2D segA0, Vector2D segA1, 
 			Vector2D segB0, Vector2D segB1) {
-		// Get components to local variables. Just for performance
+		/* Get components to local variables. Just for performance */
 		final float a0x = segA0.i, a0y = segA0.j, a1x = segA1.i, a1y = segA1.j, 
 			b0x = segB0.i, b0y = segB0.j, b1x = segB1.i, b1y = segB1.j;
 		
