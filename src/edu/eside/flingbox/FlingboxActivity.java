@@ -19,6 +19,7 @@
 package edu.eside.flingbox;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.res.Configuration;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
@@ -93,6 +94,13 @@ public class FlingboxActivity extends Activity {
         return true;
     }
     
+    private void showHelp() {
+    	Dialog helpDialog = new Dialog(this);
+    	helpDialog.setTitle(R.string.help);
+    	helpDialog.setContentView(R.layout.help);
+    	helpDialog.show();
+    }
+    
     /**
      * Handles item selections 
      */
@@ -106,6 +114,9 @@ public class FlingboxActivity extends Activity {
             return true;
         case MENU_PREFERENCES:
             return true;
+        case MENU_HELP:
+        	showHelp();
+        	return true;
         case MENU_LOAD_SCENE:
         	return true;
         case MENU_SAVE_SCENE:
