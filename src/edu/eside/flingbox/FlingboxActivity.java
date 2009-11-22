@@ -20,14 +20,18 @@ package edu.eside.flingbox;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 
 import edu.eside.flingbox.scene.Scene;
 
@@ -94,12 +98,7 @@ public class FlingboxActivity extends Activity {
         return true;
     }
     
-    private void showHelp() {
-    	Dialog helpDialog = new Dialog(this);
-    	helpDialog.setTitle(R.string.help);
-    	helpDialog.setContentView(R.layout.help);
-    	helpDialog.show();
-    }
+
     
     /**
      * Handles item selections 
@@ -153,6 +152,37 @@ public class FlingboxActivity extends Activity {
      */
     public boolean onTrackballEvent(MotionEvent ev) {
     	return mScene.onTrackballEvent(ev);
+    }
+    
+    /**
+     * Show help dialog
+     */
+    private void showHelp() {
+    	final Dialog helpDialog = new Dialog(this);
+    	helpDialog.setTitle(R.string.help);
+    	helpDialog.setContentView(R.layout.help);
+    	helpDialog.show();
+    	
+    	Button aboutButton = (Button) findViewById(R.id.about_button);
+    	if (aboutButton == null)
+    		return;
+    	
+    	aboutButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				helpDialog.dismiss();
+				showAboutDialog();
+			}
+    	});
+    	
+    }
+    
+    /**
+     * Show about dialog
+     */
+    private void showAboutDialog() {
+    	Dialog aboutDialog = new Dialog(this);
+    	aboutDialog.setTitle(R.string.help_about);
+    	aboutDialog.show();
     }
     
     

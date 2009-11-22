@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources> 
-    <string name="app_name">Flingbox</string>
+<string name="app_name">Flingbox</string>
 	
 <string name="simulate">Simulate</string>
 <string name="end_simulation">End simulation</string>
@@ -14,11 +14,12 @@
 <string name="body_settings_kinetic_friction">Kinetic Friction</string><string name="help">Help</string>
 
 
-<string name="help_draw">DobleTap and Draw: Draws new body.</string>
-<string name="help_body_properties">Long press over body: Edit body's properties.</string>
-<string name="help_drag">Drag over background: Moves scene camera.</string>
-<string name="help_move_body">Drag over body: Moves body</string>
-<string name="help_zoom">Scroll trackball: Zoom</string>
+<string name="help_draw"><b>DobleTap and Draw:</b> Draws new body.</string>
+<string name="help_body_properties"><b>Long press over body:</b> Edit body's properties.</string>
+<string name="help_drag"><b>Drag over background:</b> Moves scene camera.</string>
+<string name="help_move_body"><b>Drag over body:</b> Moves body</string>
+<string name="help_zoom"><b>Scroll trackball:</b> Zoom</string>
 
-<string name="help_simulate">Press Trackball: Start/Stop simulating</string>
+<string name="help_simulate"><b>Press Trackball:</b> Start/Stop simulating</string>
+<string name="help_about">About Flingbox</string>
 </resources>
