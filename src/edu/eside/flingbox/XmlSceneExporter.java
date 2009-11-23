@@ -33,7 +33,7 @@ public class XmlSceneExporter {
 		XmlSerializer serializer = Xml.newSerializer();
 
 		try {
-			
+			serializer.startTag("Scene", "scene");
 		} catch (Exception ex) {
 			
 		}

@@ -48,7 +48,7 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 	 */
 	private class DrawingRender extends Render {
 
-		/** Array of points to be drawed */
+		/** Array of points to be drawn */
 		private final ArrayList<Vector2D> mDrawingPattern;
 		
 		/** Flag to lock drawing */
@@ -87,7 +87,7 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 					.asShortBuffer();
 			
 				// Fit 2D points into 3D space
-				ArrayList<Vector2D> pattern = mDrawingPattern;
+				final ArrayList<Vector2D> pattern = mDrawingPattern;
 				for (short i = 0; i < (pointsCount - 1); ) {
 					vertexBuffer.put(pattern.get(i).i);
 					vertexBuffer.put(pattern.get(i).j);
@@ -253,19 +253,23 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 	}
 
 	@Override
-	public boolean onSingleTapUp(MotionEvent e) {
-		// Start drawing
-		mIsDrawing = true;
+	public boolean onSingleTapUp(final MotionEvent e) {
+		/* Start drawing */
+		new Thread(new Runnable() { 
+			public void run() {
+				mDrawingPattern = new ArrayList<Vector2D>(40);
+				mDrawingRender = new DrawingRender(mDrawingPattern);
+				/* Now we are ready to start drawing */
+				mIsDrawing = true;
 		
-		mDrawingPattern = new ArrayList<Vector2D>(40);
-		mDrawingRender = new DrawingRender(mDrawingPattern);
-		
-		final float onDownX = mCamera.left + (e.getX() * mCamera.getWidth() / mDisplayWidth);
-		final float onDownY = mCamera.top - (e.getY() * mCamera.getHeight() / mDisplayHeight);
+				final float onDownX = mCamera.left + (e.getX() * mCamera.getWidth() / mDisplayWidth);
+				final float onDownY = mCamera.top - (e.getY() * mCamera.getHeight() / mDisplayHeight);
 
-		mDrawingPattern.add(new Vector2D(onDownX, onDownY));
+				mDrawingPattern.add(new Vector2D(onDownX, onDownY));
 
-		mSceneRenderer.add(mDrawingRender);
+				mSceneRenderer.add(mDrawingRender);
+			}
+		}).start();
 		
 		return true;
 	}

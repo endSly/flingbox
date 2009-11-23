@@ -21,12 +21,18 @@ package edu.eside.flingbox.physics.collisions;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.PhysicBody;
 
+/**
+ * Contact solver solves contacts between two bodies and applies necessaries 
+ * forces over each body.
+ * This class has all members static due performance improvement
+ */
 public class ContactSolver {
 	/**
 	 * Minimal time unit
 	 */
 	private final static float DIFFERENTIAL_TIME = 10f / 1000f;
 	
+	/** Prevent solver creation */
 	private ContactSolver() { } 
 	
 	/**
@@ -79,6 +85,7 @@ public class ContactSolver {
 			bodyB.applyForce(normalForce.add(frictionForce), contactRelativePoint, DIFFERENTIAL_TIME);
 		} 
 		
+		fixBodysPenetration(contact, bodyA, bodyB);
 	}
 	
 	/**
@@ -111,6 +118,17 @@ public class ContactSolver {
 	}
 	
 	/**
+	 * Keeps bodies outside for other bodies
+	 * 
+	 * @param contact contact descriptor
+	 * @param bodyA first body in contact
+	 * @param bodyB second body in contact
+	 */
+	private static void fixBodysPenetration(Contact contact, PhysicBody bodyA, PhysicBody bodyB) {
+		
+	}
+	
+	/**
 	 * Obtains a Vector with velocity components proyected to contact's sense.
 	 * In the x axis it returns velocity against the contact
 	 * 
@@ -128,7 +146,7 @@ public class ContactSolver {
 			Vector2D.normalVector(relativeContactPoint) // This returns new Vector2D, so don't copy
 			.normalize()
 			.mul(relativeContactPoint.length() 
-					* body.getAngularVelocity()); // / (float) (2f * Math.PI));
+					* body.getAngularVelocity());
 		
 		/*
 		 * Get total body's total velocity at contact point 

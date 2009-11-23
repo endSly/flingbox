@@ -45,9 +45,9 @@ public final class Polygon extends Body implements OnMovementListener {
 		if (polygonPoints.length < 3)
 			throw new IllegalArgumentException("Not enough points to build a polygon.");
 		
-		mPoints = polygonPoints;
 		
-		float polygonArea = PolygonUtils.polygonArea(mPoints);
+		
+		float polygonArea = PolygonUtils.polygonArea(polygonPoints);
 		// Set points in Clock-wise order
 		if (polygonArea > 0) {
 			/* If points are in anti-Clock-wise order the
@@ -55,28 +55,28 @@ public final class Polygon extends Body implements OnMovementListener {
 			 * will be negative.
 			 */
 			Vector2D temp;
-			for (int i = 0, j = mPoints.length - 1; i<j; --j, ++i) {
-				temp = mPoints[i];
-				mPoints[i] = mPoints[j];
-				mPoints[j] = temp;
+			for (int i = 0, j = polygonPoints.length - 1; i<j; --j, ++i) {
+				temp = polygonPoints[i];
+				polygonPoints[i] = polygonPoints[j];
+				polygonPoints[j] = temp;
 			}	
 		} else {
 			polygonArea = -polygonArea;
 		}
 		
-		short[] triangulationIndexes = PolygonUtils.triangulatePolygon(mPoints);
-		Vector2D centroid = PolygonUtils.polygonCentroid(mPoints);
+		short[] triangulationIndexes = PolygonUtils.triangulatePolygon(polygonPoints);
+		Vector2D centroid = PolygonUtils.polygonCentroid(polygonPoints);
 		
 		// Relocate polygon to find the centroid with point (0, 0)
-		for (Vector2D p : mPoints) {
+		for (Vector2D p : polygonPoints) {
 			p.i -= centroid.i;
 			p.j -= centroid.j;
 		}
 		
-		mPointsCount = (short) (mPoints.length);
-		
-		mRender = new RenderPolygon(mPoints, triangulationIndexes);
-		mPhysics = new PhysicPolygon(mPoints, polygonArea, centroid, this);
+		mPointsCount = (short) (polygonPoints.length);
+		mRender = new RenderPolygon(polygonPoints, triangulationIndexes);
+		mPhysics = new PhysicPolygon(polygonPoints, polygonArea, centroid, this);
+		mPoints = polygonPoints;
 	}
 	
 	/**

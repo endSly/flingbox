@@ -30,7 +30,10 @@ import android.content.Context;
 import android.os.Environment;
 import android.view.MotionEvent;
 
-
+/**
+ * Scene Descriptor.
+ *
+ */
 public class Scene extends DrawableScene implements OnInputListener {
 	
 	private Body mSelectedBody = null;
@@ -116,23 +119,33 @@ public class Scene extends DrawableScene implements OnInputListener {
 	@Override
 	public boolean onScroll(MotionEvent downEv, MotionEvent e, float distanceX,
 			float distanceY) {
-		boolean handled = false;
-		if (mSelectedBody != null) {
+		if (mSelectedBody == null) 
+			return super.onScroll(downEv, e, distanceX, distanceY);
+		
+		if (mScenePhysics.isSimulating()) {
 			final float px = mCamera.left + (e.getX() * mCamera.getWidth() / mDisplayWidth);
 			final float py = mCamera.top - (e.getY() * mCamera.getHeight() / mDisplayHeight);
 			// Apply force to the position
 			Vector2D movementForce = new Vector2D(px, py);
-			movementForce.sub(mSelectedBody.getPhysics().getPosition()).mul(100000f);
+			movementForce.sub(mSelectedBody.getPhysics().getPosition())
+				.mul(mSelectedBody.getPhysics().getBodyMass());
 			// TODO: Fix time here
-			mSelectedBody.getPhysics().applyForce(movementForce, 20f);
-			handled = true;
-		}
+			mSelectedBody.getPhysics().applyForce(movementForce, 0.020f);
+		} else {
+			final float px = mCamera.left + (e.getX() * mCamera.getWidth() / mDisplayWidth);
+			final float py = mCamera.top - (e.getY() * mCamera.getHeight() / mDisplayHeight);
+			/* Just move the body */
+			mSelectedBody.getPhysics().setPosition(new Vector2D(px, py));
 
-		return handled ? true : super.onScroll(downEv, e, distanceX, distanceY);
+		}
+		return true;
+		
+
+		
 		
 	}
 	
-	public boolean onDragObject(MotionEvent e, Body o) {
+	public boolean onDragBody(MotionEvent e, Body o) {
 		
 		return false;
 	}

@@ -33,11 +33,11 @@ public class Contact {
 	/** Second body in contact */
 	public PhysicBody bodyInContactB;
 	
-	/** Collision's absolute position */
+	/** Contact's absolute position */
 	public final Vector2D position;
-	/** Collision's sense. This is a normalized vector */
+	/** Contact's sense. This is a normalized vector */
 	public final Vector2D sense;
-	/** Collision's normal. This is a normalized vector */
+	/** Contact's normal. This is a normalized vector */
 	public final Vector2D normal;
 	
 	

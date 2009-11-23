@@ -249,7 +249,7 @@ public final class PolygonUtils {
 	/**
 	 * Computes Polygon normals.  
 	 * 
-	 * @param contour Counterclockwise polygon Vector2Ds
+	 * @param contour Counterclockwise polygon points
 	 * @return Polygon's normals
 	 */
 	public static Vector2D[] computePolygonNormals(final Vector2D[] contour) {
@@ -265,9 +265,9 @@ public final class PolygonUtils {
 	}
 	
 	/**
-	 * Computes minimum distance from line to Vector2D
+	 * Computes minimum distance from line to point
 	 */
-	private static float distanceFromLineToPoint(final Vector2D p0, final Vector2D p1, final Vector2D p) {
+	public static float distanceFromLineToPoint(final Vector2D p0, final Vector2D p1, final Vector2D p) {
 		float area = (p0.i * p1.j + p1.i * p.j + p.i * p0.j 
 				- p1.i * p0.j - p.i * p1.j - p0.i * p.j) / 2f;
 		float base = (float) Math.sqrt((p1.i - p0.i) * (p1.i - p0.i) 

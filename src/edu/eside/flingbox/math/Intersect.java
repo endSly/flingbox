@@ -26,6 +26,11 @@ import java.util.ArrayList;
  *
  */
 public class Intersect {
+	/** Just pointer to recognize polygon side */
+	public final Vector2D[] polygonA;
+	/** Just pointer to recognize polygon side */
+	public final Vector2D[] polygonB;
+	
 	/** Stores array with intersect contour of first polygon */
 	public final Vector2D[] contourA; 
 	/** Stores array with intersect contour of second polygon */
@@ -68,10 +73,35 @@ public class Intersect {
 		for (int i = 0; i < intContourBLen; i++)
 			contourB[i] = polygonB[(pBIn + i) % pointsCountB];
 		
+		this.polygonA = polygonA;
+		this.polygonB = polygonB;
 		this.contourA = contourA;
 		this.contourB = contourB;
 		this.ingoingPoint = ingoing;
 		this.outgoingPoint = outgoing;
+	}
+	
+	/**
+	 * Computes the side where the polygon is.
+	 * 
+	 * @param polygon polygon to be checked
+	 * @return cross product between intersection vector form in to out and 
+	 * first polygon point that is inside intersection contour. < 0 if polygon 
+	 * is at right or > 0 if polygon is at left, if polygon is not  registered 
+	 * when intersection has been created, 0 is returned 
+	 */
+	public float polygonsSide(Vector2D[] polygon) {
+		Vector2D[] polygonIntersectionSegment;
+		if (polygon == this.polygonA) 
+			polygonIntersectionSegment = this.contourA;
+		else if (polygon == this.polygonB) 
+			polygonIntersectionSegment = this.contourA;
+		else
+			return 0;
+		
+		Vector2D intersectionDescriptor = new Vector2D(this.outgoingPoint).sub(this.outgoingPoint);
+		
+		return intersectionDescriptor.crossProduct(polygonIntersectionSegment[0]);
 	}
 	
 	/**
@@ -111,7 +141,7 @@ public class Intersect {
 					ingoingIntersect = null; // wait for another intersection
 				}
 			}
-
+		
 		return intersections.toArray(new Intersect[0]);
 	}
 	

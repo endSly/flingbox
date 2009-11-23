@@ -28,7 +28,7 @@ import edu.eside.flingbox.physics.collisions.ColliderPolygon;
  *
  */
 public class PhysicPolygon extends PhysicBody {
-
+	/** Polygon's Contour */
 	private final Vector2D[] mPolygonContour;
 
 	private final Vector2D[] mRotatedPolygonContour;
@@ -79,7 +79,7 @@ public class PhysicPolygon extends PhysicBody {
 	 */
 	private static float computeAngularMass(float mass, Collider collider) {
 		final float radius = collider.getBoundingCircle();
-		return 0.4f * mass * radius * radius;
+		return 0.8f * mass * radius * radius;
 	}
 	
 	/**
@@ -116,7 +116,6 @@ public class PhysicPolygon extends PhysicBody {
 		if (mIsMoveable) {
 			// Sets velocity and position
 			mVelocity.add((new Vector2D(force)).mul(dt / mMass));
-			//mPosition.add((new Vector2D(mVelocity)).mul(dt));
 		}
 	}
 	
