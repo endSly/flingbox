@@ -22,7 +22,7 @@ import edu.eside.flingbox.graphics.Render;
 import edu.eside.flingbox.physics.PhysicBody;
 
 /**
- * A Body is a general abstraction class which handles 
+ * Body is a general abstraction class which handles 
  * basic data that any object should have.
  * Any physical object on scene should inherit from
  * {@link Body}.
