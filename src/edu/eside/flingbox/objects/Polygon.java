@@ -73,7 +73,7 @@ public final class Polygon extends Body implements OnMovementListener {
 			p.j -= centroid.j;
 		}
 		
-		mPointsCount = (short) (polygonPoints.length);
+		mPointsCount = (short) (polygonPoints.length); 
 		mRender = new RenderPolygon(polygonPoints, triangulationIndexes);
 		mPhysics = new PhysicPolygon(polygonPoints, polygonArea, centroid, this);
 		mPoints = polygonPoints;
