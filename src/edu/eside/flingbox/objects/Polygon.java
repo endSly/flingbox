@@ -41,7 +41,7 @@ public final class Polygon extends Body implements OnMovementListener {
 	 * @throws IllegalArgumentException		If not enough points
 	 */
 	public Polygon(final Vector2D[] polygonPoints) throws IllegalArgumentException {
-		super();
+		super(null, null);
 		
 		// Get passed points count
 		final int pointsCount = polygonPoints.length;
