@@ -53,18 +53,20 @@ public final class Polygon extends Body implements OnMovementListener {
 		
 		float polygonArea = PolygonUtils.polygonArea(polygonPoints);
 		// Set points in Clock-wise order
-		if (polygonArea > 0)
+		if (polygonArea > 0) {
 			/* If points are in anti-Clock-wise order
 			 * returned arre will be positive, else, it 
 			 * will be negative.
 			 */
-			for (int i = 0, j = polygonPoints.length - 1; j >= 0; --j, ++i) {
-				Vector2D temp = polygonPoints[i];
+			Vector2D temp;
+			for (int i = 0, j = polygonPoints.length - 1; i<j; --j, ++i) {
+				temp = polygonPoints[i];
 				polygonPoints[i] = polygonPoints[j];
 				polygonPoints[j] = temp;
 			}	
-		else
+		} else {
 			polygonArea = -polygonArea;
+		}
 		
 		
 		short[] triangulationIndexes = PolygonUtils.triangulatePolygon(polygonPoints);
