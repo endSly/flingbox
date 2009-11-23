@@ -92,7 +92,7 @@ public class ColliderPolygon extends Collider implements OnMovementListener {
 		final int pointsCount = polygon.length;
 		final Vector2D[] locatedPolygon = new Vector2D[pointsCount];
 		
-		final Matrix22 rotationMatrix = Matrix22.rotationMatrix(angle);
+		final Matrix22 rotationMatrix = new Matrix22(angle);
 		
 		for (int i = pointsCount - 1; i >= 0; i--) 
 			locatedPolygon[i] = Vector2D.mul(polygon[i], rotationMatrix).add(position);

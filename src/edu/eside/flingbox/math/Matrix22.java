@@ -27,14 +27,7 @@ public final class Matrix22 {
 	public float[] values;
 	
 	/**
-	 * Creates zero matrix
-	 */
-	public Matrix22() {
-		this.values = new float[4]; 
-	}
-	
-	/**
-	 * Creates matrix with values
+	 * Creates a new matrix with the given values
 	 * @param m	Values
 	 */
 	public Matrix22(float[] m) {
@@ -45,22 +38,20 @@ public final class Matrix22 {
 	}
 	
 	/**
-	 * Constructor for a Rotation matrix
+	 * Constructor for a rotation matrix
 	 * @param angle	Angle for rotation
-	 * @return		New rotation matrix 
 	 */
-	public static Matrix22 rotationMatrix(float angle) {
+	public Matrix22(float angle) {
 		final float cos = (float) Math.cos(angle);
 		final float sin = (float) Math.sin(angle);
 		
-		return new Matrix22(new float[] {
-				cos, -sin, 
-				sin, cos});
+		this.values = new float[] {cos, -sin, 
+									sin, cos};
 	}
 	
 	/**
-	 * Transposes matrix
-	 * @return	New matrix with transpose
+	 * Creates the transpose of the matrix
+	 * @return	New resulting matrix
 	 */
 	public Matrix22 transpose() {
 		return new Matrix22(new float[] {
@@ -77,8 +68,8 @@ public final class Matrix22 {
 	}
 	
 	/**
-	 * Computes matrix invert
-	 * @return	New matrix with inverted current matrix or null if determinant is Zero
+	 * Computes the matrix's invert
+	 * @return	New matrix or null if determinant is zero
 	 */
 	public Matrix22 invert() {
 		final float det = determinant();
