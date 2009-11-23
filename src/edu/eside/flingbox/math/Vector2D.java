@@ -21,11 +21,11 @@ package edu.eside.flingbox.math;
 /**
  * 2D vector without application point.
  * Also includes some basic operations with 
- * vector.
+ * vectors.
  */
 public class Vector2D {
 	// Vector components
-	public float i = 0f, j = 0f;
+	public float i, j;
 	
 	/**
 	 * Default constructor for an empty vector
@@ -33,7 +33,7 @@ public class Vector2D {
 	public Vector2D() { }
 	
 	/**
-	 * Creates new vector.
+	 * Creates a new vector.
 	 * 
 	 * @param i		X component
 	 * @param j		Y component
@@ -54,7 +54,7 @@ public class Vector2D {
 	}
 	
 	/**
-	 * Copys values form other vector
+	 * Copies values from other vector
 	 * 
 	 * @param v vector to be copied
 	 */
@@ -75,7 +75,7 @@ public class Vector2D {
 	}
 
 	/**
-	 * Computes length of the vector
+	 * Computes the length of the vector
 	 * 
 	 * @return 	Length of vector
 	 */
@@ -117,7 +117,7 @@ public class Vector2D {
 	}
 	
 	/**
-	 * Multiplies vector by scalar
+	 * Multiplies by a scalar
 	 * 
 	 * @param s	Scalar
 	 * @return	result vector
@@ -129,7 +129,7 @@ public class Vector2D {
 	}
 	
 	/**
-	 * Computes dot product
+	 * Computes the dot product
 	 * 
 	 * @param v vector
 	 * @return dot product
@@ -139,7 +139,7 @@ public class Vector2D {
 	}
 	
 	/**
-	 * Computes Z axis of cross product
+	 * Computes the Z axis of the cross product
 	 * 
 	 * @param v vector
 	 * @return Z axis of cross product
@@ -149,7 +149,7 @@ public class Vector2D {
 	}
 	
 	/**
-	 * Computes angle formed by current vector and other vector.
+	 * Computes angle formed by current vector and a given vector.
 	 * 
 	 * @param v Vector
 	 * @return angle formed [0..PI]
@@ -160,10 +160,11 @@ public class Vector2D {
 	}
 	
 	/**
-	 * Multiplies vector by matrix
+	 * Multiplies a vector by a matrix
 	 * 
+	 * @param v	Vector
 	 * @param m	Matrix
-	 * @return	New vector with result
+	 * @return	New vector with the result
 	 */
 	public static Vector2D mul(Vector2D v, Matrix22 m) {
 		return new Vector2D(
@@ -172,7 +173,7 @@ public class Vector2D {
 	}
 	
 	/**
-	 * Normalizes vector
+	 * Normalizes the vector
 	 * 
 	 * @return	Normalized vector
 	 */
@@ -184,7 +185,7 @@ public class Vector2D {
 	}
 	
 	/**
-	 * Computes vector's normal
+	 * Computes the vector's normal
 	 * 
 	 * @return New vector with the normal.
 	 */
@@ -193,23 +194,20 @@ public class Vector2D {
 	}
 	
 	/**
-	 * Computes distance from current vector, to point
-	 * pointed by p.
+	 * Calculates the distance to a given point
 	 * 
-	 * @param p vector to point
+	 * @param p point
 	 * @return distance
 	 */
 	public float distanceToPoint(Vector2D p) {
 		Vector2D dir = (new Vector2D(this)).normalize();
-		float f = dir.dotProduct(p);
-		dir.mul(f);
-		// Return distance
+		dir.mul(dir.dotProduct(p));
 		return (float) Math.abs(Math.sqrt(
 				(p.i - dir.i) * (p.i - dir.i) + (p.j - dir.j) * (p.j - dir.j)));
 	}
 	
 	/**
-	 * Returns string with the vector
+	 * Returns a string representing the vector
 	 */
 	public String toString() {
 		return "Vector(" + this.i + "i + " + this.j + "j)";

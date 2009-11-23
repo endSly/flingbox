@@ -22,31 +22,26 @@ import edu.eside.flingbox.graphics.Render;
 import edu.eside.flingbox.physics.PhysicBody;
 
 /**
- * An AtomicBody is a general abstraction witch handles 
+ * Body is a general abstraction class which handles 
  * basic data that any object should have.
  * Any physical object on scene should inherit from
- * {@link AtomicBody}.
+ * {@link Body}.
  * 
- * Also Bodys witch will be rendered should inherit from
- * AtomicBody
+ * Bodies which will be rendered should inherit from
+ * {@link Body} too.
  */
 public abstract class Body {
 	
 	// Instance of the body to be rendered
 	protected Render mRender;
-	// Instance of the body in to the physic space
+	// Instance of the body in the physic space
 	protected PhysicBody mPhysics;
-	
-	/**
-	 * Empty constructor
-	 */
-	protected Body() { }
 	
 	/**
 	 * Local constructor for any body.
 	 * 
 	 * @param render {@link Render} instance of body
-	 * @param physics {@link PhysicObject} instace of body
+	 * @param physics {@link PhysicObject} instance of body
 	 * @hide
 	 */
 	protected Body(Render render, PhysicBody physics) {
@@ -55,17 +50,17 @@ public abstract class Body {
 	}
 	
 	/**
-	 * @return object's render. NOTE Can be null!
+	 * @return object's render instance. NOTE: Can be null!
 	 */
 	public Render getRender() {
 		return mRender;
 	}
 	
 	/**
-	 * @return object's physics. NOTE Can be null!
+	 * @return object's physics instance. NOTE: Can be null!
 	 */
 	public PhysicBody getPhysics() {
 		return mPhysics;
 	}
-
+	
 }
