@@ -24,7 +24,7 @@ import java.io.IOException;
 import edu.eside.flingbox.BodySettingsDialog;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 import edu.eside.flingbox.math.Vector2D;
-import edu.eside.flingbox.objects.Body;
+import edu.eside.flingbox.bodies.Body;
 
 import android.content.Context;
 import android.os.Environment;

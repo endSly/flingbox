@@ -154,11 +154,11 @@ public class ContactSolver {
 		 */
 		final Vector2D totalVelocity = velocityByAngularRotation.add(body.getVelocity()); 
 
-		// Check if body moving away contact
+		/* Check if body moving away contact */
 		if (totalVelocity.dotProduct(relativeContactPoint) <= 0) 
 			return new Vector2D(); // Velocity is Zero
 		
-		// Discompose into components
+		/* Decompose into components */
 		float velAgainstContact = totalVelocity.dotProduct(contactSense);
 		float velAlongContact = totalVelocity.dotProduct(contactNormal);
 		

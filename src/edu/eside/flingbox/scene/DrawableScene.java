@@ -35,7 +35,7 @@ import edu.eside.flingbox.input.SceneMTGestureDetector;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 import edu.eside.flingbox.math.PolygonUtils;
 import edu.eside.flingbox.math.Vector2D;
-import edu.eside.flingbox.objects.Polygon;
+import edu.eside.flingbox.bodies.Polygon;
 
 /**
  * Implements drawing methods to {@link StaticScene}

@@ -18,7 +18,7 @@
 
 package edu.eside.flingbox;
 
-import edu.eside.flingbox.objects.Body;
+import edu.eside.flingbox.bodies.Body;
 
 import android.app.Dialog;
 import android.content.Context;

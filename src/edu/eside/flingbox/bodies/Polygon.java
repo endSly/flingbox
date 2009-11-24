@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.eside.flingbox.objects;
+package edu.eside.flingbox.bodies;
 
 import java.util.Random;
 
@@ -44,9 +44,7 @@ public final class Polygon extends Body implements OnMovementListener {
 		
 		if (polygonPoints.length < 3)
 			throw new IllegalArgumentException("Not enough points to build a polygon.");
-		
-		
-		
+
 		float polygonArea = PolygonUtils.polygonArea(polygonPoints);
 		// Set points in Clock-wise order
 		if (polygonArea > 0) {
@@ -60,19 +58,16 @@ public final class Polygon extends Body implements OnMovementListener {
 				polygonPoints[i] = polygonPoints[j];
 				polygonPoints[j] = temp;
 			}	
-		} else {
+		} else 
 			polygonArea = -polygonArea;
-		}
 		
 		short[] triangulationIndexes = PolygonUtils.triangulatePolygon(polygonPoints);
 		Vector2D centroid = PolygonUtils.polygonCentroid(polygonPoints);
 		
 		// Relocate polygon to find the centroid with point (0, 0)
-		for (Vector2D p : polygonPoints) {
-			p.i -= centroid.i;
-			p.j -= centroid.j;
-		}
-		
+		for (Vector2D p : polygonPoints) 
+			p.sub(centroid);
+
 		mPointsCount = (short) (polygonPoints.length); 
 		mRender = new RenderPolygon(polygonPoints, triangulationIndexes);
 		mPhysics = new PhysicPolygon(polygonPoints, polygonArea, centroid, this);
@@ -108,8 +103,7 @@ public final class Polygon extends Body implements OnMovementListener {
 	 */
 	public void onMovement(Vector2D position, float rotation) {
 		if (mRender != null && mRender instanceof RenderPolygon)
-			((RenderPolygon) mRender).setPosition(
-					new Vector2D(position.i, position.j), rotation);
+			((RenderPolygon) mRender).setPosition(position, rotation);
 	}
 
 }

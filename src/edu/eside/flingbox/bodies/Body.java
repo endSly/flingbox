@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.eside.flingbox.objects;
+package edu.eside.flingbox.bodies;
 
 import edu.eside.flingbox.graphics.Render;
 import edu.eside.flingbox.physics.PhysicBody;

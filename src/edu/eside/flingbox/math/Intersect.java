@@ -37,9 +37,12 @@ public class Intersect {
 	public final Vector2D[] contourB; 
 	
 	/** Ingoing point, it's also in contour[0] */
-	public Vector2D ingoingPoint;
+	public final Vector2D ingoingPoint;
 	/** Outgoing point, also in contour*/
-	public Vector2D outgoingPoint;
+	public final Vector2D outgoingPoint;
+	
+	public Vector2D polygonASide;
+	public Vector2D polygonBSide;
 	
 	/**
 	 * Local constructor for an intersection. Computes intersectionContour
@@ -55,13 +58,17 @@ public class Intersect {
 	 */
 	private Intersect(Vector2D[] polygonA, Vector2D[] polygonB, 
 			Vector2D ingoing, Vector2D outgoing,
-			int pAIn, int pBIn, int pAOut, int pBOut) {
+			int pAIn, int pBIn, int pAOut, int pBOut) throws IllegalArgumentException {
 		final int pointsCountA = polygonA.length;
 		final int pointsCountB = polygonB.length;
-		
+		/*
+		 * Compute intersection contours
+		 */
 		/* Calculate total points that will be stored */
-		final int intContourALen = ((pAOut - pAIn + pointsCountA) % pointsCountA) + 1;	/* For polygon A intersect */
-		final int intContourBLen = ((pBOut - pBIn + pointsCountB) % pointsCountB) + 1;	/* For polygon B intersect */
+		final int intContourALen = ((pAOut - pAIn + pointsCountA) % pointsCountA);	// For polygon A intersect
+		final int intContourBLen = ((pBOut - pBIn + pointsCountB) % pointsCountB);	// For polygon B intersect
+		if (intContourALen <= 0 && intContourBLen <= 0)
+			throw new IllegalArgumentException("Intersection is a line. No contour passed.");
 		
 		/* Copy intersecting contour from A */
 		Vector2D[] contourA = new Vector2D[intContourALen];
@@ -75,33 +82,42 @@ public class Intersect {
 		
 		this.polygonA = polygonA;
 		this.polygonB = polygonB;
-		this.contourA = contourA;
-		this.contourB = contourB;
 		this.ingoingPoint = ingoing;
 		this.outgoingPoint = outgoing;
+		this.contourA = contourA;
+		this.contourB = contourB;
+		
+		/* This will be computed after,if needed */
+		this.polygonASide = null;
+		this.polygonBSide = null;
 	}
 	
 	/**
 	 * Computes the side where the polygon is.
+	 *           ^  <-- A
+	 *         /   \
+	 * -------*--+--*------------------
+	 *      /    |   \
+	 *    /      v <-(A side)
 	 * 
 	 * @param polygon polygon to be checked
-	 * @return cross product between intersection vector form in to out and 
-	 * first polygon point that is inside intersection contour. < 0 if polygon 
-	 * is at right or > 0 if polygon is at left, if polygon is not  registered 
-	 * when intersection has been created, 0 is returned 
+	 * @return Vector indicating sense
 	 */
-	public float polygonsSide(Vector2D[] polygon) {
-		Vector2D[] polygonIntersectionSegment;
-		if (polygon == this.polygonA) 
-			polygonIntersectionSegment = this.contourA;
-		else if (polygon == this.polygonB) 
-			polygonIntersectionSegment = this.contourA;
-		else
-			return 0;
+	public Vector2D polygonsSide(Vector2D[] polygon) {
+		/* If side is not yet computed */
+		if (this.polygonASide == null && this.polygonBSide == null)
+			if (this.contourA.length > 0) // Create side vectors and computes it
+				computeSides(this.contourA, this.ingoingPoint, this.outgoingPoint, 
+						this.polygonASide = new Vector2D(), this.polygonBSide = new Vector2D());
+			else // Same but changing contour and sides
+				computeSides(this.contourB, this.ingoingPoint, this.outgoingPoint, 
+						this.polygonBSide = new Vector2D(), this.polygonASide = new Vector2D());
 		
-		Vector2D intersectionDescriptor = new Vector2D(this.outgoingPoint).sub(this.outgoingPoint);
-		
-		return intersectionDescriptor.crossProduct(polygonIntersectionSegment[0]);
+		if (polygon == this.polygonA) // Just compare pointers
+			return this.polygonASide;
+		if (polygon == this.polygonB)
+			return this.polygonBSide;
+		return null;
 	}
 	
 	/**
@@ -174,5 +190,32 @@ public class Intersect {
 		return new Vector2D(a0x + uA * (a1x - a0x), a0y + uA * (a1y - a0y));
 	}
 	
+	/**
+	 * Computes side's vectors
+	 * 
+	 * @param contourA first polygon contour. It CAN NOT be empty
+	 * @param ingoing
+	 * @param outgoing
+	 * @param aSide first polygon side pointer
+	 * @param bSide other polygon side pointer
+	 */
+	private static void computeSides(final Vector2D[] contourA, 
+			final Vector2D ingoing, final Vector2D outgoing,  Vector2D aSide, Vector2D bSide) {
+		/* 
+		 * Compute polygons sides 
+		 */
+		Vector2D contourPoint  = contourA[0]; // Just one point of inside intersection
+
+		aSide                              // try with A Side as normal
+			.set(outgoing).sub(ingoing)    // of intersection line
+			.normalVector();
+		
+		float sense = aSide.crossProduct(contourPoint);
+		if (sense > 0) { // a side is wrong, is really b side, then invert a side
+			bSide.set(aSide);
+			aSide.negate();
+		} else // a side ok, b side is the opposite
+			bSide.set(aSide).negate();
+	}
 	
 }

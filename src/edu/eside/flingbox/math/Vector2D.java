@@ -48,7 +48,7 @@ public class Vector2D {
 	 * 
 	 * @param v vector to copy
 	 */
-	public Vector2D(Vector2D v) {
+	public Vector2D(Vector2D v) throws NullPointerException {
 		this.i = v.i;
 		this.j = v.j;
 	}
@@ -58,9 +58,10 @@ public class Vector2D {
 	 * 
 	 * @param v vector to be copied
 	 */
-	public void set(Vector2D v) {
+	public Vector2D set(Vector2D v) {
 		this.i = v.i;
 		this.j = v.j;
+		return this;
 	}
 	
 	/**
@@ -69,9 +70,10 @@ public class Vector2D {
 	 * @param i x component of the vector
 	 * @param j y component of the vector
 	 */
-	public void set(float i, float j) {
+	public Vector2D set(float i, float j) {
 		this.i = i;
 		this.j = j;
+		return this;
 	}
 
 	/**
@@ -90,6 +92,13 @@ public class Vector2D {
 		this.i = -this.i;
 		this.j = -this.j;
 		return this;
+	}
+	
+	/**
+	 * Negates current vector
+	 */
+	public static Vector2D negate(Vector2D v) {
+		return new Vector2D(-v.i, -v.j);
 	}
 	
 	/**
@@ -187,12 +196,23 @@ public class Vector2D {
 	/**
 	 * Computes the vector's normal
 	 * 
+	 * @return Vector with the normal.
+	 */
+	public Vector2D normalVector() {
+		this.i = -this.j;
+		this.j = this.i;
+		return this;
+	}
+	
+	/**
+	 * Computes the vector's normal
+	 * 
 	 * @return New vector with the normal.
 	 */
 	public static Vector2D normalVector(Vector2D v) {
 		return new Vector2D(-v.j, v.i);
 	}
-	
+
 	/**
 	 * Calculates the distance to a given point
 	 * 

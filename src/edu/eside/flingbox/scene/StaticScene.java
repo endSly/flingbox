@@ -30,7 +30,7 @@ import edu.eside.flingbox.graphics.SceneRenderer;
 import edu.eside.flingbox.graphics.SceneRenderer.Camera;
 import edu.eside.flingbox.input.SceneGestureDetector;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
-import edu.eside.flingbox.objects.Body;
+import edu.eside.flingbox.bodies.Body;
 import edu.eside.flingbox.physics.ScenePhysics;
 import edu.eside.flingbox.physics.gravity.GravitySource;
 
