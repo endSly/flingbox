@@ -41,8 +41,8 @@ public class Intersect {
 	/** Outgoing point, also in contour*/
 	public final Vector2D outgoingPoint;
 	
-	public Vector2D polygonASide;
-	public Vector2D polygonBSide;
+	private Vector2D mPolygonASide;
+	private Vector2D mPolygonBSide;
 	
 	/**
 	 * Local constructor for an intersection. Computes intersectionContour
@@ -88,8 +88,8 @@ public class Intersect {
 		this.contourB = contourB;
 		
 		/* This will be computed after,if needed */
-		this.polygonASide = null;
-		this.polygonBSide = null;
+		this.mPolygonASide = null;
+		this.mPolygonBSide = null;
 	}
 	
 	/**
@@ -101,22 +101,22 @@ public class Intersect {
 	 *    /      v <-(A side)
 	 * 
 	 * @param polygon polygon to be checked
-	 * @return Vector indicating sense
+	 * @return Vector indicating sense, null if polygon not used to construct intersect
 	 */
 	public Vector2D polygonsSide(Vector2D[] polygon) {
 		/* If side is not yet computed */
-		if (this.polygonASide == null && this.polygonBSide == null)
+		if (this.mPolygonASide == null && this.mPolygonBSide == null)
 			if (this.contourA.length > 0) // Create side vectors and computes it
 				computeSides(this.contourA, this.ingoingPoint, this.outgoingPoint, 
-						this.polygonASide = new Vector2D(), this.polygonBSide = new Vector2D());
+						this.mPolygonASide = new Vector2D(), this.mPolygonBSide = new Vector2D());
 			else // Same but changing contour and sides
 				computeSides(this.contourB, this.ingoingPoint, this.outgoingPoint, 
-						this.polygonBSide = new Vector2D(), this.polygonASide = new Vector2D());
+						this.mPolygonBSide = new Vector2D(), this.mPolygonASide = new Vector2D());
 		
 		if (polygon == this.polygonA) // Just compare pointers
-			return this.polygonASide;
+			return this.mPolygonASide;
 		if (polygon == this.polygonB)
-			return this.polygonBSide;
+			return this.mPolygonBSide;
 		return null;
 	}
 	

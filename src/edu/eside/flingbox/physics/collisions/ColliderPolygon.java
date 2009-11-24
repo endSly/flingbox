@@ -66,6 +66,39 @@ public class ColliderPolygon extends Collider implements OnMovementListener {
 			mVertexAngle[i] = (float) Math.atan(contour[i].j / contour[i].i);
 
 	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public Vector2D[] getPolygonContour() {
+		return mPolygonContour;
+	}
+	
+	/**
+	 * 
+	 */
+	public boolean checkCollision(Collider collider) {
+		if (!super.checkCollision(collider)) 
+			return false;
+		
+		final Vector2D[] polygon = translateAndRotatePolygon(mPolygonContour, mPosition, mAngle);
+		final Vector2D[] otherPolygon = translateAndRotatePolygon(((ColliderPolygon) collider).mPolygonContour, 
+				((ColliderPolygon) collider).mPosition, ((ColliderPolygon) collider).mAngle);
+		
+		/*
+		 * Find intersections
+		 * TODO Optimize this!!
+		 */
+		Intersect[] intersections = Intersect.intersectPolygons(polygon, otherPolygon);
+		
+		/* Compute detected intersections */
+		for (Intersect intersect : intersections) {
+			Contact contact = new Contact(this.mPhysicBody, collider.mPhysicBody, intersect);
+			ContactSolver.solveContact(contact);
+		}
+		return intersections.length > 0;
+	}
 
 	/**
 	 * Computes bounding circle with center in point (0, 0)
@@ -99,30 +132,5 @@ public class ColliderPolygon extends Collider implements OnMovementListener {
 		
 		return locatedPolygon;
 	}
-	
-	/**
-	 * TODO
-	 */
-	public boolean checkCollision(Collider collider) {
-		if (!super.checkCollision(collider)) 
-			return false;
-		
-		final Vector2D[] polygon = translateAndRotatePolygon(mPolygonContour, mPosition, mAngle);
-		final Vector2D[] otherPolygon = translateAndRotatePolygon(((ColliderPolygon) collider).mPolygonContour, 
-				((ColliderPolygon) collider).mPosition, ((ColliderPolygon) collider).mAngle);
-		
-		/*
-		 * Find intersections
-		 * TODO Optimize this!!
-		 */
-		Intersect[] intersections = Intersect.intersectPolygons(polygon, otherPolygon);
-		
-		/* Compute detected intersections */
-		for (Intersect intersect : intersections) {
-			Contact contact = new Contact(this.mPhysicBody, collider.mPhysicBody, intersect);
-			ContactSolver.solveContact(contact);
-		}
-		return intersections.length > 0;
-	}
-	
+
 }

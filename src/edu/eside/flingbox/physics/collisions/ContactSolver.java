@@ -61,8 +61,8 @@ public class ContactSolver {
 						
 			final float normalModule = (vFinal - velA.i) * mA / DIFFERENTIAL_TIME;
 			
-			final Vector2D normalForce = new Vector2D(contact.sense).mul(normalModule);
-			final Vector2D frictionForce = computeFrictionForce(bodyA, normalModule, velA.j, contact.normal);
+			final Vector2D normalForce = new Vector2D(contact.normal).mul(normalModule);
+			final Vector2D frictionForce = computeFrictionForce(bodyA, normalModule, velA.j, contact.sense);
 			
 			final Vector2D contactRelativePoint = new Vector2D(bodyA.getPosition()).sub(contact.position);
 			
@@ -77,8 +77,8 @@ public class ContactSolver {
 			
 			final float normalModule = (vFinal - velB.i) * mB / DIFFERENTIAL_TIME;
 
-			final Vector2D normalForce = new Vector2D(contact.sense).mul(normalModule);
-			final Vector2D frictionForce = computeFrictionForce(bodyB, normalModule, velB.j, contact.normal);
+			final Vector2D normalForce = new Vector2D(contact.normal).mul(normalModule);
+			final Vector2D frictionForce = computeFrictionForce(bodyB, normalModule, velB.j, contact.sense);
 
 			final Vector2D contactRelativePoint = new Vector2D(bodyB.getPosition()).sub(contact.position);
 
@@ -137,8 +137,8 @@ public class ContactSolver {
 	 * @return velocity components proyected
 	 */
 	private static Vector2D getVelocityIntoContactAxis(final Contact contact, final PhysicBody body) {
-		final Vector2D contactSense = contact.sense;
 		final Vector2D contactNormal = contact.normal;
+		final Vector2D contactSense = contact.sense;
 		
 		/* Get vector from Polygon's center to contact point  */
 		final Vector2D relativeContactPoint = new Vector2D(contact.position).sub(body.getPosition());
@@ -159,8 +159,8 @@ public class ContactSolver {
 			return new Vector2D(); // Velocity is Zero
 		
 		/* Decompose into components */
-		float velAgainstContact = totalVelocity.dotProduct(contactSense);
-		float velAlongContact = totalVelocity.dotProduct(contactNormal);
+		float velAgainstContact = totalVelocity.dotProduct(contactNormal);
+		float velAlongContact = totalVelocity.dotProduct(contactSense);
 		
 		return new Vector2D(velAgainstContact, velAlongContact);
 	}

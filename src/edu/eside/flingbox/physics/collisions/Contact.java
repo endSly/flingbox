@@ -21,17 +21,18 @@ package edu.eside.flingbox.physics.collisions;
 import edu.eside.flingbox.math.Intersect;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.PhysicBody;
+import edu.eside.flingbox.physics.PhysicPolygon;
 
 /**
  * Class to handle contact description.
  */
 public class Contact {
 	/** Description of intersection */
-	public Intersect intersect;
+	public final Intersect intersect;
 	/** First body in contact */
-	public PhysicBody bodyInContactA;
+	public final PhysicBody bodyInContactA;
 	/** Second body in contact */
-	public PhysicBody bodyInContactB;
+	public final PhysicBody bodyInContactB;
 	
 	/** Contact's absolute position */
 	public final Vector2D position;
@@ -47,22 +48,18 @@ public class Contact {
 		this.bodyInContactB = bodyB;
 		this.position = new Vector2D(intersect.ingoingPoint)
 			.add(intersect.outgoingPoint).mul(0.5f);
-		this.normal = new Vector2D(intersect.outgoingPoint)
+		this.sense = new Vector2D(intersect.outgoingPoint)
 			.sub(intersect.ingoingPoint).normalize();
-		this.sense = Vector2D.normalVector(normal);
+		this.normal = Vector2D.normalVector(sense);
 	}
 	
-	/**
-	 * Default constructor for a collision
-	 * 
-	 * @param position relative position
-	 * @param sense collisio's sense
-	 * @deprecated
-	 */
-	public Contact(Vector2D position, Vector2D sense) {
-		this.position = new Vector2D(position);
-		this.sense = new Vector2D(sense).normalize();
-		this.normal = Vector2D.normalVector(this.sense);
+	public Vector2D getBodysSide(PhysicBody body) {
+		if (body instanceof PhysicPolygon) {
+			Vector2D[] polygonContour = ((ColliderPolygon) body.getCollider()).getPolygonContour();
+			return intersect.polygonsSide(polygonContour);
+		}
+		
+		return null;
 	}
 	
 }
