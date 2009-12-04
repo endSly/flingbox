@@ -103,6 +103,42 @@ public class BodySettingsDialog extends Dialog {
 			public void onStartTrackingTouch(SeekBar seekBar) { }
 			public void onStopTrackingTouch(SeekBar seekBar) { }
 		});
+		
+		/*
+		 * Static friction SeekBar 
+		 */
+		SeekBar staticFrictionSeekBar = (SeekBar)findViewById(R.id.seek_static_friction);
+		staticFrictionSeekBar.setMax(1024);
+		staticFrictionSeekBar.setProgress((int) (mBody.getPhysics().getStaticFrictionCoeficient() * 1024));
+
+		staticFrictionSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+				if (!fromUser)
+					return;
+				mBody.getPhysics().setStaticFrictionCoeficient((float) progress / 1024f);
+			}
+
+			public void onStartTrackingTouch(SeekBar seekBar) { }
+			public void onStopTrackingTouch(SeekBar seekBar) { }
+		});
+	
+		/*
+		 * Kinetic friction SeekBar 
+		 */
+		SeekBar kineticFrictionSeekBar = (SeekBar)findViewById(R.id.seek_kinetic_friction);
+		kineticFrictionSeekBar.setMax(1024);
+		kineticFrictionSeekBar.setProgress((int) (mBody.getPhysics().getDynamicFrictionCoeficient() * 1024));
+
+		kineticFrictionSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+				if (!fromUser)
+					return;
+				mBody.getPhysics().setDynamicFrictionCoeficient((float) progress / 1024f);
+			}
+
+			public void onStartTrackingTouch(SeekBar seekBar) { }
+			public void onStopTrackingTouch(SeekBar seekBar) { }
+		});
 	
 }
 

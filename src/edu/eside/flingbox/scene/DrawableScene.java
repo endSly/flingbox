@@ -163,7 +163,7 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 				mDrawingRender.onDelete();
 				mSceneRenderer.remove(mDrawingRender);
 				mDrawingRender = null;
-					
+				
 				final int pointsCount = mDrawingPattern.size();
 				// if we had points enough
 				if (pointsCount >= 3) {
@@ -174,9 +174,8 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 					if (optimizedPoints.length >= 3) {
 						Polygon drawedPolygon = new Polygon(optimizedPoints);
 						drawedPolygon.setRandomColor();
-					
 						add(drawedPolygon);
-					
+						
 						// Vibrate as haptic feedback
 						mVibrator.vibrate(50);
 					}

@@ -93,7 +93,7 @@ abstract class PhysicAtomicBody {
 	}
 	
 	public Vector2D getImpulse() {
-		return new Vector2D(mVelocity).mul(mMass);
+		return new Vector2D(mVelocity).mul(mMass).add(mAcomulatedImpulse);
 	}
 	
 	/** @return true if is enabled */

@@ -181,6 +181,8 @@ public class ScenePhysics implements Runnable {
 					body.onUpdateBody((float) time / 1000f);
 			} catch (InterruptedException e1) {
 				e1.printStackTrace();
+			} finally {
+				mLockOnSceneBodys.release();
 			}
 
 			/* Keep max frame-rate */
@@ -189,9 +191,7 @@ public class ScenePhysics implements Runnable {
 					Thread.sleep(20 - time);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-			} finally {
-				mLockOnSceneBodys.release();
-			}
+			} 
 		}
 		mDoKill = false;
 		mIsSimulating = false;
