@@ -81,12 +81,30 @@ public class BodySettingsDialog extends Dialog {
 				mBody.getPhysics().setDensity((float) Math.exp( 
 						((float) seekBar.getProgress() - 200f) / 10f));
 			}
-			
+
 			public void onStartTrackingTouch(SeekBar seekBar) { }
 			public void onStopTrackingTouch(SeekBar seekBar) { }
 		});
-		
-    }
+
+		/*
+		 * Restitution SeekBar 
+		 */
+		SeekBar restitutionSeekBar = (SeekBar)findViewById(R.id.seek_restitution_coef);
+		restitutionSeekBar.setMax(1024);
+		restitutionSeekBar.setProgress((int) (mBody.getPhysics().getRestitutionCoeficient() * 1024));
+
+		restitutionSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+				if (!fromUser)
+					return;
+				mBody.getPhysics().setRestitutionCoeficient((float) progress / 1024f);
+			}
+
+			public void onStartTrackingTouch(SeekBar seekBar) { }
+			public void onStopTrackingTouch(SeekBar seekBar) { }
+		});
+	
+}
 
 
 }

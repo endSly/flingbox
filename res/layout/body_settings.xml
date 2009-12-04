@@ -31,5 +31,45 @@
 			android:layout_marginLeft="6dip"
 			android:layout_marginRight="6dip"/>     
 
-
+	<!-- Restitution Coeficient -->
+	<TableRow> 
+		<TextView android:textColor="#ffffff" 
+			android:text="@string/body_settings_restitution" 
+			android:textSize="16px" 
+			android:layout_marginLeft="6dip"/>     
+	</TableRow> 
+	<SeekBar android:id="@+id/seek_restitution_coef" 
+			android:layout_width="fill_parent" 
+			android:layout_height="wrap_content"
+			android:layout_gravity="right|top" 
+			android:layout_marginLeft="6dip"
+			android:layout_marginRight="6dip"/>     
+			
+	<!-- Static friction -->
+	<TableRow> 
+		<TextView android:textColor="#ffffff" 
+			android:text="@string/body_settings_static_friction" 
+			android:textSize="16px" 
+			android:layout_marginLeft="6dip"/>     
+	</TableRow> 
+	<SeekBar android:id="@+id/seek_static_friction" 
+			android:layout_width="fill_parent" 
+			android:layout_height="wrap_content"
+			android:layout_gravity="right|top" 
+			android:layout_marginLeft="6dip"
+			android:layout_marginRight="6dip"/>     
+			
+	<!-- Kinetic friction -->
+	<TableRow> 
+		<TextView android:textColor="#ffffff" 
+			android:text="@string/body_settings_kinetic_friction" 
+			android:textSize="16px" 
+			android:layout_marginLeft="6dip"/>     
+	</TableRow> 
+	<SeekBar android:id="@+id/seek_kinetic_friction" 
+			android:layout_width="fill_parent" 
+			android:layout_height="wrap_content"
+			android:layout_gravity="right|top" 
+			android:layout_marginLeft="6dip"
+			android:layout_marginRight="6dip"/>   
 </TableLayout> 
