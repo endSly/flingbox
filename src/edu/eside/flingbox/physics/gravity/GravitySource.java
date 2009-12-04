@@ -72,11 +72,11 @@ public class GravitySource extends Vector2D implements SensorEventListener {
 	}
 	
 	private GravitySource(Vector2D v) {
-		super(v.mul(32f));
+		super(v.mul(64f));
 	}
 	
 	private GravitySource(float i, float j) {
-		super(i * 32f, j * 32f);
+		super(i * 64f, j * 64f);
 	}
 
 	@Override
@@ -86,8 +86,8 @@ public class GravitySource extends Vector2D implements SensorEventListener {
 
 	@Override
 	public void onSensorChanged(SensorEvent event) {
-		this.i = -event.values[SensorManager.DATA_X] * 80;
-		this.j = -event.values[SensorManager.DATA_Y] * 80;
+		this.i = -event.values[SensorManager.DATA_X] * 64f;
+		this.j = -event.values[SensorManager.DATA_Y] * 64f;
 		
 	}
 }

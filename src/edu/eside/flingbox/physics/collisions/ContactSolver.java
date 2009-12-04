@@ -108,7 +108,7 @@ public class ContactSolver {
 			module = -bodyVelocity * body.getBodyMass();
 		else
 			/* Friction force can't stop body, and it is constant */
-			module = Math.signum(bodyVelocity) * body.getDynamicFrictionCoeficient() * normal;
+			module = -Math.signum(bodyVelocity) * body.getDynamicFrictionCoeficient() * Math.abs(normal);
 
 		return new Vector2D(frictionDirection).mul(module);
 	}
