@@ -26,11 +26,8 @@ import edu.eside.flingbox.physics.collisions.Collider;
  * Abstract class with handles all properties that any 
  * physical body should have.
  */
-public abstract class PhysicBody {
-	
-	/**
-	 * Implements on move callback.
-	 */
+public abstract class PhysicBody extends PhysicAtomicBody{
+	/** Implements on move callback. */
 	public interface OnMovementListener {
 		/**
 		 * Called when movement occurs.
@@ -40,30 +37,13 @@ public abstract class PhysicBody {
 		public void onMovement(Vector2D position, float angle);
 	}
 	
-	/** Objects with INFINITE_MASS should be impossible to move */
-	public final static float INFINITE_MASS = Float.POSITIVE_INFINITY;
+	
 	/** Objects with INFINITE_ANGULAR_MASS should be imposible to rotate */
 	public final static float INFINITE_ANGULAR_MASS = Float.POSITIVE_INFINITY;
 	
-	/** Sets if objects can be moved */
-	protected boolean mIsMoveable = true;
 	/** Sets if objects can be rotated */
 	protected boolean mIsRotable = true;
-	/** Sets if objects should interactue */
-	protected boolean mIsEnabled = true;
-	
-	/** Restitution Coeficient is a fractional value representing the ratio 
-	 * of velocities before and after an impact */
-	protected float mRestitutionCoeficient;
-	
-	
-	/** friction to be applied when body is moving */
-	protected float mDynamicFrictionCoeficient;
-	/** friction to be applied when body isn's moving */
-	protected float mStaticFrictionCoeficient;
-	
-	/** Object's current position */
-	protected final Vector2D mPosition;
+
 	/** Object's current rotated angle */
 	protected float mAngle = 0f;
 	
@@ -71,21 +51,21 @@ public abstract class PhysicBody {
 	protected float mDensity;
 	/** body's volume */
 	protected final float mVolume;
-	/** Body's mass */
-	protected float mMass;
+
 	/** Body's angular mass */
 	protected float mAngularMass = 0f;
 	/** Body's current velocity */
 	
-	protected final Vector2D mVelocity = new Vector2D();
+	
 	/** Body's current angular Velocity */
 	protected float mAngularVelocity = 0.0f;
 	
-	/** Collider for this body */
-	protected Collider mCollider;
+	protected float mAcomulatedRotationalImpulse = 0f;
 	
 	/**OnMovement callback listener */
 	protected OnMovementListener mListener;
+
+	
 	
 	/**
 	 * Local constructor for any abstract body
@@ -97,26 +77,33 @@ public abstract class PhysicBody {
 		mVolume = bodyVolume;
 		mRestitutionCoeficient = Preferences.defaultRestitutionCoeficient;
 		mDensity = Preferences.defaultDensity;
-		mPosition = new Vector2D(position);
 		mDynamicFrictionCoeficient = Preferences.defaultDynamicFrictionCoeficient;
 		mStaticFrictionCoeficient = Preferences.defaultStaticFrictionCoeficient;
-		
+		mPosition.set(position);
 		mMass = bodyVolume * mDensity;
 	}
-	
+
 	/**
 	 * Called to refresh object's position
-	 * @param time time in ms since las update
+	 * @param time in seconds since last update
 	 */
-	public abstract void onUpdateBody(float time);
-	
-	/**
-	 * Applies force to the object
-	 * 
-	 * @param force Force
-	 * @param dt time period while force is applied
-	 */
-	public abstract void applyForce(Vector2D force, float dt);
+	public void onUpdateBody(float time) {
+		if (!mIsEnabled)
+			return;
+
+		super.onUpdateBody(time);
+		
+		if (mIsRotable) {
+			mAngularVelocity += mAcomulatedRotationalImpulse / mAngularMass;
+			mAngle += mAngularVelocity * time;
+			mAcomulatedRotationalImpulse = 0f;
+		}
+
+		if (mIsMoveable || mIsRotable) {
+			mCollider.onMovement(mPosition, mAngle);
+			mListener.onMovement(mPosition, mAngle);
+		}
+	}
 	
 	/**
 	 * Applies force to the object
@@ -125,19 +112,15 @@ public abstract class PhysicBody {
 	 * @param applicationPoint relative point in wich force is applied
 	 * @param dt time period while force is applied
 	 */
-	public abstract void applyForce(Vector2D force, Vector2D applicationPoint, float dt);
-	
-	/**
-	 * Check if point is contained by the polygon
-	 * 
-	 * @param p point to check
-	 * @return true if is containded
-	 */
-	public boolean contains(Vector2D p) {
-		return false; // Atomic body cannot be contained
+	public void applyImpulse(Vector2D impulse, Vector2D applicationPoint) {
+		mAcomulatedImpulse.add(impulse);
+		
+		mAcomulatedRotationalImpulse  += impulse.crossProduct(applicationPoint);
 	}
 	
-	/** Fixs body, making imposible to move  */
+
+	
+	/** Fixs body, making impossible to move  */
 	public void setBodyFixed(boolean fixed) {
 		mIsMoveable = !fixed;
 		mIsRotable = !fixed;
@@ -156,23 +139,6 @@ public abstract class PhysicBody {
 		return !(mIsMoveable || mIsRotable);
 	}
 	
-	/** @return true if is enabled */
-	public boolean isEnabled() {
-		return mIsEnabled;
-	}
-	
-	/** Sets if object is enabled or not */
-	public void setEnabled(boolean doEnable) {
-		mIsEnabled = doEnable;
-	}
-	
-	/**
-	 * @return Body's mass
-	 */
-	public float getBodyMass() {
-		return mMass;
-	}
-	
 	/**
 	 * @return Body's angular mass
 	 */
@@ -187,36 +153,6 @@ public abstract class PhysicBody {
 	public void setDensity(float density) {
 		mDensity = density;
 		mMass = mVolume * density;
-	}
-	
-	public float getDynamicFrictionCoeficient() {
-		return mDynamicFrictionCoeficient;
-	}
-	
-	public void setDynamicFrictionCoeficient(float f) {
-		mDynamicFrictionCoeficient = f;
-	}
-	
-	public float getStaticFrictionCoeficient() {
-		return mStaticFrictionCoeficient;
-	}
-	
-	public void setStaticFrictionCoeficient(float f) {
-		mStaticFrictionCoeficient = f;
-	}
-	
-	/**
-	 * @return body's Restitution Coeficient
-	 */
-	public float getRestitutionCoeficient() {
-		return mRestitutionCoeficient;
-	}
-	
-	/**
-	 * Sets body's Restitution Coeficient
-	 */
-	public void setRestitutionCoeficient(float restCoef) {
-		mRestitutionCoeficient = restCoef;
 	}
 	
 	/**
@@ -242,29 +178,6 @@ public abstract class PhysicBody {
 	}
 	
 	/**
-	 * @return Body's absolute position
-	 */
-	public Vector2D getPosition() {
-		return mPosition;
-	}
-	
-	/**
-	 * @param position new postion of the object
-	 */
-	public void setPosition(float x, float y) {
-		mPosition.set(x, y);
-		onUpdateBody(0);
-	}
-	
-	/**
-	 * @param position new postion of the object
-	 */
-	public void setPosition(Vector2D v) {
-		mPosition.set(v);
-		onUpdateBody(0);
-	}
-	
-	/**
 	 * @return Body's angle
 	 */
 	public float getAngle() {
@@ -279,7 +192,7 @@ public abstract class PhysicBody {
 		onUpdateBody(0);
 	}
 	
-	/**
+	/** 
 	 * Computes current object's energy
 	 *  
 	 * @return energy in juls
@@ -291,13 +204,13 @@ public abstract class PhysicBody {
 		return kineticEnergy + kineticRotationalEnergy;
 	}
 	
+
+	
 	/**
 	 * @return the Collider
 	 */
 	public Collider getCollider() {
 		return mCollider;
 	}
-
-	
 
 }

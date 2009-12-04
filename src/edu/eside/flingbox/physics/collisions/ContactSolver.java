@@ -27,10 +27,6 @@ import edu.eside.flingbox.physics.PhysicBody;
  * This class has all members static due performance improvement
  */
 public class ContactSolver {
-	/**
-	 * Minimal time unit
-	 */
-	private final static float DIFFERENTIAL_TIME = 10f / 1000f;
 	
 	/** Prevent solver creation */
 	private ContactSolver() { } 
@@ -59,14 +55,14 @@ public class ContactSolver {
 						? -velA.i * restit
 						: ((1 + restit) * mB * velB.i + velA.i * (mA + restit * mB)) / (mA + mB);
 						
-			final float normalModule = (vFinal - velA.i) * mA / DIFFERENTIAL_TIME;
+			final float normalModule = (vFinal - velA.i) * mA;
 			
 			final Vector2D normalForce = new Vector2D(contact.normal).mul(normalModule);
 			final Vector2D frictionForce = computeFrictionForce(bodyA, normalModule, velA.j, contact.sense);
 			
 			final Vector2D contactRelativePoint = new Vector2D(bodyA.getPosition()).sub(contact.position);
 			
-			bodyA.applyForce(normalForce.add(frictionForce), contactRelativePoint, DIFFERENTIAL_TIME);
+			bodyA.applyImpulse(normalForce.add(frictionForce), contactRelativePoint);
 		}
 		
 		if (!bodyB.isFixed()) { 
@@ -75,14 +71,14 @@ public class ContactSolver {
 						? -velB.i * restit
 						: ((1 + restit) * mA * velA.i + velB.i * (mB + restit * mA)) / (mA + mB);
 			
-			final float normalModule = (vFinal - velB.i) * mB / DIFFERENTIAL_TIME;
+			final float normalModule = (vFinal - velB.i) * mB;
 
 			final Vector2D normalForce = new Vector2D(contact.normal).mul(normalModule);
 			final Vector2D frictionForce = computeFrictionForce(bodyB, normalModule, velB.j, contact.sense);
 
 			final Vector2D contactRelativePoint = new Vector2D(bodyB.getPosition()).sub(contact.position);
 
-			bodyB.applyForce(normalForce.add(frictionForce), contactRelativePoint, DIFFERENTIAL_TIME);
+			bodyB.applyImpulse(normalForce.add(frictionForce), contactRelativePoint);
 		} 
 		
 		fixBodysPenetration(contact, bodyA, bodyB);
@@ -104,16 +100,16 @@ public class ContactSolver {
 		float staticFrictionForce = body.getStaticFrictionCoeficient() * normal;
 		
 		final float currentVel = Math.abs(bodyVelocity) ;
-		final float staticFrictionVelDiff = Math.abs(staticFrictionForce * DIFFERENTIAL_TIME / body.getBodyMass());
+		final float staticFrictionVelDiff = Math.abs(staticFrictionForce / body.getBodyMass());
 		float module;
 		/* Check if friction makes too much force */
 		if (currentVel < staticFrictionVelDiff) 
 			/* Friction force stops body */
-			module = -Math.signum(bodyVelocity) * bodyVelocity * body.getBodyMass() / DIFFERENTIAL_TIME;
+			module = -bodyVelocity * body.getBodyMass();
 		else
 			/* Friction force can't stop body, and it is constant */
-			module = -Math.signum(bodyVelocity) * body.getDynamicFrictionCoeficient() * normal;
-		
+			module = Math.signum(bodyVelocity) * body.getDynamicFrictionCoeficient() * normal;
+
 		return new Vector2D(frictionDirection).mul(module);
 	}
 	
@@ -129,12 +125,12 @@ public class ContactSolver {
 	}
 	
 	/**
-	 * Obtains a Vector with velocity components proyected to contact's sense.
+	 * Obtains a Vector with velocity components projected to contact's sense.
 	 * In the x axis it returns velocity against the contact
 	 * 
 	 * @param contact contact
 	 * @param body body to be collided
-	 * @return velocity components proyected
+	 * @return velocity components projected
 	 */
 	private static Vector2D getVelocityIntoContactAxis(final Contact contact, final PhysicBody body) {
 		final Vector2D contactNormal = contact.normal;
@@ -155,7 +151,7 @@ public class ContactSolver {
 		final Vector2D totalVelocity = velocityByAngularRotation.add(body.getVelocity()); 
 
 		/* Check if body moving away contact */
-		if (totalVelocity.dotProduct(relativeContactPoint) <= 0) 
+		if (!totalVelocity.isAtSameSide(relativeContactPoint /*contact.getBodysSide(body)*/)) 
 			return new Vector2D(); // Velocity is Zero
 		
 		/* Decompose into components */

@@ -148,6 +148,26 @@ public class Vector2D {
 	}
 	
 	/**
+	 * computes the length of projected vector
+	 * 
+	 * @param v base vector
+	 * @return length of projection
+	 */
+	public float projectOver(Vector2D v) {
+		return this.i * v.i + this.j * v.j;
+	}
+	
+	/**
+	 * computes the side of vector
+	 * 
+	 * @param v vector to be compared
+	 * @return true if two vectors angle is less than 90¼
+	 */
+	public boolean isAtSameSide(Vector2D v) {
+		return (this.i * v.i + this.j * v.j) > 0f;
+	}
+	
+	/**
 	 * Computes the Z axis of the cross product
 	 * 
 	 * @param v vector

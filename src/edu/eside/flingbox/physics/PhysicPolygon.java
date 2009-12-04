@@ -79,7 +79,7 @@ public class PhysicPolygon extends PhysicBody {
 	 */
 	private static float computeAngularMass(float mass, Collider collider) {
 		final float radius = collider.getBoundingCircle();
-		return 0.8f * mass * radius * radius;
+		return 0.4f * mass * radius * radius;
 	}
 	
 	/**
@@ -94,46 +94,10 @@ public class PhysicPolygon extends PhysicBody {
 	
 
 	@Override
-	public void applyForce(Vector2D force, Vector2D applicationPoint, float dt) {
-		if (!mIsEnabled)
-			return;
-		
-		if (mIsMoveable) 
-			// Sets velocity and position
-			mVelocity.add((new Vector2D(force)).mul(dt / mMass));
-		
-		if (mIsRotable) 
-			// Sets angular velocity and rotation
-			mAngularVelocity += force.crossProduct(applicationPoint) * dt / mAngularMass;
-		
-	}
-
-	@Override
-	public void applyForce(Vector2D force, float dt) {
-		if (!mIsEnabled)
-			return;
-		
-		if (mIsMoveable) {
-			// Sets velocity and position
-			mVelocity.add((new Vector2D(force)).mul(dt / mMass));
-		}
-	}
-	
-	@Override
 	public void setDensity(float density) {
 		super.setDensity(density);
 		mAngularMass = computeAngularMass(mMass, mCollider);
 	}
 	
-	/**
-	 * Called when object has been updated
-	 */
-	public synchronized void onUpdateBody(float time) {
-		mPosition.add((new Vector2D(mVelocity)).mul(time));
-		mAngle += mAngularVelocity * time;
-
-		mCollider.onMovement(mPosition, mAngle);
-		mListener.onMovement(mPosition, mAngle);
-	}
 	
 }

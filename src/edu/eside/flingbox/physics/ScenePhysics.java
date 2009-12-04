@@ -163,8 +163,7 @@ public class ScenePhysics implements Runnable {
 				/* first apply gravity */
 				for (PhysicBody body : bodys) {
 					force.set(mGravity);
-					body.applyForce(force.mul(body.getBodyMass()),
-									(float) time / 1000f);
+					body.applyImpulse(force.mul(body.getBodyMass() * (float) time / 1000f));
 				}
 			} catch (InterruptedException e1) {
 				e1.printStackTrace();

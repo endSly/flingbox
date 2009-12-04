@@ -21,10 +21,9 @@ package edu.eside.flingbox.physics.collisions;
 import edu.eside.flingbox.math.Intersect;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.PhysicBody;
-import edu.eside.flingbox.physics.PhysicPolygon;
 
 /**
- * Class to handle contact description.
+ * Class to handle contact between two bodies.
  */
 public class Contact {
 	/** Description of intersection */
@@ -33,6 +32,11 @@ public class Contact {
 	public final PhysicBody bodyInContactA;
 	/** Second body in contact */
 	public final PhysicBody bodyInContactB;
+	
+	/**  */
+	public final Vector2D bodyASense;
+	/**  */
+	public final Vector2D bodyBSense;
 	
 	/** Contact's absolute position */
 	public final Vector2D position;
@@ -51,14 +55,20 @@ public class Contact {
 		this.sense = new Vector2D(intersect.outgoingPoint)
 			.sub(intersect.ingoingPoint).normalize();
 		this.normal = Vector2D.normalVector(sense);
-	}
-	
-	public Vector2D getBodysSide(PhysicBody body) {
-		if (body instanceof PhysicPolygon) {
-			Vector2D[] polygonContour = ((ColliderPolygon) body.getCollider()).getPolygonContour();
-			return intersect.polygonsSide(polygonContour);
-		}
 		
+		Vector2D[] polygonContour = ((ColliderPolygon) bodyA.getCollider()).getPolygonContour();
+		bodyASense = intersect.polygonsSide(polygonContour);
+		polygonContour = ((ColliderPolygon) bodyB.getCollider()).getPolygonContour();
+		bodyBSense = intersect.polygonsSide(polygonContour);
+		
+	}
+
+
+	public Vector2D getBodysSide(PhysicBody body) {
+		if (body == bodyInContactA)
+			return bodyASense;
+		if (body == bodyInContactB)
+			return bodyBSense;
 		return null;
 	}
 	

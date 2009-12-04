@@ -98,7 +98,7 @@ public class Intersect {
 	 *         /   \
 	 * -------*--+--*------------------
 	 *      /    |   \
-	 *    /      v <-(A side)
+	 *    /      v <-(B side)
 	 * 
 	 * @param polygon polygon to be checked
 	 * @return Vector indicating sense, null if polygon not used to construct intersect
@@ -211,7 +211,7 @@ public class Intersect {
 			.normalVector();
 		
 		float sense = aSide.crossProduct(contourPoint);
-		if (sense > 0) { // a side is wrong, is really b side, then invert a side
+		if (sense >= 0) { // a side is wrong, is really b side, then invert a side
 			bSide.set(aSide);
 			aSide.negate();
 		} else // a side ok, b side is the opposite

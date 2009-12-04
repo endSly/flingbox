@@ -29,7 +29,7 @@ public class Preferences {
 	private static final String KEY_DENSITY = "PREFERENCES_DENSITY";
 	public static float defaultDensity = 1.0f;
 	private static final String KEY_RESTIT_COEF = "PREFERENCES_RESTIT_COEF";
-	public static float defaultRestitutionCoeficient = 0.6f;
+	public static float defaultRestitutionCoeficient = 0.5f;
 	
 	private static final String KEY_DYNAMIC_FRICTION = "PREFERENCES_DYNAMIC_FRICTION";
 	public static float defaultDynamicFrictionCoeficient = 0.35f;

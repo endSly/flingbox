@@ -43,6 +43,8 @@ public class ColliderPolygon extends Collider implements OnMovementListener {
 	/** Handled in Physics, only pointer */
 	private final Vector2D[] mPolygonContour;
 	
+	private Vector2D[] mLocatedContour;
+	
 	private final float[] mVertexAngle;
 	
 	/**
@@ -72,7 +74,7 @@ public class ColliderPolygon extends Collider implements OnMovementListener {
 	 * @return
 	 */
 	public Vector2D[] getPolygonContour() {
-		return mPolygonContour;
+		return mLocatedContour;
 	}
 	
 	/**
@@ -85,6 +87,9 @@ public class ColliderPolygon extends Collider implements OnMovementListener {
 		final Vector2D[] polygon = translateAndRotatePolygon(mPolygonContour, mPosition, mAngle);
 		final Vector2D[] otherPolygon = translateAndRotatePolygon(((ColliderPolygon) collider).mPolygonContour, 
 				((ColliderPolygon) collider).mPosition, ((ColliderPolygon) collider).mAngle);
+		
+		this.mLocatedContour = polygon;
+		((ColliderPolygon) collider).mLocatedContour = otherPolygon;
 		
 		/*
 		 * Find intersections
