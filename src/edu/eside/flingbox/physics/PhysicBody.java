@@ -118,8 +118,6 @@ public abstract class PhysicBody extends PhysicAtomicBody{
 		mAcomulatedRotationalImpulse  += impulse.crossProduct(applicationPoint);
 	}
 	
-
-	
 	/** Fixs body, making impossible to move  */
 	public void setBodyFixed(boolean fixed) {
 		mIsMoveable = !fixed;

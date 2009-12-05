@@ -20,46 +20,23 @@ package edu.eside.flingbox.physics.collisions;
 
 import java.util.ArrayList;
 
-/**
- * SceneCollider manages collisions of the scene
- *
- */
-public class SceneCollider {
-	private final ArrayList<Collider> mInCollisionObjects;
+public class Arbiter {
+	private final ArrayList<Collider> mCollisionableBodys = new ArrayList<Collider>();
 	
-	public SceneCollider() {
-		mInCollisionObjects = new ArrayList<Collider>();
-	}
-	
-	public SceneCollider(Collider collider) {
-		mInCollisionObjects = new ArrayList<Collider>();
-		this.add(collider);
-	}
-	
-	public SceneCollider(Collider[] colliders) {
-		mInCollisionObjects = new ArrayList<Collider>();
-		this.add(colliders);
-	}
-	
-	public void add(Collider collider) {
-		mInCollisionObjects.add(collider);
-	}
-	
-	public void add(Collider[] colliders) {
-		for (Collider c : colliders)
-			mInCollisionObjects.add(c);
+	public void add(final Collider collider) {
+		mCollisionableBodys.add(collider);
 	}
 	
 	public boolean remove(Collider collider) {
-		return mInCollisionObjects.remove(collider);
+		return mCollisionableBodys.remove(collider);
 	}
 	
 	public int checkCollisions() {
-		final int objectsCount = mInCollisionObjects.size();
+		final int objectsCount = mCollisionableBodys.size();
 		int collisionsCount = 0;
 		for (int i = 0 ; i < objectsCount; i++) 
 			for (int j = i + 1; j < objectsCount; j++) {
-				if (mInCollisionObjects.get(i).checkCollision(mInCollisionObjects.get(j)))
+				if (mCollisionableBodys.get(i).checkCollision(mCollisionableBodys.get(j)))
 					collisionsCount++;
 			}
 		return collisionsCount;

@@ -50,7 +50,7 @@ public class Intersect {
 	 * @param polygonA first Polygon
 	 * @param polygonB second polygon
 	 * @param ingoing first intersecting point
-	 * @param outgoing last intersectiong point
+	 * @param outgoing last intersection point
 	 * @param pAIn index of the point after ingoing point
 	 * @param pBIn index of the point after ingoing point
 	 * @param pAOut index of the point after outgoing point
@@ -211,7 +211,7 @@ public class Intersect {
 			.normalVector();
 		
 		float sense = aSide.crossProduct(contourPoint);
-		if (sense >= 0) { // a side is wrong, is really b side, then invert a side
+		if (sense > 0) { // a side is wrong, is really b side, then invert a side
 			bSide.set(aSide);
 			aSide.negate();
 		} else // a side ok, b side is the opposite

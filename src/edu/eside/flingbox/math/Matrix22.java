@@ -22,12 +22,12 @@ package edu.eside.flingbox.math;
  * Basic 2x2 matrix implementation
  * This will be used to storage rotational matrix
  */
-public final class Matrix22 {
-	// Matrix values
+public class Matrix22 {
+	/** Matrix values */
 	public float[] values;
 	
-	/**
-	 * Creates zero matrix
+	/** 
+	 * Creates zero matrix 
 	 */
 	public Matrix22() {
 		this.values = new float[4]; 
@@ -35,17 +35,16 @@ public final class Matrix22 {
 	
 	/**
 	 * Creates matrix with values
-	 * @param m	Values
+	 * 
+	 * @param m	Values. should have 4 members
 	 */
 	public Matrix22(float[] m) {
-		this.values = new float[4];
-		// Copy vector
-		for (int i = m.length > 4 ? 4 : m.length; i-- > 0; )
-			this.values[i] = m[i];
+		this.values = m;
 	}
 	
 	/**
 	 * Constructor for a Rotation matrix
+	 * 
 	 * @param angle	Angle for rotation
 	 * @return		New rotation matrix 
 	 */
@@ -60,16 +59,62 @@ public final class Matrix22 {
 	
 	/**
 	 * Transposes matrix
+	 * 
 	 * @return	New matrix with transpose
 	 */
-	public Matrix22 transpose() {
+	public static Matrix22 transpose(Matrix22 m) {
 		return new Matrix22(new float[] {
-				values[0], values[2], 
-				values[1], values[3]});
+				m.values[0], m.values[2], 
+				m.values[1], m.values[3]});
+	}
+	
+	/**
+	 * Transposes matrix
+	 * 
+	 * @return	current matrix
+	 */
+	public Matrix22 transpose() {
+		float temp = this.values[1]; // Just swap 0,1 and 1,0
+		this.values[1] = this.values[2];
+		this.values[2] = temp;
+		return this;
+	}
+	
+	/**
+	 * Computes matrix invert
+	 * 
+	 * @return	New matrix with inverted current matrix or null if determinant is Zero
+	 */
+	public static Matrix22 invert(Matrix22 m) {
+		final float det = m.determinant();
+		if (det == 0)
+			return null;
+		
+		return new Matrix22(new float[] {
+				m.values[3] / det, m.values[1] / det, 
+				m.values[2] / det, m.values[0] / det});
+	}
+	
+	
+	/**
+	 * Computes matrix invert
+	 * 
+	 * @return	Current matrix with inverted current matrix or null if determinant is Zero
+	 */
+	public Matrix22 invert() {
+		final float det = determinant();
+		if (det == 0)
+			return null;
+		
+		this.values = new float[] {
+				values[3] / det, values[1] / det, 
+				values[2] / det, values[0] / det};
+		return this;
 	}
 	
 	/**
 	 * Computes determinant
+	 * 
 	 * @return	determinant
 	 */
 	public float determinant() {
@@ -77,16 +122,9 @@ public final class Matrix22 {
 	}
 	
 	/**
-	 * Computes matrix invert
-	 * @return	New matrix with inverted current matrix or null if determinant is Zero
+	 * Return a string representing the matrix
 	 */
-	public Matrix22 invert() {
-		final float det = determinant();
-		if (det == 0)
-			return null;
-		
-		return new Matrix22(new float[] {
-				values[3] / det, values[1] / det, 
-				values[2] / det, values[0] / det});
+	public String toString() {
+		return "[Matrix22 (" + values[0] + ", " + values[1] + ", " + values[2] + ", " + values[3] + ")]";
 	}
 }

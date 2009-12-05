@@ -144,8 +144,7 @@ public class ContactSolver {
 			.mul(relativeContactPoint.length() 
 					* body.getAngularVelocity());
 		
-		/*
-		 * Get total body's total velocity at contact point 
+		/* Get total body's total velocity at contact point 
 		 * NOTE: velocityByAngularRotation is not duplicated since it won't be longer used.
 		 */
 		final Vector2D totalVelocity = velocityByAngularRotation.add(body.getImpulse().mul(1f / body.getBodyMass())); 

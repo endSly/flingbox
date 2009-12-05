@@ -16,14 +16,13 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package edu.eside.flingbox.physics;
 
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
 import edu.eside.flingbox.math.Vector2D;
-import edu.eside.flingbox.physics.collisions.SceneCollider;
+import edu.eside.flingbox.physics.collisions.Arbiter;
 import edu.eside.flingbox.physics.gravity.GravitySource;
 
 /**
@@ -35,50 +34,25 @@ public class ScenePhysics implements Runnable {
 	public GravitySource mGravity;
 	
 	/** List of physical bodys on scene */
-	private final ArrayList<PhysicBody> mOnSceneBodys;
+	private final ArrayList<PhysicBody> mOnSceneBodys = new ArrayList<PhysicBody>();
 	/** Collision manager for current scene */
-	private final SceneCollider mCollider;
+	private final Arbiter mArbiter = new Arbiter();
 	
 	/** Semaphore for lock writing on mOnSceneBodys */
-	private Semaphore mLockOnSceneBodys = new Semaphore(1, false);
+	private Semaphore mLockOnSceneBodys = new Semaphore(1);
 
 	/** Thread for simulation */
 	private Thread mSimulationThread;
 	/** Flag for kill simulation */
 	private boolean mDoKill = false;
 	/** Flag indicating if thread is running */
-	private boolean mIsSimulating = false;
+	private Semaphore mSimulationMutex = new Semaphore(1, true);
 	
 	/**
-	 * Initializes an empty 
+	 * Initializes an empty scene
 	 */
 	public ScenePhysics(GravitySource gravity) {
-		mOnSceneBodys = new ArrayList<PhysicBody>();
-		mCollider = new SceneCollider();
 		mGravity = gravity;
-	}
-	
-	/**
-	 * Intializes scene with one object 
-	 * @param object first object
-	 */
-	public ScenePhysics(GravitySource gravity, PhysicBody object) {
-		mOnSceneBodys = new ArrayList<PhysicBody>();
-		mCollider = new SceneCollider();
-		mGravity = gravity;
-		this.add(object);
-	}
-	
-	/**
-	 * Intializes scene with array of objects 
-	 * @param objects array of objects
-	 */
-	public ScenePhysics(GravitySource gravity, PhysicBody[] objects) {
-		mOnSceneBodys = new ArrayList<PhysicBody>();
-		mCollider = new SceneCollider();
-		
-		mGravity = gravity;
-		this.add(objects);
 	}
 	
 	/**
@@ -88,37 +62,23 @@ public class ScenePhysics implements Runnable {
 	public void add(PhysicBody object) {
 		try {
 			mLockOnSceneBodys.acquire();
-			mOnSceneBodys.add(object);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		} finally {
-			mLockOnSceneBodys.release();
 		}
-		
-		mCollider.add(object.getCollider());
-	}
-	
-	/**
-	 * Adds an array of objects
-	 * @param objects array of objects to be added
-	 */
-	public void add(PhysicBody[] objects) {
-		for (PhysicBody object : objects)
-			add(object);
+		mOnSceneBodys.add(object);
+		mArbiter.add(object.getCollider());
+		mLockOnSceneBodys.release();
 	}
 	
 	/**
 	 * Starts simulation
 	 */
 	public void startSimulation() {
-		System.gc();
-		mSimulationThread = new Thread(this);
-
-		mDoKill = false;
-		if (mIsSimulating) 
+		if (mSimulationThread != null && mSimulationThread.isAlive())
 			return;
-		
-		mIsSimulating = true;
+			
+		mDoKill = false;
+		mSimulationThread = new Thread(this);
 		mSimulationThread.start();
 	}
 	
@@ -126,21 +86,22 @@ public class ScenePhysics implements Runnable {
 	 * Sends message to kill and waits
 	 */
 	public void stopSimulation() {
-		if (!mIsSimulating)
-			return;
 		mDoKill = true;
-		
-		System.gc(); // Good moment to call to GC
-		while (mIsSimulating) { }	// Wait until thread ends.
-		
+		try {
+			mSimulationMutex.acquire();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		mSimulationThread = null;
+		mSimulationMutex.release();
+		System.gc(); // Good moment to call to GC
 	}
 	
 	/**
 	 * @return true if simulating
 	 */
 	public boolean isSimulating() {
-		return mIsSimulating;
+		return mSimulationThread != null ? mSimulationThread.isAlive() : false;
 	}
 	
 	/**
@@ -153,6 +114,12 @@ public class ScenePhysics implements Runnable {
 		long time;
 		final Vector2D force = new Vector2D();
 		for (; !mDoKill; ) {
+			try {
+				mSimulationMutex.acquire();
+			} catch (InterruptedException e2) {
+				e2.printStackTrace();
+			}
+			
 			/* Compute time */
 			time = System.currentTimeMillis() - lastTime;
 			lastTime = System.currentTimeMillis();
@@ -160,31 +127,29 @@ public class ScenePhysics implements Runnable {
 			/* We need a semaphore here */
 			try {
 				mLockOnSceneBodys.acquire();
-				/* first apply gravity */
-				for (PhysicBody body : bodys) {
-					force.set(mGravity);
-					body.applyImpulse(force.mul(body.getBodyMass() * (float) time / 1000f));
-				}
 			} catch (InterruptedException e1) {
 				e1.printStackTrace();
-			} finally {
-				mLockOnSceneBodys.release();
 			}
+			/* first apply gravity */
+			for (PhysicBody body : bodys) {
+				force.set(mGravity);
+				body.applyImpulse(force.mul(body.getBodyMass() * (float) time / 1000f));
+			}
+			mLockOnSceneBodys.release();
 			
 			/* Then apply collisions forces */
-			mCollider.checkCollisions();
+			mArbiter.checkCollisions();
 			
 			try {
 				mLockOnSceneBodys.acquire();
-				/* Last update body */
-				for (PhysicBody body : bodys)
-					body.onUpdateBody((float) time / 1000f);
 			} catch (InterruptedException e1) {
 				e1.printStackTrace();
-			} finally {
-				mLockOnSceneBodys.release();
 			}
-
+			/* Last update body */
+			for (PhysicBody body : bodys)
+				body.onUpdateBody((float) time / 1000f);
+			
+			mLockOnSceneBodys.release();
 			/* Keep max frame-rate */
 			try {
 				if (time < 20)
@@ -192,9 +157,9 @@ public class ScenePhysics implements Runnable {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} 
+			mSimulationMutex.release();
 		}
 		mDoKill = false;
-		mIsSimulating = false;
 	}
 	
 }

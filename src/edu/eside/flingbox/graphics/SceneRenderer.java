@@ -160,27 +160,6 @@ public class SceneRenderer implements Renderer {
 	 * Creates an Render Scene without any object
 	 */
 	public SceneRenderer() { }
-	
-	/**
-	 * Default Constructor
-	 * Creates an Render Scene with one object.
-	 * 
-	 * @param render Object to be rendered
-	 */
-	public SceneRenderer(RenderBody render) {
-		mGraphicsToRender.add(render);
-	}
-	
-	/**
-	 * Default Constructor
-	 * Creates an Render Scene with one object.
-	 * 
-	 * @param renders Objects to be rendered
-	 */
-	public SceneRenderer(RenderBody[] renders) {
-		for (RenderBody r : renders)
-			mGraphicsToRender.add(r);
-	}
 
 	/**
 	 * Adds one object to be rendered.
@@ -195,16 +174,6 @@ public class SceneRenderer implements Renderer {
 		}
 		mGraphicsToRender.add(render);
 		mGraphicsToRenderMutex.release();
-	}
-	
-	/**
-	 * Adds an array of renderizable objects to scene.
-	 * 
-	 * @param renders array of objects
-	 */
-	public void add(RenderBody[] renders) {
-		for (RenderBody r : renders)
-			add(r);
 	}
 	
 	/**

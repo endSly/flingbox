@@ -21,7 +21,7 @@ package edu.eside.flingbox.math;
 import java.util.ArrayList;
 
 /**
- * Implements some utilities for polygon.
+ * Implements some utilities for polygons.
  */
 public final class PolygonUtils {
 	/**
@@ -43,14 +43,17 @@ public final class PolygonUtils {
 		if (pointsCount < 4 || epsilon <= 0.0f)
 			return points;	// No reduction possible
 		
-		final ArrayList<Vector2D> reducedPolygon = new ArrayList<Vector2D>(pointsCount);
+		final ArrayList<Vector2D> reducedPolygon = new ArrayList<Vector2D>();
 		
 		reducedPolygon.add(points[0]);	// First point will not be include
-		// Call recursively to algorithm
+		
+		/* Call recursively to algorithm */
 		douglasPeucker(points, epsilon, 0, pointsCount - 1, reducedPolygon);
+		
 		if (points[0].distanceToPoint(points[pointsCount - 1]) > epsilon)
 			reducedPolygon.add(points[pointsCount - 1]); // Last point neither
-
+		
+		reducedPolygon.trimToSize();
 		return (Vector2D[]) reducedPolygon.toArray(new Vector2D[0]);
 	}
 	
@@ -63,7 +66,7 @@ public final class PolygonUtils {
 		float maxDistance = 0.0f;
 		int maxDistanceIndex = 0;
 		
-		// Find maximum distance point.  
+		/* Find maximum distance point.  */
 		for (int i = first + 1; i < last ; i++) {
 			float distance = distanceFromLineToPoint(points[first], points[last], points[i]);
 			if (distance > maxDistance) {	// Store point
@@ -72,17 +75,16 @@ public final class PolygonUtils {
 			}
 		}
 		
-		/* 
-		 * If point distance is more than epsilon then split points array in 
+		/* If point distance is more than epsilon then split points array in 
 		 * two parts and iterate for each. 
 		 */
 		if (maxDistance > epsilon) {
-			// Find in previous segment
+			/* Find in previous segment */
 			if ((maxDistanceIndex - first) > 1)
 				douglasPeucker(points, epsilon, first, maxDistanceIndex, resultPoints);
-			// Put point in buffer(2 coords)
+			/* Put point in buffer(2 coords) */
 			resultPoints.add(points[maxDistanceIndex]);	
-			// Continue searching important points
+			/* Continue searching important points */
 			if ((last - maxDistanceIndex) > 1)
 				douglasPeucker(points, epsilon, maxDistanceIndex, last, resultPoints);
 		}
@@ -194,6 +196,7 @@ public final class PolygonUtils {
 	
 	/**
 	 * Computes area of polygon.
+	 * 
 	 * @param Vector2Ds Polygon's Vector2Ds
 	 * @return Polygon's area. if Vector2Ds are counter-clockwise the 
 	 * result will be positive, else it'll be negative
@@ -216,29 +219,20 @@ public final class PolygonUtils {
 	 * Computes polygon centroid
 	 * 
 	 * @param Vector2Ds Polygon's Vector2Ds
-	 * @return centroid Vector2D
+	 * @return centroid 
 	 */
-	public static Vector2D polygonCentroid(final Vector2D[] Vector2Ds) {
-		final int Vector2DsCount = Vector2Ds.length;
+	public static Vector2D polygonCentroid(final Vector2D[] contour) {
+		final int pointsCount = contour.length;
 		float cx = 0f, cy = 0f;
-		/*
-		float cnx = 0f, cny = 0f;
-		for (Vector2D p : Vector2Ds) {
-			cnx += p.x;
-			cny += p.y;
-		}
-		cnx /= Vector2DsCount;
-		cny /= Vector2DsCount;
-		*/
 		
-		for (int i = 0; i < Vector2DsCount; i++) {
-			float p0x = Vector2Ds[i].i, p1x = Vector2Ds[(i + 1) % Vector2DsCount].i;
-			float p0y = Vector2Ds[i].j, p1y = Vector2Ds[(i + 1) % Vector2DsCount].j;
+		for (int i = 0; i < pointsCount; i++) {
+			float p0x = contour[i].i, p1x = contour[(i + 1) % pointsCount].i;
+			float p0y = contour[i].j, p1y = contour[(i + 1) % pointsCount].j;
 			final float k = (p0x * p1y - p1x * p0y);
 			cx += (p0x + p1x) * k;
 			cy += (p0y + p1y) * k;
 		}
-		final float d = 6f * polygonArea(Vector2Ds);
+		final float d = 6f * polygonArea(contour);
 		cx /= d;
 		cy /= d;
 
@@ -253,11 +247,11 @@ public final class PolygonUtils {
 	 * @return Polygon's normals
 	 */
 	public static Vector2D[] computePolygonNormals(final Vector2D[] contour) {
-		final int Vector2DsCount = contour.length;
-		Vector2D[] normals = new Vector2D[Vector2DsCount];
+		final int pointsCount = contour.length;
+		Vector2D[] normals = new Vector2D[pointsCount];
 		
-		for (int i = 0; i < Vector2DsCount; i++) {
-			final Vector2D p0 = contour[i], p1 = contour[i == Vector2DsCount - 1 ? 0 : i ]; 
+		for (int i = 0; i < pointsCount; i++) {
+			final Vector2D p0 = contour[i], p1 = contour[i == pointsCount - 1 ? 0 : i ]; 
 			normals[i] = new Vector2D((p1.j - p0.j), (p0.i - p1.i));//.normalize();
 		}
 		

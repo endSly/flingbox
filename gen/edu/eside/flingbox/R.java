@@ -18,7 +18,6 @@ public final class R {
         public static final int text_stone=0x7f020004;
     }
     public static final class id {
-        public static final int ListView01=0x7f050007;
         public static final int about_button=0x7f050005;
         public static final int checkbox_lock_body=0x7f050000;
         public static final int seek_bodys_density=0x7f050001;

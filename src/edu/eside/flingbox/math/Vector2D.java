@@ -24,7 +24,7 @@ package edu.eside.flingbox.math;
  * vectors.
  */
 public class Vector2D {
-	// Vector components
+	/** Vector components */
 	public float i, j;
 	
 	/**
@@ -48,7 +48,7 @@ public class Vector2D {
 	 * 
 	 * @param v vector to copy
 	 */
-	public Vector2D(Vector2D v) throws NullPointerException {
+	public Vector2D(Vector2D v) {
 		this.i = v.i;
 		this.j = v.j;
 	}
@@ -250,7 +250,7 @@ public class Vector2D {
 	 * Returns a string representing the vector
 	 */
 	public String toString() {
-		return "Vector(" + this.i + "i + " + this.j + "j)";
+		return "[Vector (" + this.i + "i + " + this.j + "j)]";
 	}
 	
 }
