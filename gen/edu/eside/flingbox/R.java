@@ -28,10 +28,11 @@ public final class R {
         public static final int settings_list=0x7f050006;
     }
     public static final class layout {
-        public static final int body_settings=0x7f030000;
-        public static final int help=0x7f030001;
-        public static final int object_settings=0x7f030002;
-        public static final int preferences=0x7f030003;
+        public static final int about_dialog=0x7f030000;
+        public static final int body_settings=0x7f030001;
+        public static final int help=0x7f030002;
+        public static final int object_settings=0x7f030003;
+        public static final int preferences=0x7f030004;
     }
     public static final class string {
         public static final int app_name=0x7f040000;
@@ -44,6 +45,7 @@ public final class R {
         public static final int end_simulation=0x7f040002;
         public static final int help=0x7f04000d;
         public static final int help_about=0x7f040014;
+        public static final int help_about_dialog=0x7f040015;
         public static final int help_body_properties=0x7f04000f;
         public static final int help_drag=0x7f040010;
         public static final int help_draw=0x7f04000e;

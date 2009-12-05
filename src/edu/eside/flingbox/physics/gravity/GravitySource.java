@@ -30,6 +30,8 @@ import edu.eside.flingbox.math.Vector2D;
  *
  */
 public class GravitySource extends Vector2D implements SensorEventListener {
+	/** Empirical value for a gravity multiply factor */
+	private static final float FACTOR = 80f;
 	
 	public static final float GRAVITY_SUN = 275.0f;
 	
@@ -72,11 +74,11 @@ public class GravitySource extends Vector2D implements SensorEventListener {
 	}
 	
 	private GravitySource(Vector2D v) {
-		super(v.mul(64f));
+		super(v.mul(FACTOR));
 	}
 	
 	private GravitySource(float i, float j) {
-		super(i * 64f, j * 64f);
+		super(i * FACTOR, j * FACTOR);
 	}
 
 	@Override
@@ -86,8 +88,8 @@ public class GravitySource extends Vector2D implements SensorEventListener {
 
 	@Override
 	public void onSensorChanged(SensorEvent event) {
-		this.i = -event.values[SensorManager.DATA_X] * 64f;
-		this.j = -event.values[SensorManager.DATA_Y] * 64f;
+		this.i = -event.values[SensorManager.DATA_X] * FACTOR;
+		this.j = -event.values[SensorManager.DATA_Y] * FACTOR;
 		
 	}
 }

@@ -162,7 +162,7 @@ public class FlingboxActivity extends Activity {
     	helpDialog.setContentView(R.layout.help);
     	helpDialog.show();
     	
-    	Button aboutButton = (Button) findViewById(R.id.about_button);
+    	Button aboutButton = (Button) helpDialog.findViewById(R.id.about_button);
     	if (aboutButton == null)
     		return;
     	
@@ -181,6 +181,7 @@ public class FlingboxActivity extends Activity {
     private void showAboutDialog() {
     	Dialog aboutDialog = new Dialog(this);
     	aboutDialog.setTitle(R.string.help_about);
+    	aboutDialog.setContentView(R.layout.about_dialog);
     	aboutDialog.show();
     }
     

@@ -56,7 +56,7 @@ public class BodySettingsDialog extends Dialog {
 		/*
 		 * Lock Body Checkbox
 		 */
-		CheckBox lockBodyCheckbox = (CheckBox)findViewById(R.id.checkbox_lock_body);
+		CheckBox lockBodyCheckbox = (CheckBox) findViewById(R.id.checkbox_lock_body);
 		lockBodyCheckbox.setChecked(mBody.getPhysics().isFixed());
 		lockBodyCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
@@ -68,7 +68,7 @@ public class BodySettingsDialog extends Dialog {
 		/*
 		 * Density SeekBar 
 		 */
-		SeekBar densitySeekBar = (SeekBar)findViewById(R.id.seek_bodys_density);
+		SeekBar densitySeekBar = (SeekBar) findViewById(R.id.seek_bodys_density);
 		densitySeekBar.setMax(400); /* Density is between [-200, 199] */
 		densitySeekBar.setProgress((int) (Math.log( /* Logaritmical progress */
 				mBody.getPhysics().getDensity()) * 10f + 200f));
@@ -89,7 +89,7 @@ public class BodySettingsDialog extends Dialog {
 		/*
 		 * Restitution SeekBar 
 		 */
-		SeekBar restitutionSeekBar = (SeekBar)findViewById(R.id.seek_restitution_coef);
+		SeekBar restitutionSeekBar = (SeekBar) findViewById(R.id.seek_restitution_coef);
 		restitutionSeekBar.setMax(1024);
 		restitutionSeekBar.setProgress((int) (mBody.getPhysics().getRestitutionCoeficient() * 1024));
 
@@ -107,7 +107,7 @@ public class BodySettingsDialog extends Dialog {
 		/*
 		 * Static friction SeekBar 
 		 */
-		SeekBar staticFrictionSeekBar = (SeekBar)findViewById(R.id.seek_static_friction);
+		SeekBar staticFrictionSeekBar = (SeekBar) findViewById(R.id.seek_static_friction);
 		staticFrictionSeekBar.setMax(1024);
 		staticFrictionSeekBar.setProgress((int) (mBody.getPhysics().getStaticFrictionCoeficient() * 1024));
 
@@ -125,7 +125,7 @@ public class BodySettingsDialog extends Dialog {
 		/*
 		 * Kinetic friction SeekBar 
 		 */
-		SeekBar kineticFrictionSeekBar = (SeekBar)findViewById(R.id.seek_kinetic_friction);
+		SeekBar kineticFrictionSeekBar = (SeekBar) findViewById(R.id.seek_kinetic_friction);
 		kineticFrictionSeekBar.setMax(1024);
 		kineticFrictionSeekBar.setProgress((int) (mBody.getPhysics().getDynamicFrictionCoeficient() * 1024));
 

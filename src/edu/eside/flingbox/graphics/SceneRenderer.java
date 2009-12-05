@@ -47,18 +47,18 @@ public class SceneRenderer implements Renderer {
 	 * be moved.
 	 */
 	public class Camera {
-		// This will be used by OpenGL
+		private final static float DEFAULT_WIDTH = 256f;
+		
+		/** Used by OpenGL */
 		public float left, rigth, top, bottom;
-		boolean isChanged;	// Flag
+		/** Flag to change OpenGL's camera */
+		boolean isChanged = true;
 		
-		// This will store camera position;
-		private float mX, mY, mWidth = 256f, mHeight = 256f;
+		/** Camera position and aperture */
+		private float mX, mY, mWidth = DEFAULT_WIDTH, mHeight;
+		/** Surface size */
 		private int mSurfaceWidth = 100, mSurfaceHeight = 100;
-		
-		Camera() {
-			updateGLCamera();
-		}
-		
+
 		/**
 		 * Set surface and calculates camera's position and width
 		 * to kept aspect ratio.
