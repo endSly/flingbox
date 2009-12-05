@@ -18,7 +18,7 @@
 
 package edu.eside.flingbox.bodies;
 
-import edu.eside.flingbox.graphics.Render;
+import edu.eside.flingbox.graphics.RenderBody;
 import edu.eside.flingbox.physics.PhysicBody;
 
 /**
@@ -31,10 +31,9 @@ import edu.eside.flingbox.physics.PhysicBody;
  * {@link Body} too.
  */
 public abstract class Body {
-	
-	// Instance of the body to be rendered
-	protected Render mRender;
-	// Instance of the body in the physic space
+	/* Instance of the body to be rendered */
+	protected RenderBody mRender;
+	/* Instance of the body in the physic space */
 	protected PhysicBody mPhysics;
 	
 	/**
@@ -44,7 +43,7 @@ public abstract class Body {
 	 * @param physics {@link PhysicObject} instance of body
 	 * @hide
 	 */
-	protected Body(Render render, PhysicBody physics) {
+	protected Body(RenderBody render, PhysicBody physics) {
 		mRender = render;
 		mPhysics = physics;
 	}
@@ -52,7 +51,7 @@ public abstract class Body {
 	/**
 	 * @return object's render instance. NOTE: Can be null!
 	 */
-	public Render getRender() {
+	public RenderBody getRender() {
 		return mRender;
 	}
 	

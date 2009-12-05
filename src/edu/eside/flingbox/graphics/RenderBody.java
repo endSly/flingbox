@@ -24,7 +24,7 @@ import javax.microedition.khronos.opengles.GL10;
  * {@link Renderizable} interface witch should be 
  * implemented by on scene bodys to be rendered.
  */
-public abstract class Render {
+public abstract class RenderBody {
 	/**
 	 * Called when object has to be rendered.
 	 * When {link onRender} called a new OpenGL's matrix has

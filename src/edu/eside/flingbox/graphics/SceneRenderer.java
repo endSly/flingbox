@@ -20,13 +20,16 @@ package edu.eside.flingbox.graphics;
 
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
+import java.util.concurrent.Semaphore;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import edu.eside.flingbox.Preferences;
+import edu.eside.flingbox.math.Vector2D;
 
 import android.opengl.GLSurfaceView.Renderer;
+import android.util.Log;
 
 /**
  * {@link SceneRenderer} handles functions to render 
@@ -49,12 +52,9 @@ public class SceneRenderer implements Renderer {
 		boolean isChanged;	// Flag
 		
 		// This will store camera position;
-		private float mX = 0f, mY = 0f, mWidth = 256f, mHeight = 256f;
+		private float mX, mY, mWidth = 256f, mHeight = 256f;
 		private int mSurfaceWidth = 100, mSurfaceHeight = 100;
 		
-		/**
-		 * Default constructor
-		 */
 		Camera() {
 			updateGLCamera();
 		}
@@ -108,6 +108,16 @@ public class SceneRenderer implements Renderer {
 		}
 		
 		/**
+		 * Projects surface point in to camera relative point 
+		 * 
+		 * @return same vector that has been modified
+		 */
+		public Vector2D project(Vector2D v) {
+			return v.set(left + (v.i * mWidth / mSurfaceWidth), 
+					top - (v.j * mHeight / mSurfaceHeight));
+		}
+		
+		/**
 		 * @return	x of camera's position
 		 */
 		public float getX() {
@@ -137,20 +147,19 @@ public class SceneRenderer implements Renderer {
 		
 	}
 	
-	// Stores objects that will be renderized
-	private final ArrayList<Render> mGraphicsToRender;
+	/** Stores objects that will be renderized */
+	private final ArrayList<RenderBody> mGraphicsToRender = new ArrayList<RenderBody>();
+	/** Manages mGraphicsToRender access */
+	private final Semaphore mGraphicsToRenderMutex = new Semaphore(1, true);
 	
-	// Stores camera for this scene
-	private final Camera mCamera;
+	/** Camera for this scene */
+	private final Camera mCamera = new Camera();
 	
 	/**
 	 * Default Constructor
 	 * Creates an Render Scene without any object
 	 */
-	public SceneRenderer() {
-		mGraphicsToRender = new ArrayList<Render>();
-		mCamera = new Camera();
-	}
+	public SceneRenderer() { }
 	
 	/**
 	 * Default Constructor
@@ -158,9 +167,7 @@ public class SceneRenderer implements Renderer {
 	 * 
 	 * @param render Object to be rendered
 	 */
-	public SceneRenderer(Render render) {
-		mGraphicsToRender = new ArrayList<Render>();
-		mCamera = new Camera();
+	public SceneRenderer(RenderBody render) {
 		mGraphicsToRender.add(render);
 	}
 	
@@ -170,10 +177,8 @@ public class SceneRenderer implements Renderer {
 	 * 
 	 * @param renders Objects to be rendered
 	 */
-	public SceneRenderer(Render[] renders) {
-		mGraphicsToRender = new ArrayList<Render>();
-		mCamera = new Camera();
-		for (Render r : renders)
+	public SceneRenderer(RenderBody[] renders) {
+		for (RenderBody r : renders)
 			mGraphicsToRender.add(r);
 	}
 
@@ -182,8 +187,14 @@ public class SceneRenderer implements Renderer {
 	 * 
 	 * @param render object
 	 */
-	public void add(Render render) {
+	public void add(RenderBody render) {
+		try { // Wait until everything rendered
+			mGraphicsToRenderMutex.acquire();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		mGraphicsToRender.add(render);
+		mGraphicsToRenderMutex.release();
 	}
 	
 	/**
@@ -191,9 +202,9 @@ public class SceneRenderer implements Renderer {
 	 * 
 	 * @param renders array of objects
 	 */
-	public void add(Render[] renders) {
-		for (Render r : renders)
-			mGraphicsToRender.add(r);
+	public void add(RenderBody[] renders) {
+		for (RenderBody r : renders)
+			add(r);
 	}
 	
 	/**
@@ -202,8 +213,15 @@ public class SceneRenderer implements Renderer {
 	 * @param render Render to be removed
 	 * @return true if removed, else false
 	 */
-	public boolean remove(Render render) {
-		return mGraphicsToRender.remove(render);
+	public boolean remove(RenderBody render) {
+		try { // Wait until everything rendered
+			mGraphicsToRenderMutex.acquire();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		boolean succeed = mGraphicsToRender.remove(render);
+		mGraphicsToRenderMutex.release();
+		return succeed;
 	}
 	
 	/**
@@ -223,7 +241,7 @@ public class SceneRenderer implements Renderer {
 			 *	to throw an {@link ConcurrentModificationException}.
 			 */
 			if (mCamera.isChanged) {
-				// Set camera. 
+				/* Set camera. */
 				gl.glMatrixMode(GL10.GL_PROJECTION);
 				gl.glLoadIdentity();
 				gl.glOrthof(mCamera.left, mCamera.rigth, mCamera.bottom, mCamera.top, 0, 1);
@@ -232,34 +250,38 @@ public class SceneRenderer implements Renderer {
 				mCamera.isChanged = false;
 			}
 			
-			// Set up OpenGL's Scene
+			/* Set up OpenGL's Scene */
 			gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 			gl.glMatrixMode(GL10.GL_MODELVIEW);
 			gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 			gl.glLoadIdentity();
 
-			// Set background color
+			/* Set background color */
 			gl.glClearColor(Preferences.backgroundColor[0], Preferences.backgroundColor[1], 
 					Preferences.backgroundColor[2], 1.0f);
 
-			// Render All objectsCount = 
-			final ArrayList<Render> renders = mGraphicsToRender;
-			for (Render r : renders) {
-				// Work with new stacked matrix
+			/* Render All objectsCount */
+			final ArrayList<RenderBody> renders = mGraphicsToRender;
+			
+			try {
+				mGraphicsToRenderMutex.acquire();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			for (RenderBody r : renders) {
+				/* Work with new stacked matrix */
 				gl.glPushMatrix();
 				gl.glLoadIdentity();
 				r.onRender(gl);
 				gl.glPopMatrix();
 			}
-			// End drawing
+			mGraphicsToRenderMutex.release();
+			/* End drawing */
 			gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 		
 		} catch (ConcurrentModificationException ex) {
-			/* Do Nothing.
-			 * Just skip drawing until next frame.
-			 * This will origin image blink.
-			 * TODO Add semaphore
-			 */
+			/* This should never happened */
+			Log.e("Flingbox", "Frame can not be rendered due ConcurrentModificationException");
 		}
 		
 	}

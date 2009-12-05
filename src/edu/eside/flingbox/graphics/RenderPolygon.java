@@ -25,7 +25,7 @@ import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import edu.eside.flingbox.graphics.Render;
+import edu.eside.flingbox.math.PolygonUtils;
 import edu.eside.flingbox.math.Vector2D;
 
 /**
@@ -36,55 +36,48 @@ import edu.eside.flingbox.math.Vector2D;
  * 
  * This should only be instantiate by {@link Polygon}.
  */
-public class RenderPolygon extends Render {
-	// Buffers needed to allocate graphical polygon
+public class RenderPolygon extends RenderBody {
+	/** Buffer with vertex, for OpenGL */
 	private final FloatBuffer mVertexBuffer;
+	/** Buffer with triangulation indexes, for OpenGL */
 	private final ShortBuffer mIndexBuffer;
+	/** Triangles count */
 	private final short mTrianglesCount;
 	
-	// Storage polygon's position and angle
-	private final Vector2D mPosition;
-	private float mAngle;
+	/** Position to draw polygon */
+	private final Vector2D mPosition = new Vector2D();
+	/** Angle of the polygon */
+	private float mAngle = 0f;
 	
-	// Stores polygon's color
-	private float[] mColor;
+	/** Stores polygon's color */
+	private float[] mColor = new float[] { 0f, 0f, 0f, 1f };
 
 	/**
 	 * Default constructor of PolygonRender.
 	 * initializes values needed by OpenGL.
 	 * 
-	 * @param points	Polygon's points
+	 * @param points	Polygon's points, with centroid at 0,0
 	 */
-	public RenderPolygon(final Vector2D[] points, final short[] triangulationIndexes)
-	throws IllegalArgumentException{
-		if (points == null || points.length < 3 || triangulationIndexes == null)
-			throw new IllegalArgumentException();
-		
-		// Set object's color
-		mColor = new float[] {
-			0f, 0f, 0f, 1f
-		};
-		
-		mPosition = new Vector2D();
-	
+	public RenderPolygon(final Vector2D[] points) {
 		final int pointsCount = points.length;
 		
-		// Fill 2D polygon into 3D space
+		/* Fill 2D polygon into 3D space */
 		float[] points3D = new float[3 * pointsCount];
 		for (int i = 0; i < pointsCount; i++) {
-			points3D[3 * i + 0] = points[i].i;			// x
+			points3D[3 * i + 0] = points[i].i;		// x
 			points3D[3 * i + 1] = points[i].j;		// y
-			points3D[3 * i + 2] = 0.0f;				// z
+			points3D[3 * i + 2] = 0f;				// z
 		}
-
-		// Fill buffers with correspondent vertex
-		mVertexBuffer = ByteBuffer
+		
+		mVertexBuffer = ByteBuffer // Fill buffers with correspondent vertex
 			.allocateDirect(4 * 3 * pointsCount)
 			.order(ByteOrder.nativeOrder())
 			.asFloatBuffer()
 			.put(points3D);
 		mVertexBuffer.position(0);
 		
+		/* Set point drawing order by triangulation */
+		short[] triangulationIndexes = PolygonUtils.triangulatePolygon(points);
 		mIndexBuffer = ByteBuffer
 			.allocateDirect(2 * triangulationIndexes.length)
 			.order(ByteOrder.nativeOrder())
@@ -115,13 +108,13 @@ public class RenderPolygon extends Render {
 	 * Sets object's position to render 
 	 * 
 	 * @param position	Point to current position
-	 * @param rotation	Rotation angle in Radians
+	 * @param rotation	Rotation angle in radiants
 	 */
 	public void setPosition(final Vector2D position, final float rotation) {
-		// Copy point. Avoid objects creation
+		/* Copy point. Avoid objects creation */
 		mPosition.set(position);
 		
-		// Set angle into degrees
+		/* Set angle into degrees */
 		mAngle = rotation * 360.0f / (2f * (float) Math.PI);
 	}
 	
@@ -129,21 +122,21 @@ public class RenderPolygon extends Render {
 	 * Renderizes Polygon into gl
 	 */
 	public boolean onRender(GL10 gl) {
-		// Set color
+		/* Set color */
 		gl.glColor4f(mColor[0], mColor[1], mColor[2], mColor[3]);
 		
-		// First translate object for it's position
+		/* First translate object for it's position */
 		gl.glTranslatef(mPosition.i, mPosition.j, 0f);
-		// Then rotate it
+		/* Then rotate it */
 		gl.glRotatef(((int) mAngle) % 360, 0f, 0f, 1.0f);
 		try {
-			// Draw it
+			/* Draw it */
 			gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);
 			gl.glDrawElements(GL10.GL_TRIANGLES, 3 * mTrianglesCount, 
 					GL10.GL_UNSIGNED_SHORT, mIndexBuffer);
 		} catch (Exception ex) {
-			return false;
+			return false; // Body couldn't be rendered
 		}
-		return true;
+		return true; // Body render succeed
 	}
 }

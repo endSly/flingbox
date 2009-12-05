@@ -23,8 +23,7 @@ import android.view.MotionEvent;
 import android.view.GestureDetector;
 
 /**
- * SceneGestureDetector class  extends {@link GestureDetector}
- * with basic multitouch scroll and zoom Operations.
+ * Custom gesture detection class
  * 
  * Listener should implement {@link OnInputListener}.
  */
@@ -43,15 +42,12 @@ public class SceneGestureDetector extends GestureDetector {
 	private OnInputListener mListener;
 
 	/**
-	 * 
 	 * @param context
 	 * @param listener
 	 */
 	public SceneGestureDetector(Context context, OnInputListener listener) {
 		super(context, listener);
-		
-		if (listener instanceof OnInputListener) 
-			mListener = (OnInputListener) listener;
+		mListener = listener;
 	}
 
 	/**

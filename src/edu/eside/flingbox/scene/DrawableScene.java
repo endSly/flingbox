@@ -30,8 +30,7 @@ import android.content.Context;
 import android.opengl.GLException;
 import android.view.MotionEvent;
 
-import edu.eside.flingbox.graphics.Render;
-import edu.eside.flingbox.input.SceneMTGestureDetector;
+import edu.eside.flingbox.graphics.RenderBody;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 import edu.eside.flingbox.math.PolygonUtils;
 import edu.eside.flingbox.math.Vector2D;
@@ -46,15 +45,13 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 	 * {@link Renderizable} Object witch handles drawing pattern
 	 * and show it to OpenGL's space.
 	 */
-	private class DrawingRender extends Render {
+	private class DrawingRender extends RenderBody {
 
 		/** Array of points to be drawn */
 		private final ArrayList<Vector2D> mDrawingPattern;
 		
 		/** Flag to lock drawing */
 		private boolean mDoRender = true;
-		/** Locks drawingRender deletes until drawing ends */
-		private boolean mLockedMutex = false;
 		
 		/**
 		 * Default constructor.
@@ -73,7 +70,6 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 			if (pointsCount < 2 || !mDoRender)
 				return false;
 			
-			mLockedMutex = true;
 			try {
 				// Fit points to OpenGL 
 				FloatBuffer vertexBuffer = ByteBuffer
@@ -111,23 +107,18 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 							GL10.GL_UNSIGNED_SHORT, indexBuffer);
 				} catch (GLException ex) {
 					// Do nothing
+					return false;
 				}
 			} catch (Exception ex) {
-				// Do nothing. Just skip drawing
+				// Do nothing. Just skip drawing this frame
+				return false;
 			}
-			mLockedMutex = false;
 	    	return true;
 		}
-		
-		public void onDelete() {
-			while (mLockedMutex) { }
-			mDoRender = false;
-		}
-		
 	}
 	
 	private DrawingRender mDrawingRender;
-	private ArrayList<Vector2D> mDrawingPattern;
+	private ArrayList<Vector2D> mDrawingPattern = new ArrayList<Vector2D>();
 	
 	private boolean mIsDrawing = false;
 	private boolean mIsDrawingLocked = false;	// Drawing can be locked
@@ -138,6 +129,8 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 	 */
 	public DrawableScene(Context c) {
 		super(c);
+		
+		mDrawingRender = new DrawingRender(mDrawingPattern);
 	}
 
 	public void onLongPress(MotionEvent e) {
@@ -155,34 +148,33 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 		
 		new Thread(new Runnable() { 
 			public void run() {
-				// Drawing ends
+				/* Drawing ends */
 				mIsDrawing = false;
 				mIsDrawingLocked = false;
 				
-				// Remove drawing line
-				mDrawingRender.onDelete();
-				mSceneRenderer.remove(mDrawingRender);
-				mDrawingRender = null;
+				/* Remove drawing line */
+				mSceneRenderer.remove(mDrawingRender); // We don't want to draw it
 				
 				final int pointsCount = mDrawingPattern.size();
-				// if we had points enough
-				if (pointsCount >= 3) {
+				
+				if (pointsCount >= 3) { // if we had points enough
 					mDrawingPattern.trimToSize();
-					// Optimize points by Douglas-Peucker algorithm s 
+					/* Optimize points by Douglas-Peucker algorithm */
 					Vector2D[] optimizedPoints = PolygonUtils.douglasPeuckerReducer(
 							mDrawingPattern.toArray(new Vector2D[0]), mCamera.getWidth() / 100f);
-					if (optimizedPoints.length >= 3) {
+					
+					if (optimizedPoints.length >= 3) { // We have points enough
 						Polygon drawedPolygon = new Polygon(optimizedPoints);
 						drawedPolygon.setRandomColor();
 						add(drawedPolygon);
 						
-						// Vibrate as haptic feedback
+						/* Vibrate as haptic feedback */
 						mVibrator.vibrate(50);
 					}
 				}
-				mDrawingPattern = null;
+				mDrawingPattern.clear();
 
-				// Good moment to call garbage collector
+				/* Good moment to call garbage collector */
 				System.gc();
 			} 
 		}).start(); 
@@ -191,55 +183,31 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 	}
 	
 	public void onSingletouchCancel() {
-		// lock drawing until up event
+		/* lock drawing until up event */
 		mIsDrawingLocked = true;
 		mIsDrawing = false;
 		
-		// Remove actual drawing
+		/* Remove actual drawing */
 		mOnSceneBodys.remove(mDrawingRender);
 		mDrawingRender = null;
 		
-		// Good moment to call to Garbage Collector
+		/* Good moment to call to Garbage Collector */
 		System.gc();
 	}
 	
 	@Override
 	public boolean onDown(MotionEvent e) {
-		// TODO Auto-generated method stub
-		return false;
+		return super.onDown(e);
 	}
 
 	@Override
 	public boolean onScroll(MotionEvent downEv, MotionEvent ev, float distanceX,
 			float distanceY) {
-		// Drawing can be locked until Up event
+		/* Drawing can be locked until Up event */
 		if (mIsDrawingLocked || !mIsDrawing)
 			return super.onScroll(downEv, ev, distanceX, distanceY);
-		
-		// Gets screen projection into the OpenGL space
-		final float x = mCamera.left + (ev.getX() * mCamera.getWidth() / mDisplayWidth);
-		final float y = mCamera.top - (ev.getY() * mCamera.getHeight() / mDisplayHeight);
 
-		// Start drawing if not drawing.
-		// ONLY FOR MULTITOUCH
-		if (!mIsDrawing 
-				&& (mGestureDetector instanceof SceneMTGestureDetector)) {
-			
-			mIsDrawing = true;
-			
-			mDrawingPattern = new ArrayList<Vector2D>(40);
-			mDrawingRender = new DrawingRender(mDrawingPattern);
-			
-			final float onDownX = mCamera.left + (downEv.getX() * mCamera.getWidth() / mDisplayWidth);
-			final float onDownY = mCamera.top - (downEv.getY() * mCamera.getHeight() / mDisplayHeight);
-
-			mDrawingPattern.add(new Vector2D(onDownX, onDownY));
-
-			// We only need render, no physics
-			mSceneRenderer.add(mDrawingRender);
-		}
-		
-		mDrawingPattern.add(new Vector2D(x, y));
+		mDrawingPattern.add(mCamera.project(new Vector2D(ev.getX(), ev.getY())));
 		return true;
 	}
 	
@@ -247,29 +215,20 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 
 	@Override
 	public void onShowPress(MotionEvent e) {
-		// TODO Auto-generated method stub
+		super.onShowPress(e);
 		
 	}
 
 	@Override
 	public boolean onSingleTapUp(final MotionEvent e) {
+		if (!mDrawingPattern.isEmpty())
+			mDrawingPattern.clear();
+		
 		/* Start drawing */
-		new Thread(new Runnable() { 
-			public void run() {
-				mDrawingPattern = new ArrayList<Vector2D>(40);
-				mDrawingRender = new DrawingRender(mDrawingPattern);
-				/* Now we are ready to start drawing */
-				mIsDrawing = true;
-		
-				final float onDownX = mCamera.left + (e.getX() * mCamera.getWidth() / mDisplayWidth);
-				final float onDownY = mCamera.top - (e.getY() * mCamera.getHeight() / mDisplayHeight);
-
-				mDrawingPattern.add(new Vector2D(onDownX, onDownY));
-
-				mSceneRenderer.add(mDrawingRender);
-			}
-		}).start();
-		
+		mIsDrawing = true;
+		mSceneRenderer.add(mDrawingRender); // Add body to be rendered
+		/* Now we are ready to start drawing */
+		mDrawingPattern.add(mCamera.project(new Vector2D(e.getX(), e.getY()))); // First point
 		return true;
 	}
 

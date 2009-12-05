@@ -20,6 +20,8 @@ package edu.eside.flingbox.bodies;
 
 import java.util.Random;
 
+import android.util.Log;
+
 import edu.eside.flingbox.graphics.RenderPolygon;
 import edu.eside.flingbox.math.PolygonUtils;
 import edu.eside.flingbox.math.Vector2D;
@@ -36,17 +38,21 @@ public final class Polygon extends Body implements OnMovementListener {
 
 	/**
 	 * Constructor for a Polygon
-	 * @param polygonPoints Array of Polygon's point
+	 * @param polygonPoints Array of Polygon's point, this is stored and modified
 	 * @throws IllegalArgumentException If not enough points
 	 */
-	public Polygon(final Vector2D[] polygonPoints) throws IllegalArgumentException {
+	public Polygon(Vector2D[] polygonPoints) throws IllegalArgumentException {
 		super(null, null);
 		
-		if (polygonPoints.length < 3)
+		if (polygonPoints.length < 3) {
+			Log.e("Flingbox", "Trying to build a polygon with an insuficient number of points");
 			throw new IllegalArgumentException("Not enough points to build a polygon.");
-
+		}
+		
+		/* 
+		 * Set points in Clock-wise order 
+		 */
 		float polygonArea = PolygonUtils.polygonArea(polygonPoints);
-		// Set points in Clock-wise order
 		if (polygonArea > 0) {
 			/* If points are in anti-Clock-wise order the
 			 * returned area will be positive, else, it 
@@ -54,29 +60,28 @@ public final class Polygon extends Body implements OnMovementListener {
 			 */
 			Vector2D temp;
 			for (int i = 0, j = polygonPoints.length - 1; i<j; --j, ++i) {
-				temp = polygonPoints[i];
+				temp = polygonPoints[i];  // Just swap polygon order
 				polygonPoints[i] = polygonPoints[j];
 				polygonPoints[j] = temp;
 			}	
 		} else 
 			polygonArea = -polygonArea;
-		
-		short[] triangulationIndexes = PolygonUtils.triangulatePolygon(polygonPoints);
+
+		/* 
+		 * Relocate polygon to set the centroid at point (0, 0) 
+		 */
 		Vector2D centroid = PolygonUtils.polygonCentroid(polygonPoints);
-		
-		// Relocate polygon to find the centroid with point (0, 0)
 		for (Vector2D p : polygonPoints) 
 			p.sub(centroid);
 
-		mPointsCount = (short) (polygonPoints.length); 
-		mRender = new RenderPolygon(polygonPoints, triangulationIndexes);
-		mPhysics = new PhysicPolygon(polygonPoints, polygonArea, centroid, this);
 		mPoints = polygonPoints;
+		mPointsCount = (short) (polygonPoints.length); 
+		mRender = new RenderPolygon(polygonPoints);
+		mPhysics = new PhysicPolygon(polygonPoints, polygonArea, centroid, this);
 	}
 	
 	/**
 	 * @return Polygon points
-	 * NOTE: THIS MIGHT NOT MATCH WITH points IN CONSTRUCTOR!!
 	 */
 	public Vector2D[] getPoints() {
 		return mPoints;
@@ -84,7 +89,6 @@ public final class Polygon extends Body implements OnMovementListener {
 
 	/**
 	 * @return Polygons total points. 
-	 * NOTE: THIS MIGHT NOT MATCH WITH points IN CONSTRUCTOR!
 	 */
 	public short getPointsCount() {
 		return mPointsCount;
@@ -102,8 +106,7 @@ public final class Polygon extends Body implements OnMovementListener {
 	 * Called when movement occurs.
 	 */
 	public void onMovement(Vector2D position, float rotation) {
-		if (mRender != null && mRender instanceof RenderPolygon)
-			((RenderPolygon) mRender).setPosition(position, rotation);
+		((RenderPolygon) mRender).setPosition(position, rotation);
 	}
 
 }
