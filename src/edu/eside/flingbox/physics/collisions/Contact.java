@@ -18,7 +18,6 @@
 
 package edu.eside.flingbox.physics.collisions;
 
-import edu.eside.flingbox.math.Intersect;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.PhysicBody;
 
@@ -26,17 +25,15 @@ import edu.eside.flingbox.physics.PhysicBody;
  * Class to handle contact between two bodies.
  */
 public class Contact {
-	/** Description of intersection */
-	public final Intersect intersect;
 	/** First body in contact */
 	public final PhysicBody bodyInContactA;
 	/** Second body in contact */
 	public final PhysicBody bodyInContactB;
 	
 	/**  */
-	public final Vector2D bodyASense;
+	public Vector2D bodyASense;
 	/**  */
-	public final Vector2D bodyBSense;
+	public Vector2D bodyBSense;
 	
 	/** Contact's absolute position */
 	public final Vector2D position;
@@ -45,24 +42,13 @@ public class Contact {
 	/** Contact's normal. This is a normalized vector */
 	public final Vector2D normal;
 	
-	
-	public Contact(PhysicBody bodyA, PhysicBody bodyB, Intersect intersect) {
-		this.intersect = intersect;
+	public Contact(PhysicBody bodyA, PhysicBody bodyB, Vector2D position, Vector2D sense) {
 		this.bodyInContactA = bodyA;
 		this.bodyInContactB = bodyB;
-		this.position = new Vector2D(intersect.ingoingPoint)
-			.add(intersect.outgoingPoint).mul(0.5f);
-		this.sense = new Vector2D(intersect.outgoingPoint)
-			.sub(intersect.ingoingPoint).normalize();
+		this.position = position;
+		this.sense = sense.normalize();
 		this.normal = Vector2D.normalVector(sense);
-		
-		Vector2D[] polygonContour = ((ColliderPolygon) bodyA.getCollider()).getPolygonContour();
-		bodyASense = intersect.polygonsSide(polygonContour);
-		polygonContour = ((ColliderPolygon) bodyB.getCollider()).getPolygonContour();
-		bodyBSense = intersect.polygonsSide(polygonContour);
-		
 	}
-
 
 	public Vector2D getBodysSide(PhysicBody body) {
 		if (body == bodyInContactA)

@@ -48,7 +48,7 @@ public abstract class PhysicBody extends PhysicAtomicBody{
 	protected float mAngle = 0f;
 	
 	/** body's mass by square unit */
-	protected float mDensity;
+	protected float mDensity = Preferences.defaultDensity;
 	/** body's volume */
 	protected final float mVolume;
 
@@ -59,10 +59,10 @@ public abstract class PhysicBody extends PhysicAtomicBody{
 	
 	/** Body's current angular Velocity */
 	protected float mAngularVelocity = 0.0f;
-	
+	/** acomulated Rotational impulse */
 	protected float mAcomulatedRotationalImpulse = 0f;
 	
-	/**OnMovement callback listener */
+	/** OnMovement call-back listener */
 	protected OnMovementListener mListener;
 
 	
@@ -75,12 +75,8 @@ public abstract class PhysicBody extends PhysicAtomicBody{
 	 */
 	protected PhysicBody(final float bodyVolume, final Vector2D position) {
 		mVolume = bodyVolume;
-		mRestitutionCoeficient = Preferences.defaultRestitutionCoeficient;
-		mDensity = Preferences.defaultDensity;
-		mDynamicFrictionCoeficient = Preferences.defaultDynamicFrictionCoeficient;
-		mStaticFrictionCoeficient = Preferences.defaultStaticFrictionCoeficient;
-		mPosition.set(position);
 		mMass = bodyVolume * mDensity;
+		mPosition.set(position);
 	}
 
 	/**

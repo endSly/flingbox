@@ -20,7 +20,6 @@ package edu.eside.flingbox.physics;
 
 import edu.eside.flingbox.math.PolygonUtils;
 import edu.eside.flingbox.math.Vector2D;
-import edu.eside.flingbox.physics.collisions.Collider;
 import edu.eside.flingbox.physics.collisions.ColliderPolygon;
 
 /**
@@ -66,7 +65,7 @@ public class PhysicPolygon extends PhysicBody {
 		mListener.onMovement(mPosition, 0f);
 		mCollider.onMovement(mPosition, 0f);
 
-		mAngularMass = computeAngularMass(bodyMass, mCollider);
+		mAngularMass = computeAngularMass(bodyMass);
 
 	}
 	
@@ -77,9 +76,8 @@ public class PhysicPolygon extends PhysicBody {
 	 * @param collider Body's Collider
 	 * @return Polygon's angular mass
 	 */
-	private static float computeAngularMass(float mass, Collider collider) {
-		final float radius = collider.getBoundingCircle();
-		return 0.4f * mass * radius * radius;
+	private static float computeAngularMass(float mass) {
+		return 0.5f * mass * mass;
 	}
 	
 	/**
@@ -96,7 +94,7 @@ public class PhysicPolygon extends PhysicBody {
 	@Override
 	public void setDensity(float density) {
 		super.setDensity(density);
-		mAngularMass = computeAngularMass(mMass, mCollider);
+		mAngularMass = computeAngularMass(mMass);
 	}
 	
 	

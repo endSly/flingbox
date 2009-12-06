@@ -18,6 +18,7 @@
 
 package edu.eside.flingbox.physics;
 
+import edu.eside.flingbox.Preferences;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.collisions.Collider;
 
@@ -36,13 +37,13 @@ abstract class PhysicAtomicBody {
 
 	
 	/** friction to be applied when body is moving */
-	protected float mDynamicFrictionCoeficient;
+	protected float mDynamicFrictionCoeficient = Preferences.defaultDynamicFrictionCoeficient;
 	/** friction to be applied when body isn's moving */
-	protected float mStaticFrictionCoeficient;
+	protected float mStaticFrictionCoeficient = Preferences.defaultStaticFrictionCoeficient;
 	
 	/** Restitution Coeficient is a fractional value representing the ratio 
 	 * of velocities before and after an impact */
-	protected float mRestitutionCoeficient;
+	protected float mRestitutionCoeficient = Preferences.defaultRestitutionCoeficient;
 	
 	/** Object's current position */
 	protected final Vector2D mPosition = new Vector2D();

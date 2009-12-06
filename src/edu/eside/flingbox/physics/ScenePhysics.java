@@ -34,7 +34,7 @@ public class ScenePhysics implements Runnable {
 	public GravitySource mGravity;
 	
 	/** List of physical bodys on scene */
-	private final ArrayList<PhysicBody> mOnSceneBodys = new ArrayList<PhysicBody>();
+	private final ArrayList<PhysicBody> mOnSceneBodies = new ArrayList<PhysicBody>();
 	/** Collision manager for current scene */
 	private final Arbiter mArbiter = new Arbiter();
 	
@@ -65,7 +65,7 @@ public class ScenePhysics implements Runnable {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		mOnSceneBodys.add(object);
+		mOnSceneBodies.add(object);
 		mArbiter.add(object.getCollider());
 		mLockOnSceneBodys.release();
 	}
@@ -109,7 +109,7 @@ public class ScenePhysics implements Runnable {
 	 */
 	@Override
 	public void run() {
-		final ArrayList<PhysicBody> bodys = mOnSceneBodys;
+		final ArrayList<PhysicBody> bodies = mOnSceneBodies;
 		long lastTime = System.currentTimeMillis();
 		long time;
 		final Vector2D force = new Vector2D();
@@ -130,8 +130,8 @@ public class ScenePhysics implements Runnable {
 			} catch (InterruptedException e1) {
 				e1.printStackTrace();
 			}
-			/* first apply gravity */
-			for (PhysicBody body : bodys) {
+			/* Apply gravity impulse */
+			for (PhysicBody body : bodies) {
 				force.set(mGravity);
 				body.applyImpulse(force.mul(body.getBodyMass() * (float) time / 1000f));
 			}
@@ -146,7 +146,7 @@ public class ScenePhysics implements Runnable {
 				e1.printStackTrace();
 			}
 			/* Last update body */
-			for (PhysicBody body : bodys)
+			for (PhysicBody body : bodies)
 				body.onUpdateBody((float) time / 1000f);
 			
 			mLockOnSceneBodys.release();

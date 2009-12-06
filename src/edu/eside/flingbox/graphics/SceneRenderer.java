@@ -47,6 +47,7 @@ public class SceneRenderer implements Renderer {
 	 * be moved.
 	 */
 	public class Camera {
+		/** Default camera aperture */
 		private final static float DEFAULT_WIDTH = 256f;
 		
 		/** Used by OpenGL */
@@ -92,9 +93,7 @@ public class SceneRenderer implements Renderer {
 			updateGLCamera();
 		}
 	
-		/**
-		 * Sets coordinates needed by OpenGL from camera's position
-		 */
+		/** Sets coordinates needed by OpenGL from camera's position */
 		private void updateGLCamera() {
 			final float halfWidth = mWidth / 2;
 			final float halfHeight = mHeight / 2;
@@ -107,44 +106,31 @@ public class SceneRenderer implements Renderer {
 			this.isChanged = true;
 		}
 		
-		/**
-		 * Projects surface point in to camera relative point 
-		 * 
-		 * @return same vector that has been modified
-		 */
+		/** @return projected vector */
 		public Vector2D project(Vector2D v) {
 			return v.set(left + (v.i * mWidth / mSurfaceWidth), 
 					top - (v.j * mHeight / mSurfaceHeight));
 		}
 		
-		/**
-		 * @return	x of camera's position
-		 */
+		/** @return	x of camera's position */
 		public float getX() {
 			return mX;
 		}
 		
-		/**
-		 * @return	y of camera's position
-		 */
+		/** @return	y of camera's position */
 		public float getY() {
 			return mY;
 		}
 		
-		/**
-		 * @return	width of camera's frame
-		 */
+		/** @return	width of camera's frame */
 		public float getWidth() {
 			return mWidth;
 		}
 		
-		/**
-		 * @return	height of camera's frame
-		 */
+		/** @return	height of camera's frame */
 		public float getHeight() {
 			return mHeight;
 		}
-		
 	}
 	
 	/** Stores objects that will be renderized */
@@ -154,12 +140,6 @@ public class SceneRenderer implements Renderer {
 	
 	/** Camera for this scene */
 	private final Camera mCamera = new Camera();
-	
-	/**
-	 * Default Constructor
-	 * Creates an Render Scene without any object
-	 */
-	public SceneRenderer() { }
 
 	/**
 	 * Adds one object to be rendered.

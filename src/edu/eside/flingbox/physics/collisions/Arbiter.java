@@ -20,26 +20,38 @@ package edu.eside.flingbox.physics.collisions;
 
 import java.util.ArrayList;
 
+/**
+ * Arbiter manages the collisions between bodies
+ */
 public class Arbiter {
-	private final ArrayList<Collider> mCollisionableBodys = new ArrayList<Collider>();
+	/** List with all colliders on the scene */
+	private final ArrayList<Collider> mCollisionableBodies = new ArrayList<Collider>();
 	
+	/** Adds new collider to the arbiter */
 	public void add(final Collider collider) {
-		mCollisionableBodys.add(collider);
+		mCollisionableBodies.add(collider);
 	}
 	
+	/** Removes a collider from the arbiter */
 	public boolean remove(Collider collider) {
-		return mCollisionableBodys.remove(collider);
+		return mCollisionableBodies.remove(collider);
 	}
 	
-	public int checkCollisions() {
-		final int objectsCount = mCollisionableBodys.size();
-		int collisionsCount = 0;
-		for (int i = 0 ; i < objectsCount; i++) 
-			for (int j = i + 1; j < objectsCount; j++) {
-				if (mCollisionableBodys.get(i).checkCollision(mCollisionableBodys.get(j)))
-					collisionsCount++;
+	/**
+	 * Checks collision between bodys that are managed by the arbiter.
+	 * 
+	 * @return number of collisions
+	 */
+	public void checkCollisions() {
+		final ArrayList<Collider> bodies = mCollisionableBodies;
+		final int bodiesCount = bodies.size();
+		
+		/* Start checking movable objects */
+		for (int i = bodiesCount - 1 ; i >= 0; i--) 
+			for (int j = i - 1; j >= 0; j--) {
+				Contact[] contacts = bodies.get(i).checkContacts(bodies.get(j));
+				for (Contact contact : contacts)
+					ContactSolver.solveContact(contact);
 			}
-		return collisionsCount;
-
 	}
 }

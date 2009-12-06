@@ -52,10 +52,13 @@ public abstract class Collider implements OnMovementListener {
 	 * @param collider other objects collider.
 	 * @return true if objects can collide
 	 */
-	public boolean checkCollision(final Collider collider) {
-		/*
-		 *  Start checking bounding circle
-		 */
+	public abstract Contact[] checkContacts(final Collider collider);
+	
+	/**
+	 * @return true if there are a chance of collision
+	 */
+	public boolean canContact(final Collider collider) {
+		/* Start checking bounding circle */
 		final float radiusLength = mRadius + collider.mRadius;
 		final float thisX = mPosition.i, thisY = mPosition.j, 
 			otherX = collider.mPosition.i, otherY = collider.mPosition.j;
@@ -63,7 +66,7 @@ public abstract class Collider implements OnMovementListener {
 				+ (thisY - otherY) * (thisY - otherY);
 		
 		if (distanceSqr > (radiusLength * radiusLength))
-			return false;	// No collision possible
+			return false; // No collision possible
 
 		return true;
 		
@@ -84,4 +87,10 @@ public abstract class Collider implements OnMovementListener {
 		return mRadius;
 	}
 	
+	/**
+	 * @return associated PhysicBody
+	 */
+	public PhysicBody getAssociatedBody() {
+		return mPhysicBody;
+	}
 }
