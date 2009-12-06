@@ -23,6 +23,7 @@ import java.util.concurrent.Semaphore;
 
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.collisions.Arbiter;
+import edu.eside.flingbox.physics.collisions.Contact;
 import edu.eside.flingbox.physics.gravity.GravitySource;
 
 /**
@@ -53,6 +54,7 @@ public class ScenePhysics implements Runnable {
 	 */
 	public ScenePhysics(GravitySource gravity) {
 		mGravity = gravity;
+		Contact.UPPER_POSITION_COMPARATOR.setGravity(gravity);
 	}
 	
 	/**

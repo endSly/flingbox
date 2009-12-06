@@ -19,11 +19,14 @@
 package edu.eside.flingbox.physics.collisions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Arbiter manages the collisions between bodies
  */
 public class Arbiter {
+	
+	
 	/** List with all colliders on the scene */
 	private final ArrayList<Collider> mCollisionableBodies = new ArrayList<Collider>();
 	
@@ -38,12 +41,13 @@ public class Arbiter {
 	}
 	
 	/**
-	 * Checks collision between bodys that are managed by the arbiter.
+	 * Checks collision between bodies that are managed by the arbiter.
 	 * 
 	 * @return number of collisions
 	 */
 	public void checkCollisions() {
 		final ArrayList<Collider> bodies = mCollisionableBodies;
+		final ArrayList<Contact> contactsToSolve = new ArrayList<Contact>();
 		final int bodiesCount = bodies.size();
 		
 		/* Start checking movable objects */
@@ -51,7 +55,10 @@ public class Arbiter {
 			for (int j = i - 1; j >= 0; j--) {
 				Contact[] contacts = bodies.get(i).checkContacts(bodies.get(j));
 				for (Contact contact : contacts)
-					ContactSolver.solveContact(contact);
+					contactsToSolve.add(contact);
 			}
+		Collections.sort(contactsToSolve, Contact.UPPER_POSITION_COMPARATOR);
+		for (Contact contact : contactsToSolve)
+			ContactSolver.solveContact(contact);
 	}
 }
