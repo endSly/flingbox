@@ -57,8 +57,12 @@ public class Arbiter {
 				for (Contact contact : contacts)
 					contactsToSolve.add(contact);
 			}
+		/* Sort contacts to solve those */
 		Collections.sort(contactsToSolve, Contact.UPPER_POSITION_COMPARATOR);
 		for (Contact contact : contactsToSolve)
 			ContactSolver.solveContact(contact);
+		
+		for (int i = contactsToSolve.size() - 1; i >= 0; i--) 
+			ContactSolver.solveContact(contactsToSolve.get(i));
 	}
 }
