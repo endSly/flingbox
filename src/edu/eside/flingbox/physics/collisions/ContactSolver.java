@@ -72,7 +72,7 @@ public class ContactSolver {
 		final float normalImpulseMod = (finalVel - collidingVel.i) * collidingMass;
 		/* Get resultant impulse as addition of normal and friction */
 		final Vector2D normalImpulse = new Vector2D(contact.normal).mul(normalImpulseMod);
-		final Vector2D frictionImpulse = computeFrictionForce(collidingBody, normalImpulseMod, collidingVel.j, contact.sense);
+		final Vector2D frictionImpulse = computeFrictionImpulse(collidingBody, normalImpulseMod, collidingVel.j, contact.sense);
 		final Vector2D collisionImpuse = normalImpulse.add(frictionImpulse);
 		
 		/* Where impulse is applied */
@@ -100,7 +100,7 @@ public class ContactSolver {
 	 * @param frictionDirection normalized vector with direction.
 	 * @return Friction force vector. it has to be applied along to bodyVelocity
 	 */
-	private static Vector2D computeFrictionForce(PhysicBody body, float normal, float bodyVelocity, Vector2D frictionDirection) {
+	private static Vector2D computeFrictionImpulse(PhysicBody body, float normal, float bodyVelocity, Vector2D frictionDirection) {
 		float staticFrictionForce = body.getStaticFrictionCoeficient() * normal;
 		
 		final float currentVel = Math.abs(bodyVelocity) ;
