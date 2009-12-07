@@ -188,7 +188,7 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 		mIsDrawing = false;
 		
 		/* Remove actual drawing */
-		mOnSceneBodys.remove(mDrawingRender);
+		mOnSceneBodies.remove(mDrawingRender);
 		mDrawingRender = null;
 		
 		/* Good moment to call to Garbage Collector */

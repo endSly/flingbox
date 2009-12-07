@@ -21,12 +21,13 @@ package edu.eside.flingbox.physics;
 import edu.eside.flingbox.Preferences;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.collisions.Collider;
+import edu.eside.flingbox.utils.PositionComparator.Positionable;
 
 /**
  * Handles methods for an atomic body that can't be rotated
  *
  */
-abstract class PhysicAtomicBody {
+abstract class PhysicAtomicBody implements Positionable {
 	/** Objects with INFINITE_MASS should be impossible to move */
 	public final static float INFINITE_MASS = Float.POSITIVE_INFINITY;
 	

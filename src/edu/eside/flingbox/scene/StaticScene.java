@@ -81,7 +81,7 @@ public class StaticScene implements OnInputListener {
 	protected final ScenePhysics mScenePhysics;
 	protected final SceneGestureDetector mGestureDetector;
 	
-	protected final ArrayList<Body> mOnSceneBodys;
+	protected final ArrayList<Body> mOnSceneBodies;
 	
 	protected final Context mContext;
 	
@@ -98,7 +98,7 @@ public class StaticScene implements OnInputListener {
 		}
 		
 		// Create list of objects.
-		mOnSceneBodys = new ArrayList<Body>();
+		mOnSceneBodies = new ArrayList<Body>();
 		mSceneRenderer = new SceneRenderer();
 		mScenePhysics = new ScenePhysics(gravity);
 		/*
@@ -116,9 +116,22 @@ public class StaticScene implements OnInputListener {
 	}
 	
 	public void add(Body body) {
-		mOnSceneBodys.add(body);
+		mOnSceneBodies.add(body);
 		mSceneRenderer.add(body.getRender());
 		mScenePhysics.add(body.getPhysics());
+	}
+	
+	public boolean remove(Body body) {
+		boolean removed = mOnSceneBodies.remove(body);
+		removed &= mSceneRenderer.remove(body.getRender());
+		removed &= mScenePhysics.remove(body.getPhysics());
+		return removed;
+	}
+	
+	public void clearScene() {
+		ArrayList<Body> bodies = mOnSceneBodies;
+		for (Body body : bodies)
+			remove(body);
 	}
 	
 	public Renderer getSceneRenderer() {
@@ -130,31 +143,8 @@ public class StaticScene implements OnInputListener {
 	}
 	
 	public boolean onTrackballEvent(MotionEvent ev) {
-		/*
-		final float width = mCamera.getWidth();
-		float newX = mCamera.getX() - (ev.getX() * width / mDisplayWidth * 16);
-		float newY = mCamera.getY() + (ev.getY() * width / mDisplayWidth * 16); 	// Maintain aspect radio
-		
-		// Set positions
-		mCamera.setPosition(newX, newY, width);
-		*/
-		
 		onZoom(0f, 0f, 1f + ev.getY() / 8f);
 		
-		return true;
-	}
-
-
-	public boolean onMultitouchScroll(MotionEvent downEvent, MotionEvent ev,
-			float dX, float dY) {
-		// Fit dX and dY into the openGL space
-		final float width = mCamera.getWidth();
-		final float newX = mCamera.getX() - (dX * width / mDisplayWidth);
-		final float newY = mCamera.getY() + (dY * width / mDisplayWidth); 	// Maintain aspect radio
-		
-		// Set positions
-		mCamera.setPosition(newX, newY, width);
-
 		return true;
 	}
 

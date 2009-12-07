@@ -39,49 +39,53 @@ public class ContactSolver {
 	 * @param bodyB second colliding body
 	 */
 	public static void solveContact(final Contact contact) {
-		final PhysicBody bodyA = contact.bodyInContactA; 
-		final PhysicBody bodyB = contact.bodyInContactB; 
+		PhysicBody collidingBody; // Colliding body is movable
+		PhysicBody collidedBody; // Collided body can or cannot be movable
+		 /* Find colliding body */
+		if (!contact.bodyInContactA.isFixed()) {
+			collidingBody = contact.bodyInContactA; // A is colliding
+			collidedBody = contact.bodyInContactB;
+		} else if (!contact.bodyInContactB.isFixed()) {
+			collidingBody = contact.bodyInContactB; // B is colliding
+			collidedBody = contact.bodyInContactA;
+		} else
+			return; // Collision is between fixed bodies so do nothing
 		
-		final float restit = (bodyA.getRestitutionCoeficient() + bodyB.getRestitutionCoeficient()) / 2;
-		final float mA = bodyA.getBodyMass();
-		final float mB = bodyB.getBodyMass();
+		final float restit = (collidingBody.getRestitutionCoeficient() + collidedBody.getRestitutionCoeficient()) / 2;
+		/* Get velocity and mass of colliding body */
+		final Vector2D collidingVel = getVelocityIntoContactAxis(contact, collidingBody);
+		final float collidingMass = collidingBody.getBodyMass();
 		
-		Vector2D velA = getVelocityIntoContactAxis(contact, bodyA);
-		Vector2D velB = getVelocityIntoContactAxis(contact, bodyB);
-		
-		if (!bodyA.isFixed()) { 
-			/* compute resultant velocity after collision */
-			final float vFinal = bodyB.isFixed() 
-						? -velA.i * restit
-						: ((1 + restit) * mB * velB.i + velA.i * (mA + restit * mB)) / (mA + mB);
-						
-			final float normalModule = (vFinal - velA.i) * mA;
+		/* Compute final velocity */
+		final float finalVel;
+		if (collidedBody.isFixed()) // Other body is fixed
+			finalVel = -collidingVel.i * restit;
+		else { // If collided body can be moved is a little bit more complicated
+			float collidedMass = collidedBody.getBodyMass();
+			Vector2D collidedVel = getVelocityIntoContactAxis(contact, collidedBody);
 			
-			final Vector2D normalForce = new Vector2D(contact.normal).mul(normalModule);
-			final Vector2D frictionForce = computeFrictionForce(bodyA, normalModule, velA.j, contact.sense);
-			
-			final Vector2D contactRelativePoint = new Vector2D(bodyA.getPosition()).sub(contact.position);
-			
-			bodyA.applyImpulse(normalForce.add(frictionForce), contactRelativePoint);
+			finalVel = ((1 + restit) * collidedMass * collidedVel.i 
+					+ collidingVel.i * (collidingMass + restit * collidedMass)) 
+					/ (collidingMass + collidedMass);
 		}
+		/* Compute final normal impulse */
+		final float normalImpulseMod = (finalVel - collidingVel.i) * collidingMass;
+		/* Get resultant impulse as addition of normal and friction */
+		final Vector2D normalImpulse = new Vector2D(contact.normal).mul(normalImpulseMod);
+		final Vector2D frictionImpulse = computeFrictionForce(collidingBody, normalImpulseMod, collidingVel.j, contact.sense);
+		final Vector2D collisionImpuse = normalImpulse.add(frictionImpulse);
 		
-		if (!bodyB.isFixed()) { 
-			/* compute resultant velocity after collision */
-			final float vFinal = bodyA.isFixed() 
-						? -velB.i * restit
-						: ((1 + restit) * mA * velA.i + velB.i * (mB + restit * mA)) / (mA + mB);
-			
-			final float normalModule = (vFinal - velB.i) * mB;
-
-			final Vector2D normalForce = new Vector2D(contact.normal).mul(normalModule);
-			final Vector2D frictionForce = computeFrictionForce(bodyB, normalModule, velB.j, contact.sense);
-
-			final Vector2D contactRelativePoint = new Vector2D(bodyB.getPosition()).sub(contact.position);
-
-			bodyB.applyImpulse(normalForce.add(frictionForce), contactRelativePoint);
-		} 
+		/* Where impulse is applied */
+		Vector2D contactRelativePoint = new Vector2D(collidingBody.getPosition()).sub(contact.position);
 		
-		fixBodysPenetration(contact, bodyA, bodyB);
+		collidingBody.applyImpulse(collisionImpuse, contactRelativePoint);
+		
+		if (!collidedBody.isFixed()) { // Other body also has an impulse
+			contactRelativePoint.set(collidingBody.getPosition()).sub(contact.position);
+			collidedBody.applyImpulse(collisionImpuse.negate(), contactRelativePoint);
+		}
+
+		fixBodysPenetration(contact, collidingBody, collidedBody);
 	}
 	
 	/**

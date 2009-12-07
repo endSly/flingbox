@@ -93,7 +93,6 @@ public class Scene extends DrawableScene implements OnInputListener {
 			dialog.show();
 		}
 		super.onLongPress(e);
-		
 	}
 
 	public boolean onDown(MotionEvent e) {
@@ -101,7 +100,7 @@ public class Scene extends DrawableScene implements OnInputListener {
 		final float onDownY = mCamera.top - (e.getY() * mCamera.getHeight() / mDisplayHeight);
 		final Vector2D p = new Vector2D(onDownX, onDownY);
 		
-		for (Body object : mOnSceneBodys)
+		for (Body object : mOnSceneBodies)
 			if (object.getPhysics().contains(p)) {
 				mSelectedBody = object;
 				return true;

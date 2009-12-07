@@ -18,42 +18,14 @@
 
 package edu.eside.flingbox.physics.collisions;
 
-import java.util.Comparator;
-
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.PhysicBody;
+import edu.eside.flingbox.utils.PositionComparator;
 
 /**
  * Class to handle contact between two bodies.
  */
-public class Contact {
-	/**
-	 * Compares contacts to arrange it.
-	 *
-	 */
-	public final static class UpperPositionComparator implements Comparator<Contact> {
-		private Vector2D mGravity = new Vector2D(0f, -1.0f);
-		
-		/**
-		 * return positive for an upper contact
-		 */
-		@Override
-		public int compare(Contact contact1, Contact contact2) {
-			if (contact1 == contact2)
-				return 0;
-			float verticalPos1 = contact1.position.projectOver(mGravity);
-			float verticalPos2 = contact2.position.projectOver(mGravity);
-			return verticalPos1 > verticalPos2 ? 1 : -1;
-		}
-		
-		public void setGravity(Vector2D gravity) {
-			mGravity = gravity;
-		}
-		
-	}
-
-	public static final UpperPositionComparator UPPER_POSITION_COMPARATOR = new UpperPositionComparator();
-	
+public class Contact implements PositionComparator.Positionable {
 	/** First body in contact */
 	public final PhysicBody bodyInContactA;
 	/** Second body in contact */
@@ -85,6 +57,11 @@ public class Contact {
 		if (body == bodyInContactB)
 			return bodyBSense;
 		return null;
+	}
+
+	@Override
+	public Vector2D getPosition() {
+		return this.position;
 	}
 	
 }

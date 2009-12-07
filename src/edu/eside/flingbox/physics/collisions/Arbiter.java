@@ -21,6 +21,8 @@ package edu.eside.flingbox.physics.collisions;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import edu.eside.flingbox.utils.PositionComparator;
+
 /**
  * Arbiter manages the collisions between bodies
  */
@@ -58,10 +60,13 @@ public class Arbiter {
 					contactsToSolve.add(contact);
 			}
 		/* Sort contacts to solve those */
-		Collections.sort(contactsToSolve, Contact.UPPER_POSITION_COMPARATOR);
+		Collections.sort(contactsToSolve, PositionComparator.UPPER_COMPARATOR);
+		
+		/* Now we want to solve all contacts. For this we are going to
+		 * solve contacts from up to down and then from down to up. 
+		 */
 		for (Contact contact : contactsToSolve)
 			ContactSolver.solveContact(contact);
-		
 		for (int i = contactsToSolve.size() - 1; i >= 0; i--) 
 			ContactSolver.solveContact(contactsToSolve.get(i));
 	}

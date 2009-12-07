@@ -58,15 +58,14 @@ public class FlingboxActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        /* Request full screen view */
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        
         mScene = new Scene(this);
         
         mSurface = new GLSurfaceView(this);
         mSurface.setRenderer(mScene.getSceneRenderer());
-
-        // Request full screen view
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
         // Set OpenGL's surface
         setContentView(mSurface);
@@ -115,6 +114,11 @@ public class FlingboxActivity extends Activity {
         case MENU_HELP:
         	showHelp();
         	return true;
+        case MENU_NEW_SCENE:
+        	mScene.stopSimulation();
+        	mScene.clearScene();
+        	System.gc();
+        	return true;
         case MENU_LOAD_SCENE:
         	return true;
         case MENU_SAVE_SCENE:
@@ -126,12 +130,29 @@ public class FlingboxActivity extends Activity {
     /**
      * Called when activity Pause
      */
+    @Override
     public void onPause() {
     	super.onPause();
+    	mScene.stopSimulation();
+    	mSurface.onPause();
+    }
+    
+    @Override
+    public void onResume() {
+    	super.onResume();
+    	mSurface.onResume();
     }
     
     /**
-     * Called only wehn orientation changed.
+     * Called when activity Stops
+     */
+    public void onStop() {
+    	super.onStop();
+    	mScene.stopSimulation();
+    }
+    
+    /**
+     * Called only when orientation changed.
      * This is called because the android:configChanges="orientation"
      * in AndroidManifest.xml
      */

@@ -154,7 +154,7 @@ public class Vector2D {
 	 * @return length of projection
 	 */
 	public float projectOver(Vector2D v) {
-		return this.i * v.i + this.j * v.j;
+		return (this.i * v.i + this.j * v.j) / v.length();
 	}
 	
 	/**

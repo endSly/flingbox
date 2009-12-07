@@ -23,8 +23,8 @@ import java.util.concurrent.Semaphore;
 
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.collisions.Arbiter;
-import edu.eside.flingbox.physics.collisions.Contact;
 import edu.eside.flingbox.physics.gravity.GravitySource;
+import edu.eside.flingbox.utils.PositionComparator;
 
 /**
  * Stores all physic object in scene and make those 
@@ -54,22 +54,34 @@ public class ScenePhysics implements Runnable {
 	 */
 	public ScenePhysics(GravitySource gravity) {
 		mGravity = gravity;
-		Contact.UPPER_POSITION_COMPARATOR.setGravity(gravity);
+		PositionComparator.setGroundSense(gravity);
 	}
 	
 	/**
 	 * Adds physical object
 	 * @param object object to be added
 	 */
-	public void add(PhysicBody object) {
+	public void add(PhysicBody body) {
 		try {
 			mLockOnSceneBodys.acquire();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		mOnSceneBodies.add(object);
-		mArbiter.add(object.getCollider());
+		mOnSceneBodies.add(body);
+		mArbiter.add(body.getCollider());
 		mLockOnSceneBodys.release();
+	}
+	
+	public boolean remove(PhysicBody body) {
+		try {
+			mLockOnSceneBodys.acquire();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		boolean removed = mOnSceneBodies.remove(body);
+		mLockOnSceneBodys.release();
+		removed &= mArbiter.remove(body.getCollider());
+		return removed;
 	}
 	
 	/**
@@ -163,5 +175,7 @@ public class ScenePhysics implements Runnable {
 		}
 		mDoKill = false;
 	}
+
+	
 	
 }
