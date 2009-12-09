@@ -32,15 +32,15 @@ public final class PolygonUtils {
 	/**
 	 * The Douglas-Peucker algorithm is an algorithm for reducing the number 
 	 * of points in a curve that is approximated by a series of points.
-	 * At the end of this function is a good moment for call to GarbageCollector
+	 * The end of this function is a good moment to call the GarbageCollector
 	 * 
-	 * @param points	Array of polygon's points 
+	 * @param points	Array of the polygon's points 
 	 * @param epsilon	Max distance to ignore a point
 	 * @return			New array with optimized points
 	 */
 	public static Vector2D[] douglasPeuckerReducer(final Vector2D[] points, final float epsilon) {
-		final int pointsCount = points.length;
-		if (pointsCount < 4 || epsilon <= 0.0f)
+		final int lastPoint = points.length -1;
+		if (lastPoint < 3 || epsilon <= 0.0f)
 			return points;	// No reduction possible
 		
 		final ArrayList<Vector2D> reducedPolygon = new ArrayList<Vector2D>();
@@ -48,12 +48,13 @@ public final class PolygonUtils {
 		reducedPolygon.add(points[0]);	// First point will not be include
 		
 		/* Call recursively to algorithm */
-		douglasPeucker(points, epsilon, 0, pointsCount - 1, reducedPolygon);
+		douglasPeucker(points, epsilon, 0, lastPoint, reducedPolygon);
 		
-		if (points[0].distanceToPoint(points[pointsCount - 1]) > epsilon)
-			reducedPolygon.add(points[pointsCount - 1]); // Last point neither
+		if (points[0].distanceToPoint(points[lastPoint]) > epsilon)
+			reducedPolygon.add(points[lastPoint]); // Last point neither
 		
 		reducedPolygon.trimToSize();
+
 		return (Vector2D[]) reducedPolygon.toArray(new Vector2D[0]);
 	}
 	
@@ -94,7 +95,7 @@ public final class PolygonUtils {
 	/**
 	 * Computes the triangulation of a polygon(tesellation) with ear-clipping 
 	 * algorithm. 
-	 * @param points	Array of polygon's points
+	 * @param Vector2Ds	Array of polygon's points
 	 * @return			Will return n-2 group of 3 points, for n sides polygon
 	 * 					or null if not enough points
 	 */
@@ -104,13 +105,12 @@ public final class PolygonUtils {
 			return null;
 		
 		// n-2 group of 3 Vector2Ds, for n sides polygon 
-		short[] triangules = new short[3 * (Vector2DsCount - 2)];
-		boolean[] included = new boolean [Vector2DsCount];
+		short[] triangles = new short[3 * (Vector2DsCount - 2)];
+		boolean[] included = new boolean[Vector2DsCount];
 
-		// Call to recursive function witch will calculate triangulation
-		triangulatePolygon(Vector2Ds, triangules, included, Vector2DsCount, 0);
+		triangulatePolygon(Vector2Ds, triangles, included, Vector2DsCount, 0);
 		
-		return triangules;
+		return triangles;
 	}
 	
 	/**
@@ -157,8 +157,8 @@ public final class PolygonUtils {
 	}
 	
 	/**
-	 * Checks if a Vector2D is contained by a polygon. It is bassed on 
-	 * Winding number algorithm.
+	 * Checks if a Vector2D is contained by a polygon.
+	 * It's based on Winding number algorithm.
 	 * More info at {@link http://en.wikipedia.org/wiki/Winding_number}
 	 * 
 	 * @param polygon polygon's Vector2Ds
@@ -171,10 +171,10 @@ public final class PolygonUtils {
 		for (int i = 0; i < Vector2DsCount; i++) {
 			Vector2D v1 = polygon[i];
 			Vector2D v2 = polygon[(i + 1) % Vector2DsCount] ;
-			if ((v1.j < py) && (v2.j > py)) {  
+			if ((v1.j < py) && (v2.j > py)) {
 				if (v1.i > px || v2.i > px)
 					c++;
-				// Check if Vector2D is at left or at rigth of the object
+				// Check if Vector2D is at the left or the right side of the object
 				//final float segmentAtX = ((v2.i - v1.i) / (v2.j - v1.j)) * (py - v1.j) + v1.i;
 				//if (segmentAtX > px) 
 				//	c++;
@@ -183,7 +183,7 @@ public final class PolygonUtils {
 			} else if ((v1.j > py) && (v2.j < py)) {
 				if (v1.i > px || v2.i > px)
 					c--;
-				// Check if Vector2D is at left or at rigth of the object
+				// Check if Vector2D is at the left or the right side of the object
 				//final float segmentAtX = ((v2.i - v1.i) / (v2.j - v1.j)) * (py - v1.j) + v1.i;
 				//if (segmentAtX > px) 
 				//	c--;
@@ -207,16 +207,17 @@ public final class PolygonUtils {
 		float area = Vector2Ds[lastVector2D].i * Vector2Ds[0].j 
 			- Vector2Ds[0].i * Vector2Ds[lastVector2D].j;
 		
+		Vector2D Vector2D, nextVector2D;
 		for (int i = 0; i < lastVector2D; i++) {
-			Vector2D Vector2D = Vector2Ds[i];
-			Vector2D nextVector2D = Vector2Ds[i + 1];
+			Vector2D = Vector2Ds[i];
+			nextVector2D = Vector2Ds[i + 1];
 			area += Vector2D.i * nextVector2D.j - nextVector2D.i * Vector2D.j;
 		}
 		return area / 2f;
 	}
 	
 	/**
-	 * Computes polygon centroid
+	 * Computes the polygon's centroid
 	 * 
 	 * @param Vector2Ds Polygon's Vector2Ds
 	 * @return centroid 
@@ -241,7 +242,7 @@ public final class PolygonUtils {
 	
 	
 	/**
-	 * Computes Polygon normals.  
+	 * Computes the polygon's normals.  
 	 * 
 	 * @param contour Counterclockwise polygon points
 	 * @return Polygon's normals
@@ -262,10 +263,10 @@ public final class PolygonUtils {
 	 * Computes minimum distance from line to point
 	 */
 	public static float distanceFromLineToPoint(final Vector2D p0, final Vector2D p1, final Vector2D p) {
-		float area = (p0.i * p1.j + p1.i * p.j + p.i * p0.j 
-				- p1.i * p0.j - p.i * p1.j - p0.i * p.j) / 2f;
-		float base = (float) Math.sqrt((p1.i - p0.i) * (p1.i - p0.i) 
-				+ (p1.j - p0.j) * (p1.j - p0.j));
+		final float area = (p0.i * p1.j + p1.i * p.j + p.i * p0.j 
+					- p1.i * p0.j - p.i * p1.j - p0.i * p.j) / 2f;
+		final float base = (float) Math.sqrt((p1.i - p0.i) * (p1.i - p0.i) 
+					+ (p1.j - p0.j) * (p1.j - p0.j));
 		return (float) Math.abs(2f * area / base);
 	}
 	

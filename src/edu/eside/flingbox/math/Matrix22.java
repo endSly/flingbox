@@ -46,21 +46,19 @@ public class Matrix22 {
 	 * Constructor for a Rotation matrix
 	 * 
 	 * @param angle	Angle for rotation
-	 * @return		New rotation matrix 
 	 */
-	public static Matrix22 rotationMatrix(float angle) {
+	public Matrix22(float angle) {
 		final float cos = (float) Math.cos(angle);
 		final float sin = (float) Math.sin(angle);
 		
-		return new Matrix22(new float[] {
-				cos, -sin, 
-				sin, cos});
+		this.values = new float[] {cos, -sin, 
+									sin, cos};
 	}
 	
 	/**
-	 * Transposes matrix
+	 * Creates the transpose of the matrix
 	 * 
-	 * @return	New matrix with transpose
+	 * @return	New resulting matrix
 	 */
 	public static Matrix22 transpose(Matrix22 m) {
 		return new Matrix22(new float[] {
@@ -94,7 +92,6 @@ public class Matrix22 {
 				m.values[3] / det, m.values[1] / det, 
 				m.values[2] / det, m.values[0] / det});
 	}
-	
 	
 	/**
 	 * Computes matrix invert
