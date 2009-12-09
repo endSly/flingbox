@@ -19,10 +19,16 @@
 package edu.eside.flingbox;
 
 import android.app.ListActivity;
+import android.os.Bundle;
 
 /**
  * Preferences activity
  */
 public class PreferencesActivity extends ListActivity {
+	@Override
+    protected void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
 
+        setContentView(R.layout.preferences);
+	}
 }

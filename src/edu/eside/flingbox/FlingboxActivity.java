@@ -48,7 +48,6 @@ public class FlingboxActivity extends Activity {
 	private final static int MENU_LOAD_SCENE = 11;
 	private final static int MENU_SAVE_SCENE = 12;
 	
-	
 	private GLSurfaceView mSurface;
 	private Scene mScene; 
 	
@@ -115,6 +114,7 @@ public class FlingboxActivity extends Activity {
         	showHelp();
         	return true;
         case MENU_NEW_SCENE:
+        	mSurface.onPause();
         	mScene.stopSimulation();
         	mScene.clearScene();
         	System.gc();
@@ -149,6 +149,21 @@ public class FlingboxActivity extends Activity {
     public void onStop() {
     	super.onStop();
     	mScene.stopSimulation();
+    }
+    
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    	super.onSaveInstanceState(savedInstanceState);
+    	
+    	if (savedInstanceState == null)
+        	showHelp();
+        
+    }
+    
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+    	super.onSaveInstanceState(outState);
+    	Preferences.onSavePreferences(outState);
     }
     
     /**

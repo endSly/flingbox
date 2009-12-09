@@ -81,10 +81,10 @@ public class ContactSolver {
 		collidingBody.applyImpulse(collisionImpuse, contactRelativePoint);
 		
 		if (!collidedBody.isFixed()) { // Other body also has an impulse
-			contactRelativePoint.set(collidingBody.getPosition()).sub(contact.position);
+			contactRelativePoint.set(collidedBody.getPosition()).sub(contact.position);
 			collidedBody.applyImpulse(collisionImpuse.negate(), contactRelativePoint);
 		}
-
+		
 		fixBodysPenetration(contact, collidingBody, collidedBody);
 	}
 	

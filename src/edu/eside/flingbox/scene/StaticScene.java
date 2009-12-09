@@ -26,6 +26,7 @@ import android.opengl.GLSurfaceView.Renderer;
 import android.os.Vibrator;
 import android.view.MotionEvent;
 
+import edu.eside.flingbox.Preferences;
 import edu.eside.flingbox.graphics.SceneRenderer;
 import edu.eside.flingbox.graphics.SceneRenderer.Camera;
 import edu.eside.flingbox.input.SceneGestureDetector;
@@ -89,15 +90,17 @@ public class StaticScene implements OnInputListener {
 		mContext = c;
 		
 		GravitySource gravity;
-		try {
-			//gravity = GravitySource.getAccelerometerBasedGravity(c);
+		if (Preferences.useAcelerometerBasedGravity)
+			try {
+				gravity = GravitySource.getAccelerometerBasedGravity(c);
+			} catch (Exception ex) {
+				/* We don't have accelerometers */
+				gravity = GravitySource.getStaticGravity(0f, -SensorManager.GRAVITY_EARTH);
+			}
+		else 
 			gravity = GravitySource.getStaticGravity(0f, -SensorManager.GRAVITY_EARTH);
-		} catch (Exception ex) {
-			// We don't have accelerometers
-			gravity = GravitySource.getStaticGravity(0f, -SensorManager.GRAVITY_EARTH);
-		}
 		
-		// Create list of objects.
+		/* Create list of objects. */
 		mOnSceneBodies = new ArrayList<Body>();
 		mSceneRenderer = new SceneRenderer();
 		mScenePhysics = new ScenePhysics(gravity);

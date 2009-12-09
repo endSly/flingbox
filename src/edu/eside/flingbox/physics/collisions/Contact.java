@@ -58,6 +58,16 @@ public class Contact implements PositionComparator.Positionable {
 			return bodyBSense;
 		return null;
 	}
+	
+	public boolean concerns(PhysicBody body) {
+		return (bodyInContactA == body) || (bodyInContactB == body);
+	}
+	
+	public PhysicBody otherBody(PhysicBody body) {
+		if (!concerns(body))
+			return null;
+		return (bodyInContactA == body) ? bodyInContactB : bodyInContactA;
+	}
 
 	@Override
 	public Vector2D getPosition() {

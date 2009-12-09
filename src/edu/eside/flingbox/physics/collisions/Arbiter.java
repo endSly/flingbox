@@ -21,6 +21,8 @@ package edu.eside.flingbox.physics.collisions;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import edu.eside.flingbox.math.Vector2D;
+import edu.eside.flingbox.physics.PhysicBody;
 import edu.eside.flingbox.utils.PositionComparator;
 
 /**
@@ -61,7 +63,20 @@ public class Arbiter {
 			}
 		/* Sort contacts to solve those */
 		Collections.sort(contactsToSolve, PositionComparator.UPPER_COMPARATOR);
+/*
+		final ArrayList<Contact> isolatedContactTree = new ArrayList<Contact>();
 		
+		while (!contactsToSolve.isEmpty()) {
+			isolatedContactTree.clear();
+			Contact treeRoot = contactsToSolve.get(0); // get top contact
+			contactsToSolve.remove(0);			
+			isolatedContactTree.add(treeRoot);
+			getIsolatedContactsTree(treeRoot.bodyInContactA, contactsToSolve, isolatedContactTree);
+			getIsolatedContactsTree(treeRoot.bodyInContactB, contactsToSolve, isolatedContactTree);
+			
+			solveIsolatedContactTree(isolatedContactTree);
+		}
+*/
 		/* Now we want to solve all contacts. For this we are going to
 		 * solve contacts from up to down and then from down to up. 
 		 */
@@ -69,5 +84,21 @@ public class Arbiter {
 			ContactSolver.solveContact(contact);
 		for (int i = contactsToSolve.size() - 1; i >= 0; i--) 
 			ContactSolver.solveContact(contactsToSolve.get(i));
+	}
+	
+	private void solveIsolatedContactTree(ArrayList<Contact> isolatedContacts) {
+		Vector2D totalImpulse = new Vector2D();
+		
+	}
+	
+	private void getIsolatedContactsTree(final PhysicBody rootBody, final ArrayList<Contact> contacts, 
+			ArrayList<Contact> isolatedContacts) {
+		for (Contact contact : contacts) 
+			if (contact.concerns(rootBody)) {
+				contacts.remove(contact);
+				isolatedContacts.add(contact);
+				getIsolatedContactsTree(contact.otherBody(rootBody), contacts, isolatedContacts);
+			}
+			
 	}
 }
