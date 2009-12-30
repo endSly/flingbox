@@ -21,9 +21,12 @@ package edu.eside.flingbox.scene;
 import java.io.File;
 import java.io.IOException;
 
+import org.xmlpull.v1.XmlSerializer;
+
 import edu.eside.flingbox.BodySettingsDialog;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 import edu.eside.flingbox.math.Vector2D;
+import edu.eside.flingbox.XmlExporter.XmlSerializable;
 import edu.eside.flingbox.bodies.Body;
 
 import android.content.Context;
@@ -34,7 +37,7 @@ import android.view.MotionEvent;
  * Scene Descriptor.
  *
  */
-public class Scene extends DrawableScene implements OnInputListener {
+public class Scene extends DrawableScene implements OnInputListener, XmlSerializable {
 	
 	private Body mSelectedBody = null;
 
@@ -89,7 +92,7 @@ public class Scene extends DrawableScene implements OnInputListener {
 	public void onLongPress(MotionEvent e) {
 		if (mSelectedBody != null) {
 			mVibrator.vibrate(50); // vibrate as haptic feedback
-			BodySettingsDialog dialog = new BodySettingsDialog(mContext, mSelectedBody);
+			BodySettingsDialog dialog = new BodySettingsDialog(mContext, mSelectedBody, this);
 			dialog.show();
 		}
 		super.onLongPress(e);
@@ -100,6 +103,7 @@ public class Scene extends DrawableScene implements OnInputListener {
 		final float onDownY = mCamera.top - (e.getY() * mCamera.getHeight() / mDisplayHeight);
 		final Vector2D p = new Vector2D(onDownX, onDownY);
 		
+		/* Check selected body */
 		for (Body object : mOnSceneBodies)
 			if (object.getPhysics().contains(p)) {
 				mSelectedBody = object;
@@ -170,6 +174,13 @@ public class Scene extends DrawableScene implements OnInputListener {
 		} catch (IOException ex) {
 				
 		}
+		
+		return false;
+	}
+	
+
+	@Override
+	public boolean writeXml(XmlSerializer serializer) {
 		
 		return false;
 	}

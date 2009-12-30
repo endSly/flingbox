@@ -19,10 +19,13 @@
 package edu.eside.flingbox;
 
 import edu.eside.flingbox.bodies.Body;
+import edu.eside.flingbox.scene.Scene;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
@@ -35,11 +38,13 @@ public class BodySettingsDialog extends Dialog {
 	
 	/** Contains Body to change properties */
 	protected Body mBody;
+	protected Scene mScene;
 
-	public BodySettingsDialog(Context context, Body body) {
+	public BodySettingsDialog(Context context, Body body, Scene scene) {
 		super(context);
 		//mContext = context;
 		mBody = body;
+		mScene = scene;
 	}
 	
     /** 
@@ -139,8 +144,18 @@ public class BodySettingsDialog extends Dialog {
 			public void onStartTrackingTouch(SeekBar seekBar) { }
 			public void onStopTrackingTouch(SeekBar seekBar) { }
 		});
-	
-}
+		
+		Button removeButton = (Button) findViewById(R.id.button_remove_body);
+		removeButton.setOnClickListener(new View.OnClickListener() {
 
+			@Override
+			public void onClick(View v) {
+				mScene.remove(mBody);
+				cancel();
+			}
+			
+		});
+	
+    }
 
 }

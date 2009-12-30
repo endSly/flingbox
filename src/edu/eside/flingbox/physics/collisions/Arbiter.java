@@ -20,8 +20,10 @@ package edu.eside.flingbox.physics.collisions;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
 
-import edu.eside.flingbox.math.Vector2D;
+import android.util.Log;
+
 import edu.eside.flingbox.physics.PhysicBody;
 import edu.eside.flingbox.utils.PositionComparator;
 
@@ -63,7 +65,7 @@ public class Arbiter {
 			}
 		/* Sort contacts to solve those */
 		Collections.sort(contactsToSolve, PositionComparator.UPPER_COMPARATOR);
-/*
+
 		final ArrayList<Contact> isolatedContactTree = new ArrayList<Contact>();
 		
 		while (!contactsToSolve.isEmpty()) {
@@ -71,34 +73,38 @@ public class Arbiter {
 			Contact treeRoot = contactsToSolve.get(0); // get top contact
 			contactsToSolve.remove(0);			
 			isolatedContactTree.add(treeRoot);
+			
 			getIsolatedContactsTree(treeRoot.bodyInContactA, contactsToSolve, isolatedContactTree);
 			getIsolatedContactsTree(treeRoot.bodyInContactB, contactsToSolve, isolatedContactTree);
 			
 			solveIsolatedContactTree(isolatedContactTree);
 		}
-*/
-		/* Now we want to solve all contacts. For this we are going to
-		 * solve contacts from up to down and then from down to up. 
-		 */
-		for (Contact contact : contactsToSolve)
-			ContactSolver.solveContact(contact);
-		for (int i = contactsToSolve.size() - 1; i >= 0; i--) 
-			ContactSolver.solveContact(contactsToSolve.get(i));
+
 	}
 	
 	private void solveIsolatedContactTree(ArrayList<Contact> isolatedContacts) {
-		Vector2D totalImpulse = new Vector2D();
+		//Vector2D totalImpulse = new Vector2D();
+		for (Contact contact : isolatedContacts) {
+			ContactSolver.solveContact(contact);
+		}
+		if (isolatedContacts.size() > 1)
+			for (int i = isolatedContacts.size() - 1; i >= 0; i--) 
+				ContactSolver.solveContact(isolatedContacts.get(i));
 		
 	}
 	
 	private void getIsolatedContactsTree(final PhysicBody rootBody, final ArrayList<Contact> contacts, 
 			ArrayList<Contact> isolatedContacts) {
-		for (Contact contact : contacts) 
-			if (contact.concerns(rootBody)) {
-				contacts.remove(contact);
-				isolatedContacts.add(contact);
-				getIsolatedContactsTree(contact.otherBody(rootBody), contacts, isolatedContacts);
-			}
+		try {
+			for (Contact contact : contacts) 
+				if (contact.concerns(rootBody)) {
+					contacts.remove(contact);
+					isolatedContacts.add(contact);
+					getIsolatedContactsTree(contact.otherBody(rootBody), contacts, isolatedContacts);
+				}
+		} catch (ConcurrentModificationException ex) {
+			Log.e("flingbox", "ConcurrentModificationException getting isolated contacts tree", ex);
+		}
 			
 	}
 }

@@ -20,8 +20,11 @@ package edu.eside.flingbox.bodies;
 
 import java.util.Random;
 
+import org.xmlpull.v1.XmlSerializer;
+
 import android.util.Log;
 
+import edu.eside.flingbox.XmlExporter.XmlSerializable;
 import edu.eside.flingbox.graphics.RenderPolygon;
 import edu.eside.flingbox.math.PolygonUtils;
 import edu.eside.flingbox.math.Vector2D;
@@ -32,7 +35,7 @@ import edu.eside.flingbox.physics.PhysicBody.OnMovementListener;
  * Polygon is a general class which handles the physics
  * and render instances of a polygonal Body.
  */
-public final class Polygon extends Body implements OnMovementListener {
+public final class Polygon extends Body implements OnMovementListener, XmlSerializable {
 	private final Vector2D[] mPoints;
 	private final short mPointsCount;
 
@@ -107,6 +110,20 @@ public final class Polygon extends Body implements OnMovementListener {
 	 */
 	public void onMovement(Vector2D position, float rotation) {
 		((RenderPolygon) mRender).setPosition(position, rotation);
+	}
+
+	@Override
+	public boolean writeXml(XmlSerializer serializer) {
+		try {
+			serializer.startTag("", "polygon");
+			serializer.setProperty("contour", mPoints);
+			serializer.setProperty("position", mPhysics.getPosition());
+			serializer.endTag("", "polygon");
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 
 }

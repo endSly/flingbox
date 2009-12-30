@@ -72,4 +72,13 @@
 			android:layout_gravity="right|top" 
 			android:layout_marginLeft="6dip"
 			android:layout_marginRight="6dip"/>   
+	
+	<!-- Remove body -->
+	<Button android:text="@string/body_settings_remove_body" 
+			android:id="@+id/button_remove_body"    
+			android:layout_width="fill_parent" 
+			android:layout_height="wrap_content"
+			android:layout_marginTop="8dip" 
+			android:layout_marginLeft="6dip"
+			android:layout_marginRight="6dip"/>
 </TableLayout> 

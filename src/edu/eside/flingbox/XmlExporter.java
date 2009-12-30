@@ -18,24 +18,47 @@
 
 package edu.eside.flingbox;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import org.xmlpull.v1.XmlSerializer;
 
 import android.util.Xml;
-import edu.eside.flingbox.scene.Scene;
 
-public class XmlSceneExporter {
-	
-	public interface XmlExportable {
-		
+/**
+ * Generic exporter in XML
+ *
+ */
+public class XmlExporter {
+	/**
+	 * Should be implemented by any body that will be serialized
+	 */
+	public interface XmlSerializable {
+		boolean writeXml(XmlSerializer serializer) throws IllegalArgumentException, IllegalStateException, IOException;
 	}
 	
-	public static void exportScene(String file, Scene sceneToExport) {
+	/**
+	 * Exports serializable to writer.
+	 * 
+	 * @param writer
+	 * @param exportable
+	 * @return
+	 */
+	public static boolean exportXml(Writer writer, XmlSerializable exportable) {
 		XmlSerializer serializer = Xml.newSerializer();
 
 		try {
-			serializer.startTag("Scene", "scene");
-		} catch (Exception ex) {
+			serializer.setOutput(writer);
+	        serializer.startDocument("UTF-8", true);
+	        
+	        serializer.startTag("", "flingbox");
+	        exportable.writeXml(serializer);
+	        serializer.endTag("", "flingbox");
 			
+		} catch (Exception ex) {
+			/* File cant be written */
+			return false;
 		}
+		return true;
 	}
 }
