@@ -128,7 +128,10 @@ public class ScenePhysics implements Runnable {
 		final ArrayList<PhysicBody> bodies = mOnSceneBodies;
 		long lastTime = System.currentTimeMillis();
 		long time;
+		int fpsCounter = 0;
+		long fpsLastTimeShowed = lastTime;
 		final Vector2D force = new Vector2D();
+		
 		for (; !mDoKill; ) {
 			try {
 				mSimulationMutex.acquire();
@@ -136,9 +139,20 @@ public class ScenePhysics implements Runnable {
 				e2.printStackTrace();
 			}
 			
+			/* Show fps */
+			long currentTime = System.currentTimeMillis();
+			if (currentTime - fpsLastTimeShowed >= 1000) {
+				Log.d("Flingbox", "Simulation fps: " + 1000f * (float)fpsCounter / (float)(currentTime - fpsLastTimeShowed));
+				fpsLastTimeShowed = currentTime;
+				fpsCounter = 0;
+			}
+			fpsCounter++;
+			
 			/* Compute time */
-			time = System.currentTimeMillis() - lastTime;
-			lastTime = System.currentTimeMillis();
+			time = currentTime - lastTime;
+			lastTime = currentTime;
+			
+			
 			
 			/* We need a semaphore here */
 			try {
@@ -168,8 +182,8 @@ public class ScenePhysics implements Runnable {
 			mLockOnSceneBodys.release();
 			/* Keep max frame-rate */
 			try {
-				if (time < 50) 
-					Thread.sleep(50 - time);
+				if (time < 40) 
+					Thread.sleep(40 - time);
 				
 			} catch (InterruptedException e) {
 				Log.e("Flingbox", "Can't sleep during simulation.");

@@ -96,12 +96,15 @@ public class Arbiter {
 	private void getIsolatedContactsTree(final PhysicBody rootBody, final ArrayList<Contact> contacts, 
 			ArrayList<Contact> isolatedContacts) {
 		try {
-			for (Contact contact : contacts) 
+			for (int i = 0; i < contacts.size(); i++) {
+				Contact contact = contacts.get(i);
 				if (contact.concerns(rootBody)) {
 					contacts.remove(contact);
+					i--;
 					isolatedContacts.add(contact);
 					getIsolatedContactsTree(contact.otherBody(rootBody), contacts, isolatedContacts);
 				}
+			}
 		} catch (ConcurrentModificationException ex) {
 			Log.e("flingbox", "ConcurrentModificationException getting isolated contacts tree", ex);
 		}

@@ -60,6 +60,9 @@ public class ColliderPolygon extends Collider implements OnMovementListener {
 		mRadius = computeBoundingCircleRadius(contour);
 		mLocatedContour = new Vector2D[pointsCount];
 		
+		for (int i = 0; i < pointsCount; i++)
+			mLocatedContour[i] = new Vector2D();
+		
 		// Stores all point's angles
 		//mVertexAngle = new float[pointsCount];
 		//for (int i = 0 ; i < pointsCount; i++) 
@@ -118,13 +121,11 @@ public class ColliderPolygon extends Collider implements OnMovementListener {
 		final Vector2D[] locatedPolygon = mLocatedContour;
 		final Vector2D position = mPosition;
 		final float angle =  mAngle;
-		
 		final int pointsCount = polygon.length;
-		
 		final Matrix22 rotationMatrix = new Matrix22(angle);
 
-		for (int i = pointsCount - 1; i >= 0; i--) 
-			locatedPolygon[i] = Vector2D.mul(polygon[i], rotationMatrix).add(position);
+		for (int i = 0; i < pointsCount; i++)
+			locatedPolygon[i].set(polygon[i]).mul(rotationMatrix).add(position);
 		
 		return locatedPolygon;
 	}

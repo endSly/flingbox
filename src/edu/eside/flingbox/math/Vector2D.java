@@ -202,6 +202,19 @@ public class Vector2D {
 	}
 	
 	/**
+	 * Multiplies current vector by a matrix
+	 * 
+	 * @param m	Matrix
+	 * @return	New vector with the result
+	 */
+	public Vector2D mul(Matrix22 m) {
+		final float lastI = this.i, lastJ = this.j;
+		this.i = lastI * m.values[0] + lastJ * m.values[1];
+		this.j = lastI * m.values[2] + lastJ * m.values[3];
+		return this;
+	}
+	
+	/**
 	 * Normalizes the vector
 	 * 
 	 * @return	Normalized vector
