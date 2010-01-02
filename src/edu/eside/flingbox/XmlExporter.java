@@ -46,19 +46,20 @@ public class XmlExporter {
 	 */
 	public static boolean exportXml(Writer writer, XmlSerializable exportable) {
 		XmlSerializer serializer = Xml.newSerializer();
-
+		boolean writeSuccess = false;
 		try {
 			serializer.setOutput(writer);
 	        serializer.startDocument("UTF-8", true);
 	        
 	        serializer.startTag("", "flingbox");
-	        exportable.writeXml(serializer);
+	        writeSuccess = exportable.writeXml(serializer);
 	        serializer.endTag("", "flingbox");
 			
+	        serializer.endDocument();
 		} catch (Exception ex) {
-			/* File cant be written */
+			/* File can't be written */
 			return false;
 		}
-		return true;
+		return writeSuccess;
 	}
 }

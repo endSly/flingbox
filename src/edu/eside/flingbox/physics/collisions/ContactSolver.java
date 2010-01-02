@@ -33,6 +33,12 @@ public class ContactSolver {
 	
 	/**
 	 * Computes contacts effects to body's
+	 * Conditions for a contact solver
+	 * (I total) = (I total at the end)
+	 * Vel diference at end = (Vel diference at begin) * e
+	 * so:
+	 * (I1 + I2) = (I1f + I2f)
+	 * (v1f - v2f) = (v1 - v2) * e
 	 * 
 	 * @param contact contact descriptor
 	 * @param bodyA first colliding body
@@ -51,33 +57,38 @@ public class ContactSolver {
 		} else
 			return; // Collision is between fixed bodies so do nothing
 		
-		final float restit = (collidingBody.getRestitutionCoeficient() + collidedBody.getRestitutionCoeficient()) / 2;
+		final float restit = (collidingBody.getRestitutionCoeficient() * collidedBody.getRestitutionCoeficient());
 		/* Get velocity and mass of colliding body */
-		final Vector2D collidingVel = getVelocityIntoContactAxis(contact, collidingBody);
+		final Vector2D collidingVelVector = getVelocityIntoContactAxis(contact, collidingBody);
+		final float collidingVel = collidingVelVector.i;
 		final float collidingMass = collidingBody.getBodyMass();
 		
 		/* Compute final velocity */
-		final float finalVel;
-		if (collidedBody.isFixed()) // Other body is fixed
-			finalVel = -collidingVel.i * restit;
-		else { // If collided body can be moved is a little bit more complicated
-			float collidedMass = collidedBody.getBodyMass();
-			Vector2D collidedVel = getVelocityIntoContactAxis(contact, collidedBody);
+		final float diffImpulse;
+		if (collidedBody.isFixed()) { // Other body is fixed
+			final float finalVel = -collidingVel * restit;
+			diffImpulse = (finalVel - collidingVel) * collidingMass;
+		} else { // If collided body can be moved is a little bit more complicated
+			final float collidedMass = collidedBody.getBodyMass();
+			final Vector2D collidedVelVector = getVelocityIntoContactAxis(contact, collidedBody);
+			final float collidedVel = collidedVelVector.i;
 			
-			finalVel = ((1 + restit) * collidedMass * collidedVel.i 
-					+ collidingVel.i * (collidingMass + restit * collidedMass)) 
-					/ (collidingMass + collidedMass);
+			float collidingImp = collidingVel * collidingMass;
+			float collidedImp = collidedVel * collidedMass;
+			
+			final float finalVel = (collidingImp + collidedImp + (collidingVel - collidedVel) * collidedMass * restit) 
+				/ (collidingMass + collidedMass);
+
+			diffImpulse = (finalVel - collidingVel) * collidingMass;
 		}
-		/* Compute final normal impulse */
-		final float normalImpulseMod = (finalVel - collidingVel.i) * collidingMass;
+
 		/* Get resultant impulse as addition of normal and friction */
-		final Vector2D normalImpulse = new Vector2D(contact.normal).mul(normalImpulseMod);
-		final Vector2D frictionImpulse = computeFrictionImpulse(collidingBody, normalImpulseMod, collidingVel.j, contact.sense);
+		final Vector2D normalImpulse = new Vector2D(contact.normal).mul(diffImpulse);
+		final Vector2D frictionImpulse = computeFrictionImpulse(collidingBody, diffImpulse, collidingVelVector.j, contact.sense);
 		final Vector2D collisionImpuse = normalImpulse.add(frictionImpulse);
 		
 		/* Where impulse is applied */
 		Vector2D contactRelativePoint = new Vector2D(collidingBody.getPosition()).sub(contact.position);
-		
 		collidingBody.applyImpulse(collisionImpuse, contactRelativePoint);
 		
 		if (!collidedBody.isFixed()) { // Other body also has an impulse

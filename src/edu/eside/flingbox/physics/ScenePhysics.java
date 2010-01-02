@@ -21,6 +21,8 @@ package edu.eside.flingbox.physics;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
+import android.util.Log;
+
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.collisions.Arbiter;
 import edu.eside.flingbox.physics.gravity.GravitySource;
@@ -166,9 +168,11 @@ public class ScenePhysics implements Runnable {
 			mLockOnSceneBodys.release();
 			/* Keep max frame-rate */
 			try {
-				if (time < 20)
-					Thread.sleep(20 - time);
+				if (time < 50) 
+					Thread.sleep(50 - time);
+				
 			} catch (InterruptedException e) {
+				Log.e("Flingbox", "Can't sleep during simulation.");
 				e.printStackTrace();
 			} 
 			mSimulationMutex.release();

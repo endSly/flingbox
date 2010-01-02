@@ -37,13 +37,12 @@ import edu.eside.flingbox.physics.PhysicBody.OnMovementListener;
  *
  */
 public class ColliderPolygon extends Collider implements OnMovementListener {
-	
-	//private float mRotationAngle;
-	
 	/** Handled in Physics, only pointer */
 	private final Vector2D[] mPolygonContour;
+	/** Located and rotated contour */
+	private final Vector2D[] mLocatedContour;
 	
-	private final float[] mVertexAngle;
+	//private final float[] mVertexAngle;
 	
 	/**
 	 * Default constructor for a polygon collider.
@@ -59,11 +58,12 @@ public class ColliderPolygon extends Collider implements OnMovementListener {
 		final int pointsCount = contour.length;
 		mPolygonContour = contour;
 		mRadius = computeBoundingCircleRadius(contour);
+		mLocatedContour = new Vector2D[pointsCount];
 		
 		// Stores all point's angles
-		mVertexAngle = new float[pointsCount];
-		for (int i = 0 ; i < pointsCount; i++) 
-			mVertexAngle[i] = (float) Math.atan(contour[i].j / contour[i].i);
+		//mVertexAngle = new float[pointsCount];
+		//for (int i = 0 ; i < pointsCount; i++) 
+		//	mVertexAngle[i] = (float) Math.atan(contour[i].j / contour[i].i);
 
 	}
 	
@@ -74,9 +74,8 @@ public class ColliderPolygon extends Collider implements OnMovementListener {
 		if (!super.canContact(collider)) 
 			return new Contact[0];
 		
-		final Vector2D[] polygon = translateAndRotatePolygon(mPolygonContour, mPosition, mAngle);
-		final Vector2D[] otherPolygon = translateAndRotatePolygon(((ColliderPolygon) collider).mPolygonContour, 
-				((ColliderPolygon) collider).mPosition, ((ColliderPolygon) collider).mAngle);
+		final Vector2D[] polygon = updateLocatedPolygon();
+		final Vector2D[] otherPolygon = ((ColliderPolygon) collider).updateLocatedPolygon();
 		
 		/* Find intersections */
 		Intersect[] intersections = Intersect.intersectPolygons(polygon, otherPolygon);
@@ -114,12 +113,16 @@ public class ColliderPolygon extends Collider implements OnMovementListener {
 	 * Moves polygon to determinate point and rotates it
 	 * @return New translated polygon
 	 */
-	private static Vector2D[] translateAndRotatePolygon(Vector2D[] polygon, Vector2D position, float angle) {
+	private Vector2D[] updateLocatedPolygon() {
+		final Vector2D[] polygon = mPolygonContour;
+		final Vector2D[] locatedPolygon = mLocatedContour;
+		final Vector2D position = mPosition;
+		final float angle =  mAngle;
+		
 		final int pointsCount = polygon.length;
-		final Vector2D[] locatedPolygon = new Vector2D[pointsCount];
 		
 		final Matrix22 rotationMatrix = new Matrix22(angle);
-		
+
 		for (int i = pointsCount - 1; i >= 0; i--) 
 			locatedPolygon[i] = Vector2D.mul(polygon[i], rotationMatrix).add(position);
 		
