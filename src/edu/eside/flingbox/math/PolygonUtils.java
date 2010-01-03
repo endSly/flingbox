@@ -89,8 +89,7 @@ public final class PolygonUtils {
 			if ((last - maxDistanceIndex) > 1)
 				douglasPeucker(points, epsilon, maxDistanceIndex, last, resultPoints);
 		}
-	}
-	
+	}	
 	
 	/**
 	 * Computes the triangulation of a polygon(tesellation) with ear-clipping 
@@ -108,52 +107,44 @@ public final class PolygonUtils {
 		short[] triangles = new short[3 * (Vector2DsCount - 2)];
 		boolean[] included = new boolean[Vector2DsCount];
 
-		triangulatePolygon(Vector2Ds, triangles, included, Vector2DsCount, 0);
-		
-		return triangles;
-	}
-	
-	/**
-	 * Recursively compute triangulation
-	 */
-	private static void triangulatePolygon(final Vector2D[] Vector2Ds, short[] indexes, 
-			boolean[] included, final int Vector2DsCount, final int trianglesCount) {
-		int topVector2DIndex = 0;
-		float topVector2D = Float.NEGATIVE_INFINITY;
-		
-		// Find top Vector2D to find triangle
-		for (int i = 0; i < Vector2DsCount; i++) {
-			// Find top Vector2D
-			if (!included[i] && (Vector2Ds[i].i > topVector2D)) {
-				topVector2D = Vector2Ds[i].i;
-				topVector2DIndex = i;
+		int topVector2DIndex;
+		float topVector2D;
+		for (int trianglesCount = 0; trianglesCount < (Vector2DsCount - 3); ++trianglesCount) {
+			topVector2DIndex = 0;
+			topVector2D = Float.NEGATIVE_INFINITY;
+			
+			// Find top Vector2D to find triangle
+			for (int i = 0; i < Vector2DsCount; i++) {
+				// Find top Vector2D
+				if (!included[i] && (Vector2Ds[i].i > topVector2D)) {
+					topVector2D = Vector2Ds[i].i;
+					topVector2DIndex = i;
+				}
 			}
+			
+			// Exclude Vector2D for next iteration
+			included[topVector2DIndex] = true;
+			
+			// Save triangle
+			int prevVector2D = topVector2DIndex; // Find previous Vector2D
+			do {
+				if (--prevVector2D < 0)
+					prevVector2D = Vector2DsCount - 1;
+			} while (included[prevVector2D]);
+			
+			int nextVector2D = topVector2DIndex; // Find next Vector2D
+			do {
+				if (++nextVector2D >= Vector2DsCount)
+					nextVector2D = 0;
+			} while (included[nextVector2D]);
+			
+			// Store triangle
+			triangles[trianglesCount * 3] = (short)prevVector2D;	// Store into array
+			triangles[trianglesCount * 3 + 1] = (short)topVector2DIndex;
+			triangles[trianglesCount * 3 + 2] = (short)nextVector2D;
 		}
-		
-		// Exclude Vector2D for next iteration
-		included[topVector2DIndex] = true;
-		
-		// Save triangle
-		int prevVector2D = topVector2DIndex; // Find previous Vector2D
-		do {
-			if (--prevVector2D < 0)
-				prevVector2D = Vector2DsCount - 1;
-		} while (included[prevVector2D]);
-		
-		int nextVector2D = topVector2DIndex; // Find next Vector2D
-		do {
-			if (++nextVector2D >= Vector2DsCount)
-				nextVector2D = 0;
-		} while (included[nextVector2D]);
-		
-		// Store triangle
-		indexes[trianglesCount * 3] = (short)prevVector2D;	// Store into array
-		indexes[trianglesCount * 3 + 1] = (short)topVector2DIndex;
-		indexes[trianglesCount * 3 + 2] = (short)nextVector2D;
 
-		// If there are more triangles iterate one more time
-		if (trianglesCount < (Vector2DsCount - 3))
-			triangulatePolygon(Vector2Ds, indexes, included, Vector2DsCount, trianglesCount + 1);
+		return triangles;
 	}
 	
 	/**
