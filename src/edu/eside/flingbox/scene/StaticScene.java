@@ -28,7 +28,7 @@ import android.view.MotionEvent;
 
 import edu.eside.flingbox.Preferences;
 import edu.eside.flingbox.graphics.SceneRenderer;
-import edu.eside.flingbox.graphics.SceneRenderer.Camera;
+import edu.eside.flingbox.graphics.Camera;
 import edu.eside.flingbox.input.SceneGestureDetector;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 import edu.eside.flingbox.bodies.Body;
