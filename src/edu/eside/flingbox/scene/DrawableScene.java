@@ -45,7 +45,7 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 	 * {@link Renderizable} Object witch handles drawing pattern
 	 * and show it to OpenGL's space.
 	 */
-	private class DrawingRender extends RenderBody {
+	private class DrawingRender implements RenderBody {
 
 		/** Array of points to be drawn */
 		private final ArrayList<Vector2D> mDrawingPattern;
