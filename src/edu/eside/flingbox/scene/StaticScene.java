@@ -199,6 +199,4 @@ public class StaticScene implements OnInputListener {
 		return false;
 	}
 
-	
-
 }

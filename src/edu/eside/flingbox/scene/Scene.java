@@ -127,9 +127,7 @@ public class Scene extends DrawableScene implements OnInputListener, XmlSerializ
 			return super.onScroll(downEv, e, distanceX, distanceY);
 		
 		PhysicBody selectedPhysics = mSelectedBody.getPhysics();
-		
 		Vector2D touchPosition = mCamera.project(new Vector2D(e.getX(), e.getY()));
-		
 		if (mScenePhysics.isSimulating()) {
 			Vector2D downPosition = mCamera.project(new Vector2D(downEv.getX(), downEv.getY()));
 			/* Apply force to the position */
