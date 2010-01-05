@@ -19,7 +19,6 @@
 package edu.eside.flingbox.graphics;
 
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.concurrent.Semaphore;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -28,7 +27,6 @@ import javax.microedition.khronos.opengles.GL10;
 import edu.eside.flingbox.Preferences;
 
 import android.opengl.GLSurfaceView.Renderer;
-import android.util.Log;
 
 /**
  * {@link SceneRenderer} handles functions to render 
@@ -45,8 +43,8 @@ public class SceneRenderer implements Renderer {
 	private final Semaphore mGraphicsToRenderMutex = new Semaphore(1, true);
 	
 	/** Camera for this scene */
-	private final Camera mCamera = new Camera();
-
+	private RenderCamera mCamera = new RenderCamera(100, 100);
+	
 	/**
 	 * Adds one object to be rendered.
 	 * 
@@ -82,7 +80,7 @@ public class SceneRenderer implements Renderer {
 	/**
 	 * @return	Camera for current scene
 	 */
-	public Camera getCamera() {
+	public RenderCamera getCamera() {
 		return mCamera;
 	}
 	
@@ -91,54 +89,44 @@ public class SceneRenderer implements Renderer {
 	 */
 	@Override
 	public synchronized void onDrawFrame(GL10 gl) {
-		try{
-			/*  Due multi-threaded design of GL10 it is very possible
-			 *	to throw an {@link ConcurrentModificationException}.
-			 */
-			if (mCamera.isChanged) {
-				/* Set camera. */
-				gl.glMatrixMode(GL10.GL_PROJECTION);
-				gl.glLoadIdentity();
-				gl.glOrthof(mCamera.left, mCamera.rigth, mCamera.bottom, mCamera.top, 0, 1);
-				gl.glShadeModel(GL10.GL_FLAT);
-				// gl.glFrustrumf(...); // We are working with orthogonal projection
-				mCamera.isChanged = false;
-			}
-			
-			/* Set up OpenGL's Scene */
-			gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-			gl.glMatrixMode(GL10.GL_MODELVIEW);
-			gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+		if (mCamera.isChanged) {
+			/* Set camera. */
+			gl.glMatrixMode(GL10.GL_PROJECTION);
 			gl.glLoadIdentity();
-
-			/* Set background color */
-			gl.glClearColor(Preferences.backgroundColor[0], Preferences.backgroundColor[1], 
-					Preferences.backgroundColor[2], 1.0f);
-
-			/* Render All objectsCount */
-			final ArrayList<RenderBody> renders = mGraphicsToRender;
-			
-			try {
-				mGraphicsToRenderMutex.acquire();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			for (RenderBody r : renders) {
-				/* Work with new stacked matrix */
-				gl.glPushMatrix();
-				gl.glLoadIdentity();
-				r.onRender(gl);
-				gl.glPopMatrix();
-			}
-			mGraphicsToRenderMutex.release();
-			/* End drawing */
-			gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
-		
-		} catch (ConcurrentModificationException ex) {
-			/* This should never happened */
-			Log.e("Flingbox", "Frame can not be rendered due ConcurrentModificationException");
+			gl.glOrthof(mCamera.left, mCamera.rigth, mCamera.bottom, mCamera.top, 0, 1);
+			gl.glShadeModel(GL10.GL_FLAT);
+			// gl.glFrustrumf(...); // We are working with orthogonal projection
+			mCamera.isChanged = false;
 		}
-		
+			
+		/* Set up OpenGL's Scene */
+		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+		gl.glMatrixMode(GL10.GL_MODELVIEW);
+		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+		gl.glLoadIdentity();
+
+		/* Set background color */
+		gl.glClearColor(Preferences.backgroundColor[0], Preferences.backgroundColor[1], 
+				Preferences.backgroundColor[2], 1.0f);
+
+		/* Render All objectsCount */
+		final ArrayList<RenderBody> renders = mGraphicsToRender;
+			
+		try {
+			mGraphicsToRenderMutex.acquire();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		for (RenderBody r : renders) {
+			/* Work with new stacked matrix */
+			gl.glPushMatrix();
+			gl.glLoadIdentity();
+			r.onRender(gl);
+			gl.glPopMatrix();
+		}
+		mGraphicsToRenderMutex.release();
+		/* End drawing */
+		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 	}
 
 	/**
@@ -146,8 +134,8 @@ public class SceneRenderer implements Renderer {
 	 */
 	@Override
 	public void onSurfaceChanged(GL10 gl, int width, int height) { 
-		// Set surface size to camera
-		mCamera.setSurfaceSize(width, height);
+		/* Create camera for current surface */
+		mCamera.setSurface(width, height);
 		
 		gl.glViewport(0, 0, width, height);
 		gl.glMatrixMode(GL10.GL_PROJECTION);

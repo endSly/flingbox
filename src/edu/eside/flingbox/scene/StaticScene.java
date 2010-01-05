@@ -28,10 +28,11 @@ import android.view.MotionEvent;
 
 import edu.eside.flingbox.Preferences;
 import edu.eside.flingbox.graphics.SceneRenderer;
-import edu.eside.flingbox.graphics.Camera;
+import edu.eside.flingbox.graphics.RenderCamera;
 import edu.eside.flingbox.input.SceneGestureDetector;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 import edu.eside.flingbox.bodies.Body;
+import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.ScenePhysics;
 import edu.eside.flingbox.physics.gravity.GravitySource;
 
@@ -76,7 +77,7 @@ public class StaticScene implements OnInputListener {
 	// Vibrator instance
 	protected Vibrator mVibrator;
 	
-	protected Camera mCamera;
+	protected RenderCamera mCamera;
 
 	protected final SceneRenderer mSceneRenderer;
 	protected final ScenePhysics mScenePhysics;
@@ -157,28 +158,15 @@ public class StaticScene implements OnInputListener {
 	 */
 
 	public boolean onZoom(float x, float y, float scale) {
-		// Fit dX and dY into the openGL space
-		final float newWidth = mCamera.getWidth() * scale;
-		final float newX = mCamera.getX();
-		final float newY = mCamera.getY();
-	
-		// Set new position
-		mCamera.setPosition(newX, newY, newWidth);
+		mCamera.setAperture(mCamera.getAperture().i * scale);
 		
 		return true;
 	}
 	
 	public boolean onScroll(MotionEvent downEv, MotionEvent ev, float distanceX,
 			float distanceY) {
-		final Camera cam = mCamera;
-		// Fit dX and dY into the openGL space
-		final float width = cam.getWidth();
-		final float newX = cam.getX() + (distanceX * width / mDisplayWidth);
-		final float newY = cam.getY() - (distanceY * width / mDisplayWidth); 	// Maintain aspect radio
-		
-		// Set positions
-		cam.setPosition(newX, newY, width);
-
+		final Vector2D newPosition = mCamera.project(new Vector2D(mCamera.getPosition()));
+		mCamera.setPosition(newPosition);
 		return true;
 	}
 

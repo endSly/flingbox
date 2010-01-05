@@ -36,7 +36,7 @@ import edu.eside.flingbox.math.Vector2D;
  * 
  * This should only be instantiate by {@link Polygon}.
  */
-public class RenderPolygon implements RenderBody {
+public class RenderPolygon extends RenderBody {
 	/** Buffer with vertex, for OpenGL */
 	private final FloatBuffer mVertexBuffer;
 	/** Buffer with triangulation indexes, for OpenGL */

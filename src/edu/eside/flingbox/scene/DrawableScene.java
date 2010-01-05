@@ -45,7 +45,7 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 	 * {@link Renderizable} Object witch handles drawing pattern
 	 * and show it to OpenGL's space.
 	 */
-	private class DrawingRender implements RenderBody {
+	private class DrawingRender extends RenderBody {
 
 		/** Array of points to be drawn */
 		private final ArrayList<Vector2D> mDrawingPattern;
@@ -161,7 +161,7 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 					mDrawingPattern.trimToSize();
 					/* Optimize points by Douglas-Peucker algorithm */
 					Vector2D[] optimizedPoints = PolygonUtils.douglasPeuckerReducer(
-							mDrawingPattern.toArray(new Vector2D[0]), mCamera.getWidth() / 100f);
+							mDrawingPattern.toArray(new Vector2D[0]), mCamera.getAperture().i / 100f);
 					
 					if (optimizedPoints.length >= 3) { // We have points enough
 						Polygon drawedPolygon = new Polygon(optimizedPoints);

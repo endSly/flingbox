@@ -78,7 +78,7 @@ public class Scene extends DrawableScene implements OnInputListener, XmlSerializ
 			float velocityY) {
 		boolean handled = false;
 		if (mSelectedBody != null) {
-			final float cameraScale = mCamera.getWidth() / mDisplayWidth;
+			final float cameraScale = mCamera.getAperture().i / mDisplayWidth;
 			final float vx = (velocityX * cameraScale);
 			final float vy = (velocityY * cameraScale);
 			
@@ -99,8 +99,8 @@ public class Scene extends DrawableScene implements OnInputListener, XmlSerializ
 	}
 
 	public boolean onDown(MotionEvent e) {
-		final float onDownX = mCamera.left + (e.getX() * mCamera.getWidth() / mDisplayWidth);
-		final float onDownY = mCamera.top - (e.getY() * mCamera.getHeight() / mDisplayHeight);
+		final float onDownX = mCamera.left + (e.getX() * mCamera.getAperture().i / mDisplayWidth);
+		final float onDownY = mCamera.top - (e.getY() * mCamera.getAperture().j / mDisplayHeight);
 		final Vector2D p = new Vector2D(onDownX, onDownY);
 		
 		/* Check selected body */
@@ -125,27 +125,20 @@ public class Scene extends DrawableScene implements OnInputListener, XmlSerializ
 		if (mSelectedBody == null) 
 			return super.onScroll(downEv, e, distanceX, distanceY);
 		
+		Vector2D touchPosition = mCamera.project(new Vector2D(e.getX(), e.getY()));
+		
 		if (mScenePhysics.isSimulating()) {
-			final float px = mCamera.left + (e.getX() * mCamera.getWidth() / mDisplayWidth);
-			final float py = mCamera.top - (e.getY() * mCamera.getHeight() / mDisplayHeight);
 			// Apply force to the position
-			Vector2D movementImpulse = new Vector2D(px, py);
+			Vector2D movementImpulse = touchPosition;
 			movementImpulse.sub(mSelectedBody.getPhysics().getPosition())
 				.mul(mSelectedBody.getPhysics().getBodyMass() * 1000f);
-			// TODO: Fix time here
 			mSelectedBody.getPhysics().applyImpulse(movementImpulse);
-		} else {
-			final float px = mCamera.left + (e.getX() * mCamera.getWidth() / mDisplayWidth);
-			final float py = mCamera.top - (e.getY() * mCamera.getHeight() / mDisplayHeight);
+		} else 
 			/* Just move the body */
-			mSelectedBody.getPhysics().setPosition(new Vector2D(px, py));
+			mSelectedBody.getPhysics().setPosition(touchPosition);
 
-		}
 		return true;
-		
 
-		
-		
 	}
 	
 	public boolean onDragBody(MotionEvent e, Body o) {
