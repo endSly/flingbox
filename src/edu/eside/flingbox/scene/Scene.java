@@ -26,6 +26,7 @@ import org.xmlpull.v1.XmlSerializer;
 import edu.eside.flingbox.BodySettingsDialog;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 import edu.eside.flingbox.math.Vector2D;
+import edu.eside.flingbox.physics.PhysicBody;
 import edu.eside.flingbox.XmlExporter.XmlSerializable;
 import edu.eside.flingbox.bodies.Body;
 
@@ -125,23 +126,25 @@ public class Scene extends DrawableScene implements OnInputListener, XmlSerializ
 		if (mSelectedBody == null) 
 			return super.onScroll(downEv, e, distanceX, distanceY);
 		
+		PhysicBody selectedPhysics = mSelectedBody.getPhysics();
+		
 		Vector2D touchPosition = mCamera.project(new Vector2D(e.getX(), e.getY()));
 		
 		if (mScenePhysics.isSimulating()) {
-			// Apply force to the position
-			Vector2D movementImpulse = touchPosition;
-			movementImpulse.sub(mSelectedBody.getPhysics().getPosition())
-				.mul(mSelectedBody.getPhysics().getBodyMass() * 1000f);
-			mSelectedBody.getPhysics().applyImpulse(movementImpulse);
+			Vector2D downPosition = mCamera.project(new Vector2D(downEv.getX(), downEv.getY()));
+			/* Apply force to the position */
+			Vector2D movementImpulse = touchPosition.sub(downPosition).mul(selectedPhysics.getBodyMass());
+			
+			selectedPhysics.applyImpulse(movementImpulse);
 		} else 
 			/* Just move the body */
-			mSelectedBody.getPhysics().setPosition(touchPosition);
+			selectedPhysics.setPosition(touchPosition);
 
 		return true;
 
 	}
 	
-	public boolean onDragBody(MotionEvent e, Body o) {
+	public boolean onDragBody(MotionEvent e, Body b) {
 		
 		return false;
 	}

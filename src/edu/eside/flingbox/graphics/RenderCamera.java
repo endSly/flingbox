@@ -39,6 +39,9 @@ public class RenderCamera {
 	private float mSurfaceWidth, mSurfaceHeight;
 	private float mAspectRatio;
 
+	/**
+	 * Default constructor for a surface
+	 */
 	public RenderCamera(float surfaceWidth, float surfaceHeight) {
 		mPosition = new Vector2D();
 		mAperture = new Vector2D(surfaceWidth, surfaceHeight);
@@ -46,6 +49,9 @@ public class RenderCamera {
 		this.setSurface(surfaceWidth, surfaceHeight);
 	}
 	
+	/**
+	 * Changes surface size
+	 */
 	public void setSurface(float surfaceWidth, float surfaceHeight) {
 		mSurfaceWidth = surfaceWidth;
 		mSurfaceHeight = surfaceHeight;
@@ -69,6 +75,11 @@ public class RenderCamera {
 		updateGLCamera();
 	}
 	
+	/**
+	 * Sets camera's aperture
+	 * 
+	 * @param horizontalAperture camera's horizontal aperture
+	 */
 	public void setAperture(float horizontalAperture) {
 		mAperture.set(horizontalAperture, horizontalAperture / mAspectRatio);
 		
