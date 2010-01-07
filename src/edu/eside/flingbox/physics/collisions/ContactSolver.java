@@ -69,6 +69,26 @@ public class ContactSolver {
 			final float finalVel = -collidingVel * restit;
 			diffImpulse = (finalVel - collidingVel) * collidingMass;
 		} else { // If collided body can be moved is a little bit more complicated
+			/* 
+			 * <TEST>
+			 */
+			final float collidedMass = collidedBody.getBodyMass();
+			Vector2D relativeVel = getRelativeVelocity(collidingBody, collidedBody, contact);
+			float relativeAgainstVel = relativeVel.dotProduct(contact.normal);
+
+			/*
+			 * This operation is too simplified. Real code was:
+			 * final float finalVel = (collidingImp + collidedImp + (collidingVel - collidedVel) * collidedMass * restit) 
+			 *	/ (collidingMass + collidedMass);
+  			 *
+			 * diffImpulse = (finalVel - collidingVel) * collidingMass;
+			 * 
+			 * Now, we 
+			 */
+			diffImpulse = relativeAgainstVel * collidingMass * collidedMass * (1 - restit) / (collidingMass + collidedMass);
+			
+			
+			/*
 			final float collidedMass = collidedBody.getBodyMass();
 			final Vector2D collidedVelVector = getVelocityIntoContactAxis(contact, collidedBody);
 			final float collidedVel = collidedVelVector.i;
@@ -80,6 +100,7 @@ public class ContactSolver {
 				/ (collidingMass + collidedMass);
 
 			diffImpulse = (finalVel - collidingVel) * collidingMass;
+			*/
 		}
 
 		/* Get resultant impulse as addition of normal and friction */
@@ -154,10 +175,7 @@ public class ContactSolver {
 		/* Get vector from Polygon's center to contact point  */
 		final Vector2D relativeContactPoint = new Vector2D(contact.position).sub(body.getPosition());
 		final Vector2D velocityByAngularRotation = 
-			Vector2D.normalVector(relativeContactPoint) // This returns new Vector2D, so don't copy
-			.normalize()
-			.mul(relativeContactPoint.length() 
-					* body.getAngularVelocity());
+			Vector2D.normalVector(relativeContactPoint).mul(body.getAngularVelocity());
 		
 		/* Get total body's total velocity at contact point 
 		 * NOTE: velocityByAngularRotation is not duplicated since it won't be longer used.
@@ -173,6 +191,19 @@ public class ContactSolver {
 		float velAlongContact = totalVelocity.dotProduct(contactSense);
 		
 		return new Vector2D(velAgainstContact, velAlongContact);
+	}
+	
+	private static Vector2D getRelativeVelocity(final PhysicBody bodyA, final PhysicBody bodyB, final Contact contact) {
+		final Vector2D contactPointA = new Vector2D(contact.position).sub(bodyA.getPosition());
+		final Vector2D contactPointB = new Vector2D(contact.position).sub(bodyB.getPosition());
+		
+		final Vector2D relativeVel = new Vector2D();
+		relativeVel.add(bodyB.getVelocity());
+		relativeVel.add(Vector2D.normalVector(contactPointB).mul(bodyB.getAngularVelocity()));
+		relativeVel.sub(bodyA.getVelocity());
+		relativeVel.sub(Vector2D.normalVector(contactPointA).mul(bodyA.getAngularVelocity()));
+		
+		return relativeVel;
 	}
 	
 }

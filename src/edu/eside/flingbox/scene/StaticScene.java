@@ -158,15 +158,15 @@ public class StaticScene implements OnInputListener {
 	 */
 
 	public boolean onZoom(float x, float y, float scale) {
-		mCamera.setAperture(mCamera.getAperture().i * scale);
+		mCamera.setAperture(mCamera.getAperture().mul(scale));
 		
 		return true;
 	}
 	
 	public boolean onScroll(MotionEvent downEv, MotionEvent ev, float distanceX,
 			float distanceY) {
-		final Vector2D newPosition = mCamera.project(new Vector2D(mCamera.getPosition()));
-		mCamera.setPosition(newPosition);
+		final Vector2D distance = mCamera.scale(new Vector2D(distanceX, distanceY));
+		mCamera.setPosition(mCamera.getPosition().add(distance));
 		return true;
 	}
 

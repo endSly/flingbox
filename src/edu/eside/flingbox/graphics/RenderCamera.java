@@ -37,7 +37,6 @@ public class RenderCamera {
 	
 	/** Surface size */
 	private float mSurfaceWidth, mSurfaceHeight;
-	private float mAspectRatio;
 
 	/**
 	 * Default constructor for a surface
@@ -55,9 +54,7 @@ public class RenderCamera {
 	public void setSurface(float surfaceWidth, float surfaceHeight) {
 		mSurfaceWidth = surfaceWidth;
 		mSurfaceHeight = surfaceHeight;
-		
-		mAspectRatio = surfaceWidth / surfaceHeight;
-		
+	
 		updateGLCamera();
 	}
 	
@@ -80,8 +77,8 @@ public class RenderCamera {
 	 * 
 	 * @param horizontalAperture camera's horizontal aperture
 	 */
-	public void setAperture(float horizontalAperture) {
-		mAperture.set(horizontalAperture, horizontalAperture / mAspectRatio);
+	public void setAperture(Vector2D aperture) {
+		mAperture.set(aperture);
 		
 		updateGLCamera();
 	}
@@ -103,6 +100,12 @@ public class RenderCamera {
 	public Vector2D project(Vector2D v) {
 		return v.set(left + (v.i * mAperture.i / mSurfaceWidth), 
 				top - (v.j * mAperture.j / mSurfaceHeight));
+	}
+	
+	/** @return scaled vector */
+	public Vector2D scale(Vector2D v) {
+		return v.set(v.i * mAperture.i / mSurfaceWidth, 
+				-v.j * mAperture.j / mSurfaceHeight);
 	}
 	
 	/** @return	camera's position */
