@@ -67,15 +67,15 @@ public class Arbiter {
 		Collections.sort(contactsToSolve, PositionComparator.UPPER_COMPARATOR);
 
 		final ArrayList<Contact> isolatedContactTree = new ArrayList<Contact>();
-		
+
 		while (!contactsToSolve.isEmpty()) {
 			isolatedContactTree.clear();
 			Contact treeRoot = contactsToSolve.get(0); // get top contact
 			contactsToSolve.remove(0);			
 			isolatedContactTree.add(treeRoot);
 			
-			getIsolatedContactsTree(treeRoot.bodyInContactA, contactsToSolve, isolatedContactTree);
-			getIsolatedContactsTree(treeRoot.bodyInContactB, contactsToSolve, isolatedContactTree);
+			getIsolatedContactsTree(treeRoot.collidedBody, contactsToSolve, isolatedContactTree);
+			getIsolatedContactsTree(treeRoot.collidingBody, contactsToSolve, isolatedContactTree);
 			
 			solveIsolatedContactTree(isolatedContactTree);
 		}

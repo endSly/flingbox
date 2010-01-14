@@ -54,6 +54,8 @@ public class RenderCamera {
 	public void setSurface(float surfaceWidth, float surfaceHeight) {
 		mSurfaceWidth = surfaceWidth;
 		mSurfaceHeight = surfaceHeight;
+		
+		mAperture.set(surfaceWidth, surfaceHeight);
 	
 		updateGLCamera();
 	}

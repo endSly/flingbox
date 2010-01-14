@@ -27,14 +27,9 @@ import edu.eside.flingbox.utils.PositionComparator;
  */
 public class Contact implements PositionComparator.Positionable {
 	/** First body in contact */
-	public final PhysicBody bodyInContactA;
+	public final PhysicBody collidingBody;
 	/** Second body in contact */
-	public final PhysicBody bodyInContactB;
-	
-	/**  */
-	public Vector2D bodyASense;
-	/**  */
-	public Vector2D bodyBSense;
+	public final PhysicBody collidedBody;
 	
 	/** Contact's absolute position */
 	public final Vector2D position;
@@ -43,35 +38,78 @@ public class Contact implements PositionComparator.Positionable {
 	/** Contact's normal. This is a normalized vector */
 	public final Vector2D normal;
 	
+	/** Contact's relative velocity */
+	private final Vector2D mRelativeVelocity = new Vector2D();
+	
+	/** When false contact is not really a collision */
+	private boolean mIsCollision;
+	
+	
 	public Contact(PhysicBody bodyA, PhysicBody bodyB, Vector2D position, Vector2D sense) {
-		this.bodyInContactA = bodyA;
-		this.bodyInContactB = bodyB;
+		if (!bodyA.isFixed()) {
+			this.collidingBody = bodyA; // A is colliding
+			this.collidedBody = bodyB;
+		} else {
+			this.collidingBody = bodyB; // B is colliding
+			this.collidedBody = bodyA;
+		} 
 		this.position = position;
 		this.sense = sense.normalize();
 		this.normal = Vector2D.normalVector(sense);
+		
+		processRelativeVelocity();
 	}
 
 	public Vector2D getBodysSide(PhysicBody body) {
-		if (body == bodyInContactA)
-			return bodyASense;
-		if (body == bodyInContactB)
-			return bodyBSense;
+
 		return null;
 	}
 	
 	public boolean concerns(PhysicBody body) {
-		return (bodyInContactA == body) || (bodyInContactB == body);
+		return (this.collidingBody == body) || (this.collidedBody == body);
 	}
 	
 	public PhysicBody otherBody(PhysicBody body) {
 		if (!concerns(body))
 			return null;
-		return (bodyInContactA == body) ? bodyInContactB : bodyInContactA;
+		return (this.collidingBody == body) ? this.collidedBody : this.collidingBody;
 	}
 
 	@Override
 	public Vector2D getPosition() {
 		return this.position;
 	}
+	
+	public Vector2D getRelativeVelocity() {
+		return mRelativeVelocity;
+	}
+	
+	public boolean isCollision() {
+		return mIsCollision;
+	}
+
+	private void processRelativeVelocity() {
+		final PhysicBody bodyA = this.collidingBody;
+		final PhysicBody bodyB = this.collidedBody;
+		final Vector2D contactPointA = new Vector2D(this.position).sub(bodyA.getPosition());
+		final Vector2D contactPointB = new Vector2D(this.position).sub(bodyB.getPosition());
+		
+		final Vector2D relativeVel = new Vector2D();
+		relativeVel.add(bodyB.getVelocity());
+		relativeVel.sub(bodyA.getVelocity());
+		
+		final Vector2D relativePosition = new Vector2D();
+		relativePosition.add(contactPointB);
+		relativePosition.sub(contactPointA);
+		
+		mIsCollision = relativeVel.isAtSameSide(relativePosition);
+
+		relativeVel.add(Vector2D.normalVector(contactPointB).mul(bodyB.getAngularVelocity()));
+		relativeVel.sub(Vector2D.normalVector(contactPointA).mul(bodyA.getAngularVelocity()));
+		
+		mRelativeVelocity.set(relativeVel);
+	}
+
+	
 	
 }
