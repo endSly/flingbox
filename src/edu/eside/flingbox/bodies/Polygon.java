@@ -112,12 +112,16 @@ public final class Polygon extends Body implements OnMovementListener, XmlSerial
 		((RenderPolygon) mRender).setPosition(position, rotation);
 	}
 
+	/**
+	 * XML Writter
+	 */
 	@Override
 	public boolean writeXml(XmlSerializer serializer) {
 		try {
 			serializer.startTag("", "polygon");
 			serializer.setProperty("contour", mPoints);
 			serializer.setProperty("position", mPhysics.getPosition());
+			serializer.setProperty("angle", mPhysics.getAngle());
 			serializer.endTag("", "polygon");
 		} catch (Exception ex) {
 			ex.printStackTrace();

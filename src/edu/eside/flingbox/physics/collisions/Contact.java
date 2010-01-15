@@ -18,6 +18,7 @@
 
 package edu.eside.flingbox.physics.collisions;
 
+import edu.eside.flingbox.math.Intersect;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.PhysicBody;
 import edu.eside.flingbox.utils.PositionComparator;
@@ -38,6 +39,8 @@ public class Contact implements PositionComparator.Positionable {
 	/** Contact's normal. This is a normalized vector */
 	public final Vector2D normal;
 	
+	private final Intersect mIntersect;
+	
 	/** Contact's relative velocity */
 	private final Vector2D mRelativeVelocity = new Vector2D();
 	
@@ -45,7 +48,7 @@ public class Contact implements PositionComparator.Positionable {
 	private boolean mIsCollision;
 	
 	
-	public Contact(PhysicBody bodyA, PhysicBody bodyB, Vector2D position, Vector2D sense) {
+	public Contact(PhysicBody bodyA, PhysicBody bodyB, Vector2D position, Vector2D sense, Intersect intersect) {
 		if (!bodyA.isFixed()) {
 			this.collidingBody = bodyA; // A is colliding
 			this.collidedBody = bodyB;
@@ -56,6 +59,7 @@ public class Contact implements PositionComparator.Positionable {
 		this.position = position;
 		this.sense = sense.normalize();
 		this.normal = Vector2D.normalVector(sense);
+		mIntersect = intersect;
 		
 		processRelativeVelocity();
 	}
@@ -84,6 +88,10 @@ public class Contact implements PositionComparator.Positionable {
 		return mRelativeVelocity;
 	}
 	
+	public Intersect getIntersect() {
+		return mIntersect;
+	}
+
 	public boolean isCollision() {
 		return mIsCollision;
 	}

@@ -20,10 +20,12 @@ package edu.eside.flingbox.scene;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Writer;
 
 import org.xmlpull.v1.XmlSerializer;
 
 import edu.eside.flingbox.BodySettingsDialog;
+import edu.eside.flingbox.XmlExporter;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.PhysicBody;
@@ -165,6 +167,7 @@ public class Scene extends DrawableScene implements OnInputListener, XmlSerializ
 				+ "flingbox/saved.xml");
 		try{
 			savedFile.createNewFile(); 
+			//XmlExporter.exportXml(new Writer(savedFile)., this);
 		} catch (IOException ex) {
 				
 		}
@@ -174,8 +177,14 @@ public class Scene extends DrawableScene implements OnInputListener, XmlSerializ
 	
 
 	@Override
-	public boolean writeXml(XmlSerializer serializer) {
-		
+	public boolean writeXml(XmlSerializer serializer) 
+	throws IllegalArgumentException, IllegalStateException, IOException {
+		boolean writeSuccess = true;
+		serializer.startTag("", "flingbox");
+		for (Body body : mOnSceneBodies) {
+			writeSuccess |= body.writeXml(serializer);
+		}
+        serializer.endTag("", "flingbox");
 		return false;
 	}
 	

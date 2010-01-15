@@ -50,10 +50,8 @@ public class XmlExporter {
 		try {
 			serializer.setOutput(writer);
 	        serializer.startDocument("UTF-8", true);
-	        
-	        serializer.startTag("", "flingbox");
+
 	        writeSuccess = exportable.writeXml(serializer);
-	        serializer.endTag("", "flingbox");
 			
 	        serializer.endDocument();
 		} catch (Exception ex) {

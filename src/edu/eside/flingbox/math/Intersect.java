@@ -61,6 +61,17 @@ public class Intersect {
 			int pAIn, int pBIn, int pAOut, int pBOut) throws IllegalArgumentException {
 		final int pointsCountA = polygonA.length;
 		final int pointsCountB = polygonB.length;
+		
+		if (pAOut < pAIn) {
+			int temp = pAOut;
+			pAOut = pAIn;
+			pAIn = temp;
+		}
+		if (pBOut < pBIn) {
+			int temp = pBOut;
+			pBOut = pBIn;
+			pBIn = temp;
+		}
 		/*
 		 * Compute intersection contours
 		 */
@@ -125,7 +136,7 @@ public class Intersect {
 	 * 
 	 * @param polygonA first polygon
 	 * @param polygonB second polygon
-	 * @return an array with all intersect. if no intersects, an empty arra returned
+	 * @return an array with all intersect. if no intersects, an empty array returned
 	 */
 	public static Intersect[] intersectPolygons(Vector2D[] polygonA, Vector2D[] polygonB) {
 		final ArrayList<Intersect> intersections = new ArrayList<Intersect>();
@@ -216,6 +227,34 @@ public class Intersect {
 			aSide.negate();
 		} else // a side ok, b side is the opposite
 			bSide.set(aSide).negate();
+	}
+	
+	/**
+	 * Computes intersection penetration.
+	 * 
+	 * @return penetration distance
+	 */
+	public float computePenetration() {
+		final Vector2D ingoing = this.ingoingPoint;
+		final Vector2D outgoing = this.outgoingPoint;
+		final Vector2D[] contourA = this.contourA;
+		final Vector2D[] contourB = this.contourB;
+		
+		float penetrationByA = 0f;
+		for (Vector2D p : contourA) {
+			float pointsPenetration = PolygonUtils.distanceFromLineToPoint(ingoing, outgoing, p);
+			if (pointsPenetration > penetrationByA)
+				penetrationByA = pointsPenetration;
+		}
+		
+		float penetrationByB = 0f;
+		for (Vector2D p : contourB) {
+			float pointsPenetration = PolygonUtils.distanceFromLineToPoint(ingoing, outgoing, p);
+			if (pointsPenetration > penetrationByB)
+				penetrationByB = pointsPenetration;
+		}
+
+		return penetrationByA + penetrationByB;
 	}
 	
 }

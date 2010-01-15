@@ -90,7 +90,7 @@ public class ColliderPolygon extends Collider implements OnMovementListener {
 			Vector2D position = new Vector2D(intersect.outgoingPoint).add(intersect.ingoingPoint).mul(0.5f);
 			Vector2D sense = new Vector2D(intersect.outgoingPoint).sub(intersect.ingoingPoint);
 			
-			contacts[i] = new Contact(this.mPhysicBody, collider.mPhysicBody, position, sense);
+			contacts[i] = new Contact(this.mPhysicBody, collider.mPhysicBody, position, sense, intersect);
 		}
 		return contacts;
 	}

@@ -45,12 +45,13 @@ public class ContactSolver {
 	 * @param bodyB second colliding body
 	 */
 	public static void solveContact(final Contact contact) {
+		if (!contact.isCollision())
+			return;
+		
 		PhysicBody collidingBody = contact.collidingBody; // Colliding body is movable
 		PhysicBody collidedBody = contact.collidedBody; // Collided body can or cannot be movable
 
-		final float restit = (collidingBody.getRestitutionCoeficient() * collidedBody.getRestitutionCoeficient());
-		if (!contact.isCollision())
-			return;
+		final float restit = (collidingBody.getRestitutionCoeficient() * collidedBody.getRestitutionCoeficient());		
 		
 		/* Get velocity and mass of colliding body */
 		final Vector2D relativeVel = contact.getRelativeVelocity();
@@ -125,7 +126,12 @@ public class ContactSolver {
 	 * @param bodyB second body in contact
 	 */
 	private static void fixBodysPenetration(Contact contact, PhysicBody bodyA, PhysicBody bodyB) {
-		
+		float penetration = contact.getIntersect().computePenetration();
+		Vector2D penetrationFix = new Vector2D(contact.normal).mul(penetration);
+		Vector2D relativePosition = new Vector2D(bodyA.getPosition()).sub(bodyB.getPosition());
+		if (!penetrationFix.isAtSameSide(relativePosition))
+			penetrationFix.negate();
+		bodyA.setPosition(bodyA.getPosition().add(penetrationFix));
 	}
 	
 }

@@ -161,7 +161,7 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 					mDrawingPattern.trimToSize();
 					/* Optimize points by Douglas-Peucker algorithm */
 					Vector2D[] optimizedPoints = PolygonUtils.douglasPeuckerReducer(
-							mDrawingPattern.toArray(new Vector2D[0]), mCamera.getAperture().i / 64f);
+							mDrawingPattern.toArray(new Vector2D[0]), mCamera.getAperture().i / 80f);
 					
 					if (optimizedPoints.length >= 3) { // We have points enough
 						Polygon drawedPolygon = new Polygon(optimizedPoints);
