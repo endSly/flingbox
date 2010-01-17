@@ -173,6 +173,64 @@ public class Intersect {
 	}
 	
 	/**
+	 * Computes intersect between two polygon faster
+	 * 
+	 * @param polygonA
+	 * @param polygonACenter
+	 * @param aBoundingCircle
+	 * @param polygonB
+	 * @param polygonBCenter
+	 * @param bBoundingCircle
+	 * @return
+	 */
+	public static Intersect[] intersectPolygons(Vector2D[] polygonA, Vector2D polygonACenter, float aBoundingCircle,
+			Vector2D[] polygonB, Vector2D polygonBCenter, float bBoundingCircle) {
+		final ArrayList<Intersect> intersections = new ArrayList<Intersect>();
+		
+		final int pointsCountA = polygonA.length;
+		final int pointsCountB = polygonB.length;
+		
+		/* We are waiting for an ingoing intersection */
+		Vector2D ingoingIntersect = null;
+		int ingoingPointA = 0;
+		int ingoingPointB = 0;
+		
+		int polygonAEntry;
+		for (int i = 0; i < pointsCountA; i++)
+			if (!isPointInsideCircle(polygonA[i], polygonACenter, aBoundingCircle)) {
+				polygonAEntry = i;
+				break;
+			}
+		
+		for (int i = 0; i < pointsCountA; i++) {
+			Vector2D segA0 = polygonA[i], segA1 = polygonA[(i + 1) % pointsCountA];
+			if (!isSegmentInsideCircle(segA0, segA1, polygonBCenter, bBoundingCircle))
+				continue; // Segment can't intersect
+			for (int j = 0; j < pointsCountB; j++) {
+				Vector2D segB0 = polygonB[j], segB1 = polygonB[(j + 1) % pointsCountB];
+				if (!isSegmentInsideCircle(segB0, segB1, polygonACenter, aBoundingCircle))
+					continue; // Segment can't intersect
+				/* Check each point */
+				Vector2D intersect = computeIntersectionOfSegments(segA0, segA1, segB0, segB1);
+				if (intersect == null) // No intersect 
+					continue;
+				
+				if (ingoingIntersect == null) { 	// We have an in-going intersection 
+					ingoingIntersect = intersect;
+					ingoingPointA = (i + 1) % pointsCountA;
+					ingoingPointB = (j + 1) % pointsCountB;
+				} else { 	// We have an outgoing Intersection 
+					intersections.add(new Intersect(polygonA, polygonB, 
+							ingoingIntersect, intersect, ingoingPointA, ingoingPointB, 
+							(i + 1) % pointsCountA, (j + 1) % pointsCountB));
+					ingoingIntersect = null; // wait for another intersection
+				}
+			}
+		}
+		return intersections.toArray(new Intersect[0]);
+	}
+	
+	/**
 	 * Computes intersect between two segments
 	 * 
 	 * @param segA0 first segment point
@@ -199,6 +257,14 @@ public class Intersect {
 			return null; 	// lines can't intersect
 		
 		return new Vector2D(a0x + uA * (a1x - a0x), a0y + uA * (a1y - a0y));
+	}
+	
+	private static boolean isSegmentInsideCircle(Vector2D p0, Vector2D p1, Vector2D center, float radious) {
+		return PolygonUtils.distanceFromLineToPoint(p0, p1, center) <= radious;
+	}
+	
+	private static boolean isPointInsideCircle(Vector2D p, Vector2D center, float radious) {
+		return p.distanceToPoint(center) <= radious;
 	}
 	
 	/**
@@ -234,7 +300,7 @@ public class Intersect {
 	 * 
 	 * @return penetration distance
 	 */
-	public float computePenetration() {
+	public float getIntersectionDepth() {
 		final Vector2D ingoing = this.ingoingPoint;
 		final Vector2D outgoing = this.outgoingPoint;
 		final Vector2D[] contourA = this.contourA;

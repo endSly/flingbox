@@ -44,10 +44,7 @@ public class ContactSolver {
 	 * @param bodyA first colliding body
 	 * @param bodyB second colliding body
 	 */
-	public static void solveContact(final Contact contact) {
-		if (!contact.isCollision())
-			return;
-		
+	public static void solveCollision(final Contact contact) {
 		PhysicBody collidingBody = contact.collidingBody; // Colliding body is movable
 		PhysicBody collidedBody = contact.collidedBody; // Collided body can or cannot be movable
 
@@ -85,10 +82,26 @@ public class ContactSolver {
 			contactRelativePoint.set(collidedBody.getPosition()).sub(contact.position);
 			collidedBody.applyImpulse(collisionImpuse.negate(), contactRelativePoint);
 		}
-		
-		fixBodysPenetration(contact, collidingBody, collidedBody);
 	}
 		
+	/**
+	 * Keeps bodies outside for other bodies
+	 * 
+	 * @param contact contact descriptor
+	 * @param bodyA first body in contact
+	 * @param bodyB second body in contact
+	 */
+	public static void solvePenetration(Contact contact) {
+		final PhysicBody colliding = contact.collidingBody;
+		final PhysicBody collided = contact.collidedBody;
+		float penetration = contact.getIntersect().getIntersectionDepth();
+		Vector2D penetrationFix = new Vector2D(contact.normal).mul(penetration);
+		Vector2D relativePosition = new Vector2D(colliding.getPosition()).sub(collided.getPosition());
+		if (!penetrationFix.isAtSameSide(relativePosition))
+			penetrationFix.negate();
+		colliding.setPosition(colliding.getPosition().add(penetrationFix));
+	}
+	
 	/**
 	 * Computes friction force's module for a given contact normal.
 	 * Friction can be static or dynamic, when body's velocity is not enough to exceed
@@ -116,22 +129,6 @@ public class ContactSolver {
 			module = -Math.signum(bodyVelocity) * body.getDynamicFrictionCoeficient() * Math.abs(normal);
 
 		return new Vector2D(frictionDirection).mul(-module);
-	}
-	
-	/**
-	 * Keeps bodies outside for other bodies
-	 * 
-	 * @param contact contact descriptor
-	 * @param bodyA first body in contact
-	 * @param bodyB second body in contact
-	 */
-	private static void fixBodysPenetration(Contact contact, PhysicBody bodyA, PhysicBody bodyB) {
-		float penetration = contact.getIntersect().computePenetration();
-		Vector2D penetrationFix = new Vector2D(contact.normal).mul(penetration);
-		Vector2D relativePosition = new Vector2D(bodyA.getPosition()).sub(bodyB.getPosition());
-		if (!penetrationFix.isAtSameSide(relativePosition))
-			penetrationFix.negate();
-		bodyA.setPosition(bodyA.getPosition().add(penetrationFix));
 	}
 	
 }

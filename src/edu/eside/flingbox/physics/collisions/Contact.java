@@ -27,9 +27,9 @@ import edu.eside.flingbox.utils.PositionComparator;
  * Class to handle contact between two bodies.
  */
 public class Contact implements PositionComparator.Positionable {
-	/** First body in contact */
+	/** Colliding body in contact, this is the  body in contact */
 	public final PhysicBody collidingBody;
-	/** Second body in contact */
+	/** Collided body in contact, this is the weighter body in contact */
 	public final PhysicBody collidedBody;
 	
 	/** Contact's absolute position */
@@ -39,6 +39,7 @@ public class Contact implements PositionComparator.Positionable {
 	/** Contact's normal. This is a normalized vector */
 	public final Vector2D normal;
 	
+	/** Intersection description */
 	private final Intersect mIntersect;
 	
 	/** Contact's relative velocity */
@@ -47,9 +48,17 @@ public class Contact implements PositionComparator.Positionable {
 	/** When false contact is not really a collision */
 	private boolean mIsCollision;
 	
-	
+	/**
+	 * Default constructor
+	 * 
+	 * @param bodyA
+	 * @param bodyB
+	 * @param position
+	 * @param sense
+	 * @param intersect
+	 */
 	public Contact(PhysicBody bodyA, PhysicBody bodyB, Vector2D position, Vector2D sense, Intersect intersect) {
-		if (!bodyA.isFixed()) {
+		if (!bodyA.isFixed() || bodyA.getBodyMass() < bodyB.getBodyMass()) {
 			this.collidingBody = bodyA; // A is colliding
 			this.collidedBody = bodyB;
 		} else {
@@ -96,6 +105,9 @@ public class Contact implements PositionComparator.Positionable {
 		return mIsCollision;
 	}
 
+	/**
+	 * Must be called by constructor to process relative velocity and if is a collision
+	 */
 	private void processRelativeVelocity() {
 		final PhysicBody bodyA = this.collidingBody;
 		final PhysicBody bodyB = this.collidedBody;
@@ -116,6 +128,10 @@ public class Contact implements PositionComparator.Positionable {
 		relativeVel.sub(Vector2D.normalVector(contactPointA).mul(bodyA.getAngularVelocity()));
 		
 		mRelativeVelocity.set(relativeVel);
+	}
+	
+	private void processRelativeImpulse() {
+		
 	}
 
 	

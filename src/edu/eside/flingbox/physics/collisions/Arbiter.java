@@ -85,11 +85,13 @@ public class Arbiter {
 	private void solveIsolatedContactTree(ArrayList<Contact> isolatedContacts) {
 		//Vector2D totalImpulse = new Vector2D();
 		for (Contact contact : isolatedContacts) {
-			ContactSolver.solveContact(contact);
+			ContactSolver.solveCollision(contact);
+			ContactSolver.solvePenetration(contact);
 		}
-		if (isolatedContacts.size() > 1)
-			for (int i = isolatedContacts.size() - 1; i >= 0; i--) 
-				ContactSolver.solveContact(isolatedContacts.get(i));
+		for (int i = isolatedContacts.size() - 2; i >= 0; i--) {
+			ContactSolver.solveCollision(isolatedContacts.get(i));
+			ContactSolver.solvePenetration(isolatedContacts.get(i));
+		}
 		
 	}
 	
