@@ -40,9 +40,7 @@ public class Intersect {
 	public final Vector2D ingoingPoint;
 	/** Outgoing point, also in contour*/
 	public final Vector2D outgoingPoint;
-	
-	private Vector2D mPolygonASide;
-	private Vector2D mPolygonBSide;
+
 	
 	/**
 	 * Local constructor for an intersection. Computes intersectionContour
@@ -62,19 +60,11 @@ public class Intersect {
 		final int pointsCountA = polygonA.length;
 		final int pointsCountB = polygonB.length;
 		
-		if (pAOut < pAIn) {
-			int temp = pAOut;
-			pAOut = pAIn;
-			pAIn = temp;
-		}
-		if (pBOut < pBIn) {
-			int temp = pBOut;
-			pBOut = pBIn;
-			pBIn = temp;
-		}
-		/*
-		 * Compute intersection contours
-		 */
+		/* B order is reverse */
+		int temp = pBIn;
+		pBIn = pBOut;
+		pBOut = temp;
+		
 		/* Calculate total points that will be stored */
 		final int intContourALen = ((pAOut - pAIn + pointsCountA) % pointsCountA);	// For polygon A intersect
 		final int intContourBLen = ((pBOut - pBIn + pointsCountB) % pointsCountB);	// For polygon B intersect
@@ -88,8 +78,8 @@ public class Intersect {
 		
 		/* Copy intersecting contour from B */
 		Vector2D[] contourB = new Vector2D[intContourBLen];
-		for (int i = 0; i < intContourBLen; i++)
-			contourB[i] = polygonB[(pBIn + i) % pointsCountB];
+		for (int i = 0; i < intContourBLen ; i++)
+			contourB[i] = polygonB[(pBIn - i + pointsCountB) % pointsCountB];
 		
 		this.polygonA = polygonA;
 		this.polygonB = polygonB;
@@ -97,38 +87,6 @@ public class Intersect {
 		this.outgoingPoint = outgoing;
 		this.contourA = contourA;
 		this.contourB = contourB;
-		
-		/* This will be computed after,if needed */
-		this.mPolygonASide = null;
-		this.mPolygonBSide = null;
-	}
-	
-	/**
-	 * Computes the side where the polygon is.
-	 *           ^  <-- A
-	 *         /   \
-	 * -------*--+--*------------------
-	 *      /    |   \
-	 *    /      v <-(B side)
-	 * 
-	 * @param polygon polygon to be checked
-	 * @return Vector indicating sense, null if polygon not used to construct intersect
-	 */
-	public Vector2D polygonsSide(Vector2D[] polygon) {
-		/* If side is not yet computed */
-		if (this.mPolygonASide == null && this.mPolygonBSide == null)
-			if (this.contourA.length > 0) // Create side vectors and computes it
-				computeSides(this.contourA, this.ingoingPoint, this.outgoingPoint, 
-						this.mPolygonASide = new Vector2D(), this.mPolygonBSide = new Vector2D());
-			else // Same but changing contour and sides
-				computeSides(this.contourB, this.ingoingPoint, this.outgoingPoint, 
-						this.mPolygonBSide = new Vector2D(), this.mPolygonASide = new Vector2D());
-		
-		if (polygon == this.polygonA) // Just compare pointers
-			return this.mPolygonASide;
-		if (polygon == this.polygonB)
-			return this.mPolygonBSide;
-		return null;
 	}
 	
 	/**
@@ -144,92 +102,48 @@ public class Intersect {
 		final int pointsCountA = polygonA.length;
 		final int pointsCountB = polygonB.length;
 		
-		/* We are waiting for an ingoing intersection */
-		Vector2D ingoingIntersect = null;
-		int ingoingPointA = 0;
-		int ingoingPointB = 0;
+		/* We will need to storage line's intersections */
+		Vector2D lastIngoingIntersect = null, lastOutgoingIntersect = null;
+		int lastIngoingPointA = 0, lastIngoingPointB = 0;
+		int lastOutgoingPointA = 0, lastOutgoingPointB = 0;
 		
+		Vector2D intersect = new Vector2D();
 		for (int i = 0; i < pointsCountA; i++) 
 			for (int j = 0; j < pointsCountB; j++) {
 				/* Check each point */
-				Vector2D intersect = computeIntersectionOfSegments(polygonA[i], polygonA[(i + 1) % pointsCountA], 
-						polygonB[j], polygonB[(j + 1) % pointsCountB]);
-				if (intersect == null) // No intersect 
+				int intersectType = computeIntersectionOfSegments(polygonA[i], polygonA[(i + 1) % pointsCountA], 
+						polygonB[j], polygonB[(j + 1) % pointsCountB], intersect);
+				if (intersectType == 0) // No intersect 
 					continue;
 				
-				if (ingoingIntersect == null) { 	// We have an in-going intersection 
-					ingoingIntersect = intersect;
-					ingoingPointA = (i + 1) % pointsCountA;
-					ingoingPointB = (j + 1) % pointsCountB;
-				} else { 	// We have an outgoing Intersection 
-					intersections.add(new Intersect(polygonA, polygonB, 
-							ingoingIntersect, intersect, ingoingPointA, ingoingPointB, 
-							(i + 1) % pointsCountA, (j + 1) % pointsCountB));
-					ingoingIntersect = null; // wait for another intersection
-				}
+				if (intersectType > 0) { // Ingoing Intersect
+					lastIngoingIntersect = new Vector2D(intersect);
+					lastIngoingPointA = (i + 1) % pointsCountA;
+					lastIngoingPointB = (j + 1) % pointsCountB;
+				} else  // Outgoing Intersect
+					if (lastIngoingIntersect != null) { // We have a complete intersecion
+						intersections.add(
+								new Intersect(polygonA, polygonB, lastIngoingIntersect, new Vector2D(intersect), 
+										lastIngoingPointA, lastIngoingPointB, 
+										(i + 1) % pointsCountA, (j + 1) % pointsCountB));
+						lastIngoingIntersect = null; // wait for another intersection
+					} else {
+						lastOutgoingIntersect = new Vector2D(intersect);
+						lastOutgoingPointA = (i + 1) % pointsCountA;
+						lastOutgoingPointB = (j + 1) % pointsCountB;
+					}
 			}
+		if (lastIngoingIntersect != null && lastOutgoingIntersect != null)
+			intersections.add(
+					new Intersect(polygonA, polygonB, 
+							lastIngoingIntersect, lastOutgoingIntersect, 
+							lastIngoingPointA, lastIngoingPointB, 
+							lastOutgoingPointA, lastOutgoingPointB));
 		
 		return intersections.toArray(new Intersect[0]);
 	}
-	
-	/**
-	 * Computes intersect between two polygon faster
-	 * 
-	 * @param polygonA
-	 * @param polygonACenter
-	 * @param aBoundingCircle
-	 * @param polygonB
-	 * @param polygonBCenter
-	 * @param bBoundingCircle
-	 * @return
-	 */
-	public static Intersect[] intersectPolygons(Vector2D[] polygonA, Vector2D polygonACenter, float aBoundingCircle,
-			Vector2D[] polygonB, Vector2D polygonBCenter, float bBoundingCircle) {
-		final ArrayList<Intersect> intersections = new ArrayList<Intersect>();
-		
-		final int pointsCountA = polygonA.length;
-		final int pointsCountB = polygonB.length;
-		
-		/* We are waiting for an ingoing intersection */
-		Vector2D ingoingIntersect = null;
-		int ingoingPointA = 0;
-		int ingoingPointB = 0;
-		
-		int polygonAEntry;
-		for (int i = 0; i < pointsCountA; i++)
-			if (!isPointInsideCircle(polygonA[i], polygonACenter, aBoundingCircle)) {
-				polygonAEntry = i;
-				break;
-			}
-		
-		for (int i = 0; i < pointsCountA; i++) {
-			Vector2D segA0 = polygonA[i], segA1 = polygonA[(i + 1) % pointsCountA];
-			if (!isSegmentInsideCircle(segA0, segA1, polygonBCenter, bBoundingCircle))
-				continue; // Segment can't intersect
-			for (int j = 0; j < pointsCountB; j++) {
-				Vector2D segB0 = polygonB[j], segB1 = polygonB[(j + 1) % pointsCountB];
-				if (!isSegmentInsideCircle(segB0, segB1, polygonACenter, aBoundingCircle))
-					continue; // Segment can't intersect
-				/* Check each point */
-				Vector2D intersect = computeIntersectionOfSegments(segA0, segA1, segB0, segB1);
-				if (intersect == null) // No intersect 
-					continue;
-				
-				if (ingoingIntersect == null) { 	// We have an in-going intersection 
-					ingoingIntersect = intersect;
-					ingoingPointA = (i + 1) % pointsCountA;
-					ingoingPointB = (j + 1) % pointsCountB;
-				} else { 	// We have an outgoing Intersection 
-					intersections.add(new Intersect(polygonA, polygonB, 
-							ingoingIntersect, intersect, ingoingPointA, ingoingPointB, 
-							(i + 1) % pointsCountA, (j + 1) % pointsCountB));
-					ingoingIntersect = null; // wait for another intersection
-				}
-			}
-		}
-		return intersections.toArray(new Intersect[0]);
-	}
-	
+
+
 	/**
 	 * Computes intersect between two segments
 	 * 
@@ -237,10 +151,12 @@ public class Intersect {
 	 * @param segA1 first segment point
 	 * @param segB0 second segment point
 	 * @param segB1 second segment point
-	 * @return
+	 * @param intersectionPoint Vector to storage intersection point
+	 * @return [-1, 0, 1]; 0 no intersection; 1 ingoing intersection; -1 outgoing Intersection 
 	 */
-	private static Vector2D computeIntersectionOfSegments(Vector2D segA0, Vector2D segA1, 
-			Vector2D segB0, Vector2D segB1) {
+	private static int computeIntersectionOfSegments(final Vector2D segA0, final Vector2D segA1, 
+			final Vector2D segB0, final Vector2D segB1, 
+			Vector2D intersectionPoint) {
 		/* Get components to local variables. Just for performance */
 		final float a0x = segA0.i, a0y = segA0.j, a1x = segA1.i, a1y = segA1.j, 
 			b0x = segB0.i, b0y = segB0.j, b1x = segB1.i, b1y = segB1.j;
@@ -248,51 +164,22 @@ public class Intersect {
 		final float d = (b1y - b0y) * (a1x - a0x) - (b1x - b0x) * (a1y - a0y);
 		
 		if (d == 0.0f)
-			return null;	// Parallel lines
+			return 0;	// Parallel lines
 		
 		final float uA = ((b1x - b0x) * (a0y - b0y) - (b1y - b0y) * (a0x - b0x)) / d;
 		final float uB = ((a1x - a0x) * (a0y - b0y) - (a1y - a0y) * (a0x - b0x)) / d;
 
 		if (uA < 0 || uA > 1 || uB < 0 || uB > 1) 
-			return null; 	// lines can't intersect
-		
-		return new Vector2D(a0x + uA * (a1x - a0x), a0y + uA * (a1y - a0y));
-	}
-	
-	private static boolean isSegmentInsideCircle(Vector2D p0, Vector2D p1, Vector2D center, float radious) {
-		return PolygonUtils.distanceFromLineToPoint(p0, p1, center) <= radious;
-	}
-	
-	private static boolean isPointInsideCircle(Vector2D p, Vector2D center, float radious) {
-		return p.distanceToPoint(center) <= radious;
-	}
-	
-	/**
-	 * Computes side's vectors
-	 * 
-	 * @param contourA first polygon contour. It CAN NOT be empty
-	 * @param ingoing
-	 * @param outgoing
-	 * @param aSide first polygon side pointer
-	 * @param bSide other polygon side pointer
-	 */
-	private static void computeSides(final Vector2D[] contourA, 
-			final Vector2D ingoing, final Vector2D outgoing,  Vector2D aSide, Vector2D bSide) {
-		/* 
-		 * Compute polygons sides 
-		 */
-		Vector2D contourPoint  = contourA[0]; // Just one point of inside intersection
+			return 0; 	// lines can't intersect
 
-		aSide                              // try with A Side as normal
-			.set(outgoing).sub(ingoing)    // of intersection line
-			.normalVector();
+		intersectionPoint.set(a0x + uA * (a1x - a0x), a0y + uA * (a1y - a0y));
 		
-		float sense = aSide.crossProduct(contourPoint);
-		if (sense > 0) { // a side is wrong, is really b side, then invert a side
-			bSide.set(aSide);
-			aSide.negate();
-		} else // a side ok, b side is the opposite
-			bSide.set(aSide).negate();
+		/* Compute cross product */
+		float sA = (a0x - b0x) * (b1y - b0y) - (b1x - b0x) * (a0y - b0y);
+		
+		if (sA > 0f)
+			return -1; // is ingoing
+		return +1; // is outgoing
 	}
 	
 	/**

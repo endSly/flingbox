@@ -77,7 +77,7 @@ public class PhysicPolygon extends PhysicBody {
 	 * @return Polygon's angular mass
 	 */
 	private float computeAngularMass(float mass) {
-		return 0.5f * mass * mCollider.getBoundingCircle() * mCollider.getBoundingCircle();
+		return mass * mCollider.getBoundingCircle() * mCollider.getBoundingCircle();
 	}
 	
 	/**

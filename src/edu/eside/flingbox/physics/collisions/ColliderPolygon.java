@@ -79,8 +79,10 @@ public class ColliderPolygon extends Collider implements OnMovementListener {
 		
 		final Vector2D[] polygon = updateLocatedPolygon();
 		final Vector2D[] otherPolygon = ((ColliderPolygon) collider).updateLocatedPolygon();
+
 		
 		/* Find intersections */
+		//Intersect[] intersections = Intersect.intersectPolygons(polygon, otherPolygon);
 		Intersect[] intersections = Intersect.intersectPolygons(polygon, otherPolygon);
 		
 		/* Compute detected intersections */

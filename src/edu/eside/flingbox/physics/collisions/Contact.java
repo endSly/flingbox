@@ -130,10 +130,4 @@ public class Contact implements PositionComparator.Positionable {
 		mRelativeVelocity.set(relativeVel);
 	}
 	
-	private void processRelativeImpulse() {
-		
-	}
-
-	
-	
 }
