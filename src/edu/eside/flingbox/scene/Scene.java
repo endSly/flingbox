@@ -20,12 +20,10 @@ package edu.eside.flingbox.scene;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Writer;
 
 import org.xmlpull.v1.XmlSerializer;
 
 import edu.eside.flingbox.BodySettingsDialog;
-import edu.eside.flingbox.XmlExporter;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.PhysicBody;

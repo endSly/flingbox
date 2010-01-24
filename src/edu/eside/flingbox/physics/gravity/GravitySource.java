@@ -23,6 +23,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 import edu.eside.flingbox.math.Vector2D;
 
 /**
@@ -56,7 +57,7 @@ public class GravitySource extends Vector2D implements SensorEventListener {
 		
 		GravitySource gravity = new GravitySource();
 		// Set accelerometer event callback
-		sensorManager.registerListener(gravity, accelSensor, SensorManager.SENSOR_DELAY_UI);
+		sensorManager.registerListener(gravity, accelSensor, SensorManager.SENSOR_DELAY_FASTEST);
 		
 		return gravity;
 	}
@@ -90,6 +91,5 @@ public class GravitySource extends Vector2D implements SensorEventListener {
 	public void onSensorChanged(SensorEvent event) {
 		this.i = -event.values[SensorManager.DATA_X] * FACTOR;
 		this.j = -event.values[SensorManager.DATA_Y] * FACTOR;
-		
 	}
 }

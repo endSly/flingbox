@@ -39,6 +39,8 @@ import edu.eside.flingbox.scene.Scene;
  * Shows scene at full screen.
  */
 public class FlingboxActivity extends Activity {
+	private final static String KEY_FIRST_BOOT_DONE = "FIRST_BOOT_DONE";
+	
 	// TODO Play and pause two menus separated
 	private final static int MENU_PLAY_PAUSE = 0;
 	private final static int MENU_PREFERENCES = 1;
@@ -68,6 +70,8 @@ public class FlingboxActivity extends Activity {
         
         // Set OpenGL's surface
         setContentView(mSurface);
+        
+        showHelp();
     }
     
     /**
@@ -154,9 +158,11 @@ public class FlingboxActivity extends Activity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
     	super.onSaveInstanceState(savedInstanceState);
-    	
+    	showHelp();
     	if (savedInstanceState == null)
         	showHelp();
+    	else if (!savedInstanceState.containsKey(KEY_FIRST_BOOT_DONE)) 
+    		showHelp();
         
     }
     

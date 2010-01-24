@@ -60,14 +60,9 @@ public class Intersect {
 		final int pointsCountA = polygonA.length;
 		final int pointsCountB = polygonB.length;
 		
-		/* B order is reverse */
-		int temp = pBIn;
-		pBIn = pBOut;
-		pBOut = temp;
-		
 		/* Calculate total points that will be stored */
 		final int intContourALen = ((pAOut - pAIn + pointsCountA) % pointsCountA);	// For polygon A intersect
-		final int intContourBLen = ((pBOut - pBIn + pointsCountB) % pointsCountB);	// For polygon B intersect
+		final int intContourBLen = ((pBIn - pBOut + pointsCountB) % pointsCountB);	// For polygon B intersect
 		if (intContourALen <= 0 && intContourBLen <= 0)
 			throw new IllegalArgumentException("Intersection is a line. No contour passed.");
 		
@@ -76,10 +71,10 @@ public class Intersect {
 		for (int i = 0; i < intContourALen; i++)
 			contourA[i] = polygonA[(pAIn + i) % pointsCountA];
 		
-		/* Copy intersecting contour from B */
+		/* Copy intersecting contour from B, B order is reverse */
 		Vector2D[] contourB = new Vector2D[intContourBLen];
 		for (int i = 0; i < intContourBLen ; i++)
-			contourB[i] = polygonB[(pBIn - i + pointsCountB) % pointsCountB];
+			contourB[i] = polygonB[(pBOut + i) % pointsCountB];
 		
 		this.polygonA = polygonA;
 		this.polygonB = polygonB;
@@ -175,9 +170,9 @@ public class Intersect {
 		intersectionPoint.set(a0x + uA * (a1x - a0x), a0y + uA * (a1y - a0y));
 		
 		/* Compute cross product */
-		float sA = (a0x - b0x) * (b1y - b0y) - (b1x - b0x) * (a0y - b0y);
+		float crossAB = (a0x - b0x) * (b1y - b0y) - (b1x - b0x) * (a0y - b0y);
 		
-		if (sA > 0f)
+		if (crossAB > 0f)
 			return -1; // is ingoing
 		return +1; // is outgoing
 	}

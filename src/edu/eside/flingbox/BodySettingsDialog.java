@@ -34,8 +34,6 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class BodySettingsDialog extends Dialog {
 
-	//private Context mContext;
-	
 	/** Contains Body to change properties */
 	protected Body mBody;
 	protected Scene mScene;
