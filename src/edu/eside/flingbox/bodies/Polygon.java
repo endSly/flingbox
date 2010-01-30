@@ -18,13 +18,17 @@
 
 package edu.eside.flingbox.bodies;
 
+import java.io.IOException;
 import java.util.Random;
 
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
 
 import android.util.Log;
 
 import edu.eside.flingbox.XmlExporter.XmlSerializable;
+import edu.eside.flingbox.XmlImporter.XmlParseable;
 import edu.eside.flingbox.graphics.RenderPolygon;
 import edu.eside.flingbox.math.PolygonUtils;
 import edu.eside.flingbox.math.Vector2D;
@@ -35,10 +39,14 @@ import edu.eside.flingbox.physics.PhysicBody.OnMovementListener;
  * Polygon is a general class which handles the physics
  * and render instances of a polygonal Body.
  */
-public final class Polygon extends Body implements OnMovementListener, XmlSerializable {
-	private final Vector2D[] mPoints;
-	private final short mPointsCount;
+public final class Polygon extends Body implements OnMovementListener, XmlSerializable, XmlParseable {
+	private Vector2D[] mPoints;
+	private short mPointsCount;
 
+	public Polygon() {
+		super(null, null);
+	}
+	
 	/**
 	 * Constructor for a Polygon
 	 * @param polygonPoints Array of Polygon's point, this is stored and modified
@@ -143,6 +151,13 @@ public final class Polygon extends Body implements OnMovementListener, XmlSerial
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public boolean readXml(XmlPullParser parser) throws XmlPullParserException,
+			IOException {
+
+		return false;
 	}
 
 }

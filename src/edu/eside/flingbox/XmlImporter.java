@@ -18,11 +18,34 @@
 
 package edu.eside.flingbox;
 
+import java.io.IOException;
 import java.io.Reader;
 
-public class XmlImporter {
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
-	public static boolean importXml(Reader reader) {
-		return false;
+import android.util.Xml;
+
+public class XmlImporter {
+	public interface XmlParseable {
+		boolean readXml(XmlPullParser parser) throws XmlPullParserException, IOException;
+	}
+
+	public static boolean importXml(Reader reader, XmlParseable parseable) {
+		boolean success = false;
+		XmlPullParser parser = Xml.newPullParser();
+		try {
+			parser.setInput(reader);
+			while (parser.getEventType() != XmlPullParser.START_DOCUMENT) { }
+			if (parser.next() != XmlPullParser.END_DOCUMENT)
+				success |= parseable.readXml(parser);
+			
+		} catch (XmlPullParserException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return success;
 	}
 }

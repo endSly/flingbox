@@ -19,6 +19,7 @@
 package edu.eside.flingbox.bodies;
 
 import edu.eside.flingbox.XmlExporter.XmlSerializable;
+import edu.eside.flingbox.XmlImporter.XmlParseable;
 import edu.eside.flingbox.graphics.RenderBody;
 import edu.eside.flingbox.physics.PhysicBody;
 
@@ -31,7 +32,7 @@ import edu.eside.flingbox.physics.PhysicBody;
  * Bodies which will be rendered should inherit from
  * {@link Body} too.
  */
-public abstract class Body implements XmlSerializable {
+public abstract class Body implements XmlSerializable, XmlParseable {
 	/* Instance of the body to be rendered */
 	protected RenderBody mRender;
 	/* Instance of the body in the physic space */

@@ -18,9 +18,10 @@
 
 package edu.eside.flingbox.scene;
 
-import java.io.File;
 import java.io.IOException;
 
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
 
 import edu.eside.flingbox.BodySettingsDialog;
@@ -28,17 +29,18 @@ import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.PhysicBody;
 import edu.eside.flingbox.XmlExporter.XmlSerializable;
+import edu.eside.flingbox.XmlImporter.XmlParseable;
 import edu.eside.flingbox.bodies.Body;
+import edu.eside.flingbox.bodies.Polygon;
 
 import android.content.Context;
-import android.os.Environment;
 import android.view.MotionEvent;
 
 /**
  * Scene Descriptor.
  *
  */
-public class Scene extends DrawableScene implements OnInputListener, XmlSerializable {
+public class Scene extends DrawableScene implements OnInputListener, XmlSerializable, XmlParseable {
 	
 	private Body mSelectedBody = null;
 
@@ -159,20 +161,6 @@ public class Scene extends DrawableScene implements OnInputListener, XmlSerializ
 		return handled ? true : super.onTrackballEvent(ev);
 	}
 	
-	
-	public boolean onSaveScene() {
-		File savedFile = new File(Environment.getExternalStorageDirectory() 
-				+ "flingbox/saved.xml");
-		try{
-			savedFile.createNewFile(); 
-			//XmlExporter.exportXml(new Writer(savedFile)., this);
-		} catch (IOException ex) {
-				
-		}
-		
-		return false;
-	}
-	
 
 	@Override
 	public boolean writeXml(XmlSerializer serializer) 
@@ -184,6 +172,32 @@ public class Scene extends DrawableScene implements OnInputListener, XmlSerializ
 		}
         serializer.endTag("", "flingbox");
 		return writeSuccess;
+	}
+
+	@Override
+	public boolean readXml(XmlPullParser parser) throws XmlPullParserException, IOException {
+		boolean readSuccess = true;
+		int eventType = parser.getEventType();
+		if ((eventType = parser.next()) != XmlPullParser.START_TAG)
+			return false;
+		if (!parser.getText().equals("flingbox")) 
+			return false;
+		
+		while ((eventType = parser.next()) != XmlPullParser.END_TAG) {
+			if (eventType == XmlPullParser.START_TAG) {
+				if (parser.getText().equals("polygon")) {
+					Body newBody = new Polygon();
+					newBody.readXml(parser);
+					mOnSceneBodies.add(newBody);
+				} else
+					return false;
+			} else 
+				return false;
+		} 
+		if (!parser.getText().equals("flingbox")) 
+			return false;
+		
+		return readSuccess;
 	}
 	
 }
