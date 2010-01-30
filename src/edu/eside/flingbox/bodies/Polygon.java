@@ -119,9 +119,24 @@ public final class Polygon extends Body implements OnMovementListener, XmlSerial
 	public boolean writeXml(XmlSerializer serializer) {
 		try {
 			serializer.startTag("", "polygon");
-			serializer.setProperty("contour", mPoints);
-			serializer.setProperty("position", mPhysics.getPosition());
-			serializer.setProperty("angle", mPhysics.getAngle());
+				serializer.startTag("", "contour");
+					serializer.attribute("", "pointsCount", mPoints.length + "");
+					for (Vector2D point : mPoints) {
+					serializer.startTag("", "point");
+						serializer.attribute("", "x", point.i + "");
+						serializer.attribute("", "y", point.j + "");
+					serializer.endTag("", "point");
+					}
+				serializer.endTag("", "contour");
+				
+				serializer.startTag("", "position");
+					serializer.attribute("", "x", mPhysics.getPosition().i + "");
+					serializer.attribute("", "y", mPhysics.getPosition().j + "");
+				serializer.endTag("", "position");
+				
+				serializer.startTag("", "angle");
+					serializer.attribute("", "value", mPhysics.getAngle() + "");
+				serializer.endTag("", "angle");
 			serializer.endTag("", "polygon");
 		} catch (Exception ex) {
 			ex.printStackTrace();

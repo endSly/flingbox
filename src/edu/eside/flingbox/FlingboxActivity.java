@@ -18,11 +18,16 @@
 
 package edu.eside.flingbox;
 
+import java.io.File;
+import java.io.FileWriter;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.res.Configuration;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -31,6 +36,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.Toast;
 
 import edu.eside.flingbox.scene.Scene;
 
@@ -126,9 +132,38 @@ public class FlingboxActivity extends Activity {
         case MENU_LOAD_SCENE:
         	return true;
         case MENU_SAVE_SCENE:
+        	saveScene();
         	return true;
         }
         return false;
+    }
+    
+    /**
+     * Exports scene to default output XML
+     * 
+     * @return
+     */
+    private boolean saveScene() {
+    	final File outfile = new File(Environment.getExternalStorageDirectory(), "flingbox/scene.xml");
+    	final FileWriter outFileWriter;
+    	boolean writeSuccess = false;
+		try {
+			if (outfile.exists())
+				outfile.delete(); // Clear last saved file
+	    	outfile.createNewFile(); // Create new file
+			outFileWriter = new FileWriter(outfile);
+			writeSuccess = XmlExporter.exportXml(outFileWriter, mScene);
+			outFileWriter.close();
+		} catch (Exception e) {
+			Log.e("flingbox", "Error saving scene: " + e);
+			e.printStackTrace();
+			writeSuccess = false;
+		} 
+		if (writeSuccess)
+			Toast.makeText(this, R.string.scene_saved, Toast.LENGTH_SHORT).show();
+		else
+			Toast.makeText(this, R.string.scene_save_error, Toast.LENGTH_SHORT).show();
+    	return writeSuccess;
     }
     
     /**

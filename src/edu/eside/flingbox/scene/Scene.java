@@ -180,10 +180,10 @@ public class Scene extends DrawableScene implements OnInputListener, XmlSerializ
 		boolean writeSuccess = true;
 		serializer.startTag("", "flingbox");
 		for (Body body : mOnSceneBodies) {
-			writeSuccess |= body.writeXml(serializer);
+			writeSuccess &= body.writeXml(serializer);
 		}
         serializer.endTag("", "flingbox");
-		return false;
+		return writeSuccess;
 	}
 	
 }

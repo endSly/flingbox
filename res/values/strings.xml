@@ -26,4 +26,6 @@
 
 
 <string name="help_about_dialog">Flingbox, physics sandbox for Android OS.</string>
+<string name="scene_saved">Scene saved.</string>
+<string name="scene_save_error">Error saving scene.</string>
 </resources>
