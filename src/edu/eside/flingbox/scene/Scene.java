@@ -42,6 +42,9 @@ import android.view.MotionEvent;
  */
 public class Scene extends DrawableScene implements OnInputListener, XmlSerializable, XmlParseable {
 	
+	private final static String TAG_FLINGBOX = "flingbox";
+	private final static String TAG_POLYGON = "polygon";
+	
 	private Body mSelectedBody = null;
 
 	/**
@@ -166,26 +169,27 @@ public class Scene extends DrawableScene implements OnInputListener, XmlSerializ
 	public boolean writeXml(XmlSerializer serializer) 
 	throws IllegalArgumentException, IllegalStateException, IOException {
 		boolean writeSuccess = true;
-		serializer.startTag("", "flingbox");
-		for (Body body : mOnSceneBodies) {
+		serializer.startTag("", TAG_FLINGBOX);
+		for (Body body : mOnSceneBodies) 
 			writeSuccess &= body.writeXml(serializer);
-		}
-        serializer.endTag("", "flingbox");
+		
+        serializer.endTag("", TAG_FLINGBOX);
 		return writeSuccess;
 	}
-
+	
 	@Override
-	public boolean readXml(XmlPullParser parser) throws XmlPullParserException, IOException {
+	public boolean readXml(XmlPullParser parser) 
+	throws XmlPullParserException, IOException {
 		boolean readSuccess = true;
 		int eventType = parser.getEventType();
 		if ((eventType = parser.next()) != XmlPullParser.START_TAG)
 			return false;
-		if (!parser.getText().equals("flingbox")) 
+		if (!parser.getText().equals(TAG_FLINGBOX)) 
 			return false;
 		
 		while ((eventType = parser.next()) != XmlPullParser.END_TAG) {
 			if (eventType == XmlPullParser.START_TAG) {
-				if (parser.getText().equals("polygon")) {
+				if (parser.getText().equals(TAG_POLYGON)) {
 					Body newBody = new Polygon();
 					newBody.readXml(parser);
 					mOnSceneBodies.add(newBody);
@@ -194,7 +198,7 @@ public class Scene extends DrawableScene implements OnInputListener, XmlSerializ
 			} else 
 				return false;
 		} 
-		if (!parser.getText().equals("flingbox")) 
+		if (!parser.getText().equals(TAG_FLINGBOX)) 
 			return false;
 		
 		return readSuccess;

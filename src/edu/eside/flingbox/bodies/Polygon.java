@@ -40,6 +40,8 @@ import edu.eside.flingbox.physics.PhysicBody.OnMovementListener;
  * and render instances of a polygonal Body.
  */
 public final class Polygon extends Body implements OnMovementListener, XmlSerializable, XmlParseable {
+	private final static String TAG_POLYGON = "polygon";
+	
 	private Vector2D[] mPoints;
 	private short mPointsCount;
 
@@ -120,32 +122,38 @@ public final class Polygon extends Body implements OnMovementListener, XmlSerial
 		((RenderPolygon) mRender).setPosition(position, rotation);
 	}
 
+	
+	private final static String TAG_CONTOUR = "contour";
+	private final static String TAG_POSITION = "position";
+	private final static String TAG_ANGLE = "angle";
+	private final static String ATTRIBUTE_POINTS_COUNT = "pointsCount";
+	private final static String TAG_POINT = "point";
 	/**
 	 * XML Writter
 	 */
 	@Override
 	public boolean writeXml(XmlSerializer serializer) {
 		try {
-			serializer.startTag("", "polygon");
-				serializer.startTag("", "contour");
-					serializer.attribute("", "pointsCount", mPoints.length + "");
+			serializer.startTag("", TAG_POLYGON);
+				serializer.startTag("", TAG_CONTOUR);
+					serializer.attribute("", ATTRIBUTE_POINTS_COUNT, mPoints.length + "");
 					for (Vector2D point : mPoints) {
-					serializer.startTag("", "point");
+					serializer.startTag("", TAG_POINT);
 						serializer.attribute("", "x", point.i + "");
 						serializer.attribute("", "y", point.j + "");
-					serializer.endTag("", "point");
+					serializer.endTag("", TAG_POINT);
 					}
-				serializer.endTag("", "contour");
+				serializer.endTag("", TAG_CONTOUR);
 				
-				serializer.startTag("", "position");
+				serializer.startTag("", TAG_POSITION);
 					serializer.attribute("", "x", mPhysics.getPosition().i + "");
 					serializer.attribute("", "y", mPhysics.getPosition().j + "");
-				serializer.endTag("", "position");
+				serializer.endTag("", TAG_POSITION);
 				
-				serializer.startTag("", "angle");
+				serializer.startTag("", TAG_ANGLE);
 					serializer.attribute("", "value", mPhysics.getAngle() + "");
-				serializer.endTag("", "angle");
-			serializer.endTag("", "polygon");
+				serializer.endTag("", TAG_ANGLE);
+			serializer.endTag("", TAG_POLYGON);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return false;
@@ -154,10 +162,44 @@ public final class Polygon extends Body implements OnMovementListener, XmlSerial
 	}
 
 	@Override
-	public boolean readXml(XmlPullParser parser) throws XmlPullParserException,
-			IOException {
-
-		return false;
+	public boolean readXml(XmlPullParser parser) 
+	throws XmlPullParserException, IOException {
+		boolean readSuccess = true;
+		int eventType = parser.getEventType();
+		if ((eventType = parser.next()) != XmlPullParser.START_TAG)
+			return false;
+		if (!parser.getText().equals(TAG_POLYGON)) 
+			return false;
+		
+		while ((eventType = parser.next()) != XmlPullParser.END_TAG) {
+			if (eventType == XmlPullParser.START_TAG) {
+				if (parser.getText().equals(TAG_CONTOUR)) { 
+					/* Parse contour */
+					int pointsCount = Integer.parseInt(parser.getAttributeValue(0));
+					mPoints = new Vector2D[pointsCount];
+					for (int i = 0; i < pointsCount; i++) {
+						if ((eventType = parser.next()) != XmlPullParser.START_TAG 
+								|| !(parser.getText().equals(TAG_POINT))) 
+							return false;
+						mPoints[i] = new Vector2D(Float.parseFloat(parser.getAttributeValue(0)), 
+												  Float.parseFloat(parser.getAttributeValue(1)));
+					}
+				} else if (parser.getText().equals(TAG_POSITION)) {
+					/* Parse position */
+					this.mPhysics.setPosition(Float.parseFloat(parser.getAttributeValue(0)) , 
+							  				  Float.parseFloat(parser.getAttributeValue(1)));
+				} else if (parser.getText().equals(TAG_ANGLE)) {
+					/* Parse angle */
+					this.mPhysics.setAngle(Float.parseFloat(parser.getAttributeValue(0)));
+				} else
+					return false;
+			} else 
+				return false;
+		} 
+		if (!parser.getText().equals(TAG_POLYGON)) 
+			return false;
+		
+		return readSuccess;
 	}
 
 }
