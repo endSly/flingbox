@@ -27,14 +27,14 @@ import org.xmlpull.v1.XmlSerializer;
 
 import android.util.Log;
 
-import edu.eside.flingbox.XmlExporter.XmlSerializable;
-import edu.eside.flingbox.XmlImporter.XmlParseable;
-import edu.eside.flingbox.InvalidXmlException;
 import edu.eside.flingbox.graphics.RenderPolygon;
 import edu.eside.flingbox.math.PolygonUtils;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.PhysicPolygon;
 import edu.eside.flingbox.physics.PhysicBody.OnMovementListener;
+import edu.eside.flingbox.xml.InvalidXmlException;
+import edu.eside.flingbox.xml.XmlExporter.XmlSerializable;
+import edu.eside.flingbox.xml.XmlImporter.XmlParseable;
 
 /**
  * Polygon is a general class which handles the physics
@@ -73,7 +73,7 @@ public final class Polygon extends Body implements OnMovementListener, XmlSerial
 			 * will be negative.
 			 */
 			Vector2D temp;
-			for (int i = 0, j = polygonPoints.length - 1; i<j; --j, ++i) {
+			for (int i = 0, j = polygonPoints.length - 1; i < j; --j, ++i) {
 				temp = polygonPoints[i];  // Just swap polygon order
 				polygonPoints[i] = polygonPoints[j];
 				polygonPoints[j] = temp;
@@ -99,6 +99,16 @@ public final class Polygon extends Body implements OnMovementListener, XmlSerial
 	 */
 	public Vector2D[] getPoints() {
 		return mPoints;
+	}
+	
+	/**
+	 * @return Polygon points
+	 */
+	public void setPoints(Vector2D[] points, Vector2D centroid) {
+		mPoints = points;
+		mPointsCount = (short) (points.length); 
+		mRender = new RenderPolygon(points);
+		mPhysics = new PhysicPolygon(points, PolygonUtils.polygonArea(points), centroid, this);
 	}
 
 	/**
@@ -166,41 +176,52 @@ public final class Polygon extends Body implements OnMovementListener, XmlSerial
 	public boolean readXml(XmlPullParser parser) 
 	throws XmlPullParserException, IOException, InvalidXmlException {
 		boolean readSuccess = true;
-		int eventType = parser.getEventType();
-		if (((eventType = parser.next()) != XmlPullParser.START_TAG) || !(parser.getText().equals(TAG_POLYGON))) 
-			throw new InvalidXmlException("polygon start tag expected but " + parser.getText() + " found.");
+		if ((parser.getEventType() != XmlPullParser.START_TAG) 
+				|| !(parser.getName().equals(TAG_POLYGON))) 
+			throw new InvalidXmlException("polygon start tag expected but " + parser.getName() + " found.");
 		
-		while ((eventType = parser.next()) != XmlPullParser.END_TAG) {
+		Vector2D[] points = new Vector2D[0];
+		Vector2D centroid = new Vector2D();
+		float angle = 0f;
+		
+		for (int eventType = parser.next()
+				; eventType != XmlPullParser.END_TAG
+				; eventType = parser.next()) {
 			if (eventType == XmlPullParser.START_TAG) {
-				if (parser.getText().equals(TAG_CONTOUR)) { 
+				if (parser.getName().equals(TAG_CONTOUR)) { 
 					/* Parse contour */
 					int pointsCount = Integer.parseInt(parser.getAttributeValue(0));
-					mPoints = new Vector2D[pointsCount];
+					points = new Vector2D[pointsCount];
 					for (int i = 0; i < pointsCount; i++) {
-						if ((eventType = parser.next()) != XmlPullParser.START_TAG 
-								|| !(parser.getText().equals(TAG_POINT))) 
-							throw new InvalidXmlException("point start tag expected but " + parser.getText() + " found.");
+						if (parser.next() != XmlPullParser.START_TAG 
+								|| !(parser.getName().equals(TAG_POINT))) 
+							throw new InvalidXmlException("point start tag expected but " + parser.getName() + " found.");
 							
-						mPoints[i] = new Vector2D(Float.parseFloat(parser.getAttributeValue(0)), 
-												  Float.parseFloat(parser.getAttributeValue(1)));
+						points[i] = new Vector2D(Float.parseFloat(parser.getAttributeValue(0)), 
+												 Float.parseFloat(parser.getAttributeValue(1)));
+						parser.next();
 					}
-				} else if (parser.getText().equals(TAG_POSITION)) {
+				} else if (parser.getName().equals(TAG_POSITION)) {
 					/* Parse position */
-					this.mPhysics.setPosition(Float.parseFloat(parser.getAttributeValue(0)) , 
-							  				  Float.parseFloat(parser.getAttributeValue(1)));
-				} else if (parser.getText().equals(TAG_ANGLE)) {
+					centroid.set(Float.parseFloat(parser.getAttributeValue(0)) , 
+							  	 Float.parseFloat(parser.getAttributeValue(1)));
+				} else if (parser.getName().equals(TAG_ANGLE)) {
 					/* Parse angle */
-					this.mPhysics.setAngle(Float.parseFloat(parser.getAttributeValue(0)));
+					angle = Float.parseFloat(parser.getAttributeValue(0));
 				} else 
-					throw new InvalidXmlException("unknown tag found: " + parser.getText());
+					throw new InvalidXmlException("unknown tag found: " + parser.getName());
 					
 				parser.next();
 			} else 
 				return false;
 		} 
-		if (!parser.getText().equals(TAG_POLYGON)) 
-			throw new InvalidXmlException("polygon end tag expected but " + parser.getText() + " found.");
+		if (!parser.getName().equals(TAG_POLYGON)) 
+			throw new InvalidXmlException("polygon end tag expected but " + parser.getName() + " found.");
 
+		/* Now create the polygon */
+		setPoints(points, centroid);
+		mPhysics.setAngle(angle);
+		setRandomColor();
 		return readSuccess;
 	}
 

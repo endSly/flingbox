@@ -28,9 +28,9 @@ import edu.eside.flingbox.BodySettingsDialog;
 import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.PhysicBody;
-import edu.eside.flingbox.XmlExporter.XmlSerializable;
-import edu.eside.flingbox.InvalidXmlException;
-import edu.eside.flingbox.XmlImporter.XmlParseable;
+import edu.eside.flingbox.xml.InvalidXmlException;
+import edu.eside.flingbox.xml.XmlExporter.XmlSerializable;
+import edu.eside.flingbox.xml.XmlImporter.XmlParseable;
 import edu.eside.flingbox.bodies.Body;
 import edu.eside.flingbox.bodies.Polygon;
 
@@ -182,25 +182,26 @@ public class Scene extends DrawableScene implements OnInputListener, XmlSerializ
 	public boolean readXml(XmlPullParser parser) 
 	throws XmlPullParserException, IOException, InvalidXmlException {
 		boolean readSuccess = true;
-		int eventType = parser.getEventType();
-		if ((eventType = parser.next()) != XmlPullParser.START_TAG)
-			return false;
-		if (!parser.getText().equals(TAG_FLINGBOX)) 
-			return false;
+		if ((parser.getEventType() != XmlPullParser.START_TAG) 
+				|| !(parser.getName().equals(TAG_FLINGBOX))) 
+			throw new InvalidXmlException("Scene start tag expected but " + parser.getName() + " found.");
 		
-		while ((eventType = parser.next()) != XmlPullParser.END_TAG) {
+		
+		for (int eventType = parser.next()
+				; eventType != XmlPullParser.END_TAG
+				; eventType = parser.next()) {
 			if (eventType == XmlPullParser.START_TAG) {
-				if (parser.getText().equals(TAG_POLYGON)) {
+				if (parser.getName().equals(TAG_POLYGON)) {
 					Body newBody = new Polygon();
 					newBody.readXml(parser);
-					mOnSceneBodies.add(newBody);
+					add(newBody);
 				} else
-					return false;
+					throw new InvalidXmlException("Any body start tag expected but " + parser.getName() + " found.");
 			} else 
-				return false;
+				throw new InvalidXmlException("Start tag expected but " + parser.getName() + " found.");
 		} 
-		if (!parser.getText().equals(TAG_FLINGBOX)) 
-			return false;
+		if (!parser.getName().equals(TAG_FLINGBOX)) 
+			throw new InvalidXmlException("Scene end tag expected but " + parser.getName() + " found.");;
 		
 		return readSuccess;
 	}

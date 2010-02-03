@@ -53,6 +53,8 @@ public final class R {
         public static final int new_scene=0x7f040003;
         public static final int preferences=0x7f040006;
         public static final int save_scene=0x7f040005;
+        public static final int scene_load_error=0x7f04001a;
+        public static final int scene_loaded=0x7f040019;
         public static final int scene_save_error=0x7f040018;
         public static final int scene_saved=0x7f040017;
         public static final int simulate=0x7f040001;

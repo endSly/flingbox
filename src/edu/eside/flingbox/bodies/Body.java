@@ -18,10 +18,10 @@
 
 package edu.eside.flingbox.bodies;
 
-import edu.eside.flingbox.XmlExporter.XmlSerializable;
-import edu.eside.flingbox.XmlImporter.XmlParseable;
 import edu.eside.flingbox.graphics.RenderBody;
 import edu.eside.flingbox.physics.PhysicBody;
+import edu.eside.flingbox.xml.XmlExporter.XmlSerializable;
+import edu.eside.flingbox.xml.XmlImporter.XmlParseable;
 
 /**
  * Body is a general abstraction class which handles 

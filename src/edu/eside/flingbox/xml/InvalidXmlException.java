@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.eside.flingbox;
+package edu.eside.flingbox.xml;
 
 public class InvalidXmlException extends Exception {
 

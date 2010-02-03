@@ -19,6 +19,7 @@
 package edu.eside.flingbox;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 
 import android.app.Activity;
@@ -39,6 +40,8 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import edu.eside.flingbox.scene.Scene;
+import edu.eside.flingbox.xml.XmlExporter;
+import edu.eside.flingbox.xml.XmlImporter;
 
 /**
  * Flingbox main activity.
@@ -130,12 +133,38 @@ public class FlingboxActivity extends Activity {
         	System.gc();
         	return true;
         case MENU_LOAD_SCENE:
+        	loadScene();
         	return true;
         case MENU_SAVE_SCENE:
         	saveScene();
         	return true;
         }
         return false;
+    }
+    
+    private boolean loadScene() {
+    	final File infile = new File(Environment.getExternalStorageDirectory(), "flingbox/scene.xml");
+    	final FileReader inFileReader;
+    	boolean readSuccess = false;
+    	mScene.clearScene();
+    	if (mScene.isSimulating())
+    		mScene.stopSimulation();
+    	try {
+			if (!infile.exists())
+				return false;
+			inFileReader = new FileReader(infile);
+			readSuccess = XmlImporter.importXml(inFileReader, mScene);
+			inFileReader.close();
+		} catch (Exception e) {
+			Log.e("flingbox", "Error loading scene: " + e);
+			e.printStackTrace();
+			readSuccess = false;
+		} 
+		if (readSuccess)
+			Toast.makeText(this, R.string.scene_loaded, Toast.LENGTH_SHORT).show();
+		else
+			Toast.makeText(this, R.string.scene_load_error, Toast.LENGTH_SHORT).show();
+    	return readSuccess;
     }
     
     /**

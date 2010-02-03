@@ -16,13 +16,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.eside.flingbox;
+package edu.eside.flingbox.xml;
 
 import java.io.IOException;
 import java.io.Reader;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+
 
 import android.util.Xml;
 

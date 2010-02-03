@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.eside.flingbox;
+package edu.eside.flingbox.xml;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -50,9 +50,7 @@ public class XmlExporter {
 		try {
 			serializer.setOutput(writer);
 	        serializer.startDocument("UTF-8", true);
-
 	        writeSuccess = exportable.writeXml(serializer);
-			
 	        serializer.endDocument();
 		} catch (Exception ex) {
 			/* File can't be written */
