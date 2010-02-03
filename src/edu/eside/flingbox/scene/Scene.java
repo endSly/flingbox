@@ -29,6 +29,7 @@ import edu.eside.flingbox.input.SceneGestureDetector.OnInputListener;
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.PhysicBody;
 import edu.eside.flingbox.XmlExporter.XmlSerializable;
+import edu.eside.flingbox.InvalidXmlException;
 import edu.eside.flingbox.XmlImporter.XmlParseable;
 import edu.eside.flingbox.bodies.Body;
 import edu.eside.flingbox.bodies.Polygon;
@@ -179,7 +180,7 @@ public class Scene extends DrawableScene implements OnInputListener, XmlSerializ
 	
 	@Override
 	public boolean readXml(XmlPullParser parser) 
-	throws XmlPullParserException, IOException {
+	throws XmlPullParserException, IOException, InvalidXmlException {
 		boolean readSuccess = true;
 		int eventType = parser.getEventType();
 		if ((eventType = parser.next()) != XmlPullParser.START_TAG)

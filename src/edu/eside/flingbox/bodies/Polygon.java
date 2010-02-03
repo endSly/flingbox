@@ -29,6 +29,7 @@ import android.util.Log;
 
 import edu.eside.flingbox.XmlExporter.XmlSerializable;
 import edu.eside.flingbox.XmlImporter.XmlParseable;
+import edu.eside.flingbox.InvalidXmlException;
 import edu.eside.flingbox.graphics.RenderPolygon;
 import edu.eside.flingbox.math.PolygonUtils;
 import edu.eside.flingbox.math.Vector2D;
@@ -163,13 +164,11 @@ public final class Polygon extends Body implements OnMovementListener, XmlSerial
 
 	@Override
 	public boolean readXml(XmlPullParser parser) 
-	throws XmlPullParserException, IOException {
+	throws XmlPullParserException, IOException, InvalidXmlException {
 		boolean readSuccess = true;
 		int eventType = parser.getEventType();
-		if ((eventType = parser.next()) != XmlPullParser.START_TAG)
-			return false;
-		if (!parser.getText().equals(TAG_POLYGON)) 
-			return false;
+		if (((eventType = parser.next()) != XmlPullParser.START_TAG) || !(parser.getText().equals(TAG_POLYGON))) 
+			throw new InvalidXmlException("polygon start tag expected but " + parser.getText() + " found.");
 		
 		while ((eventType = parser.next()) != XmlPullParser.END_TAG) {
 			if (eventType == XmlPullParser.START_TAG) {
@@ -180,7 +179,8 @@ public final class Polygon extends Body implements OnMovementListener, XmlSerial
 					for (int i = 0; i < pointsCount; i++) {
 						if ((eventType = parser.next()) != XmlPullParser.START_TAG 
 								|| !(parser.getText().equals(TAG_POINT))) 
-							return false;
+							throw new InvalidXmlException("point start tag expected but " + parser.getText() + " found.");
+							
 						mPoints[i] = new Vector2D(Float.parseFloat(parser.getAttributeValue(0)), 
 												  Float.parseFloat(parser.getAttributeValue(1)));
 					}
@@ -191,14 +191,16 @@ public final class Polygon extends Body implements OnMovementListener, XmlSerial
 				} else if (parser.getText().equals(TAG_ANGLE)) {
 					/* Parse angle */
 					this.mPhysics.setAngle(Float.parseFloat(parser.getAttributeValue(0)));
-				} else
-					return false;
+				} else 
+					throw new InvalidXmlException("unknown tag found: " + parser.getText());
+					
+				parser.next();
 			} else 
 				return false;
 		} 
 		if (!parser.getText().equals(TAG_POLYGON)) 
-			return false;
-		
+			throw new InvalidXmlException("polygon end tag expected but " + parser.getText() + " found.");
+
 		return readSuccess;
 	}
 

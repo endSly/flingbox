@@ -27,11 +27,12 @@ import org.xmlpull.v1.XmlPullParserException;
 import android.util.Xml;
 
 public class XmlImporter {
+	
 	public interface XmlParseable {
-		boolean readXml(XmlPullParser parser) throws XmlPullParserException, IOException;
+		boolean readXml(XmlPullParser parser) throws XmlPullParserException, IOException, InvalidXmlException;
 	}
 
-	public static boolean importXml(Reader reader, XmlParseable parseable) {
+	public static boolean importXml(Reader reader, XmlParseable parseable) throws InvalidXmlException {
 		boolean success = false;
 		XmlPullParser parser = Xml.newPullParser();
 		try {
