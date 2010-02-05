@@ -1,0 +1,11 @@
+edu.eside.flingbox
+edu.eside.flingbox.bodies
+edu.eside.flingbox.graphics
+edu.eside.flingbox.input
+edu.eside.flingbox.math
+edu.eside.flingbox.physics
+edu.eside.flingbox.physics.collisions
+edu.eside.flingbox.physics.gravity
+edu.eside.flingbox.scene
+edu.eside.flingbox.utils
+edu.eside.flingbox.xml

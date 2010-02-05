@@ -42,7 +42,7 @@ public class XmlExporter {
 	 * 
 	 * @param writer
 	 * @param exportable
-	 * @return
+	 * @return true if success
 	 */
 	public static boolean exportXml(Writer writer, XmlSerializable exportable) {
 		XmlSerializer serializer = Xml.newSerializer();

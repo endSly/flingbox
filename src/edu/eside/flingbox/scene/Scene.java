@@ -19,6 +19,7 @@
 package edu.eside.flingbox.scene;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -70,6 +71,9 @@ public class Scene extends DrawableScene implements OnInputListener, XmlSerializ
 		return true;
 	}
 	
+	/**
+	 * @return true if success
+	 */
 	public boolean stopSimulation() {
 		if (!mScenePhysics.isSimulating())
 			return false;
@@ -77,10 +81,27 @@ public class Scene extends DrawableScene implements OnInputListener, XmlSerializ
 		return true;
 	}
 	
+	/**
+	 * @return true if simulating
+	 */
 	public boolean isSimulating() {
 		return mScenePhysics.isSimulating();
 	}
+	
+	/**
+	 * clear scene
+	 */
+	public void clearScene() {
+		ArrayList<Body> bodies = mOnSceneBodies;
+		stopSimulation();
+		while(!bodies.isEmpty())
+			remove(bodies.get(0));
+	}
+	
 
+	/**
+	 * Called when fling occurs
+	 */
 	public boolean onFling(MotionEvent onDownEv, MotionEvent e, float velocityX,
 			float velocityY) {
 		boolean handled = false;
@@ -96,6 +117,9 @@ public class Scene extends DrawableScene implements OnInputListener, XmlSerializ
 		return handled;
 	}
 	
+	/**
+	 * 
+	 */
 	public void onLongPress(MotionEvent e) {
 		if (mSelectedBody != null) {
 			mVibrator.vibrate(50); // vibrate as haptic feedback
@@ -105,6 +129,9 @@ public class Scene extends DrawableScene implements OnInputListener, XmlSerializ
 		super.onLongPress(e);
 	}
 
+	/**
+	 * 
+	 */
 	public boolean onDown(MotionEvent e) {
 		final float onDownX = mCamera.left + (e.getX() * mCamera.getAperture().i / mDisplayWidth);
 		final float onDownY = mCamera.top - (e.getY() * mCamera.getAperture().j / mDisplayHeight);
@@ -120,12 +147,18 @@ public class Scene extends DrawableScene implements OnInputListener, XmlSerializ
 		return super.onDown(e);
 	}
 	
+	/**
+	 * 
+	 */
 	@Override
 	public boolean onUp(MotionEvent e) {
 		mSelectedBody = null;
 		return super.onUp(e);
 	}
 	
+	/**
+	 * 
+	 */
 	@Override
 	public boolean onScroll(MotionEvent downEv, MotionEvent e, float distanceX,
 			float distanceY) {
@@ -148,11 +181,20 @@ public class Scene extends DrawableScene implements OnInputListener, XmlSerializ
 
 	}
 	
+	/**
+	 * 
+	 * @param e drag event
+	 * @param b body
+	 * @return true if success
+	 */
 	public boolean onDragBody(MotionEvent e, Body b) {
 		
 		return false;
 	}
 	
+	/**
+	 * 
+	 */
 	@Override
 	public boolean onTrackballEvent(MotionEvent ev) {
 		boolean handled = false;
@@ -165,7 +207,9 @@ public class Scene extends DrawableScene implements OnInputListener, XmlSerializ
 		return handled ? true : super.onTrackballEvent(ev);
 	}
 	
-
+	/**
+	 * Scene exporter
+	 */
 	@Override
 	public boolean writeXml(XmlSerializer serializer) 
 	throws IllegalArgumentException, IllegalStateException, IOException {
@@ -178,6 +222,9 @@ public class Scene extends DrawableScene implements OnInputListener, XmlSerializ
 		return writeSuccess;
 	}
 	
+	/**
+	 * Scene importer
+	 */
 	@Override
 	public boolean readXml(XmlPullParser parser) 
 	throws XmlPullParserException, IOException, InvalidXmlException {

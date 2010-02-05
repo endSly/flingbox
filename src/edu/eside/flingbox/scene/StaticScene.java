@@ -132,12 +132,6 @@ public class StaticScene implements OnInputListener {
 		return removed;
 	}
 	
-	public void clearScene() {
-		ArrayList<Body> bodies = mOnSceneBodies;
-		for (Body body : bodies)
-			remove(body);
-	}
-	
 	public Renderer getSceneRenderer() {
 		return mSceneRenderer;
 	}

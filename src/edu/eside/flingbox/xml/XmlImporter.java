@@ -24,7 +24,6 @@ import java.io.Reader;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-
 import android.util.Xml;
 
 public class XmlImporter {

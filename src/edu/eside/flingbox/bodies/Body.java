@@ -34,9 +34,14 @@ import edu.eside.flingbox.xml.XmlImporter.XmlParseable;
  */
 public abstract class Body implements XmlSerializable, XmlParseable {
 	/* Instance of the body to be rendered */
-	protected RenderBody mRender;
+	protected RenderBody mRender = null;
 	/* Instance of the body in the physic space */
-	protected PhysicBody mPhysics;
+	protected PhysicBody mPhysics = null;
+	
+	/**
+	 * Local constructor for any body.
+	 */
+	protected Body() { }
 	
 	/**
 	 * Local constructor for any body.

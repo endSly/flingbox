@@ -42,12 +42,18 @@ import edu.eside.flingbox.xml.XmlImporter.XmlParseable;
  */
 public final class Polygon extends Body implements OnMovementListener, XmlSerializable, XmlParseable {
 	private final static String TAG_POLYGON = "polygon";
+	private final static String TAG_CONTOUR = "contour";
+	private final static String TAG_POSITION = "position";
+	private final static String TAG_ANGLE = "angle";
+	private final static String ATTRIBUTE_POINTS_COUNT = "pointsCount";
+	private final static String TAG_POINT = "point";
+	private final static String TAG_FIXED = "fixed";
 	
 	private Vector2D[] mPoints;
 	private short mPointsCount;
 
 	public Polygon() {
-		super(null, null);
+		super();
 	}
 	
 	/**
@@ -56,7 +62,7 @@ public final class Polygon extends Body implements OnMovementListener, XmlSerial
 	 * @throws IllegalArgumentException If not enough points
 	 */
 	public Polygon(Vector2D[] polygonPoints) throws IllegalArgumentException {
-		super(null, null);
+		super();
 		
 		if (polygonPoints.length < 3) {
 			Log.e("Flingbox", "Trying to build a polygon with an insuficient number of points");
@@ -133,12 +139,7 @@ public final class Polygon extends Body implements OnMovementListener, XmlSerial
 		((RenderPolygon) mRender).setPosition(position, rotation);
 	}
 
-	
-	private final static String TAG_CONTOUR = "contour";
-	private final static String TAG_POSITION = "position";
-	private final static String TAG_ANGLE = "angle";
-	private final static String ATTRIBUTE_POINTS_COUNT = "pointsCount";
-	private final static String TAG_POINT = "point";
+
 	/**
 	 * XML Writter
 	 */
@@ -164,6 +165,10 @@ public final class Polygon extends Body implements OnMovementListener, XmlSerial
 				serializer.startTag("", TAG_ANGLE);
 					serializer.attribute("", "value", mPhysics.getAngle() + "");
 				serializer.endTag("", TAG_ANGLE);
+				
+				serializer.startTag("", TAG_FIXED);
+					serializer.attribute("", "value", mPhysics.isFixed() ? "1" : "0");
+				serializer.endTag("", TAG_FIXED);
 			serializer.endTag("", TAG_POLYGON);
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -182,6 +187,7 @@ public final class Polygon extends Body implements OnMovementListener, XmlSerial
 		
 		Vector2D[] points = new Vector2D[0];
 		Vector2D centroid = new Vector2D();
+		boolean isFixed = false;
 		float angle = 0f;
 		
 		for (int eventType = parser.next()
@@ -208,6 +214,9 @@ public final class Polygon extends Body implements OnMovementListener, XmlSerial
 				} else if (parser.getName().equals(TAG_ANGLE)) {
 					/* Parse angle */
 					angle = Float.parseFloat(parser.getAttributeValue(0));
+				} else if (parser.getName().equals(TAG_FIXED)) {
+					/* Parse fixed */
+					isFixed = Integer.parseInt(parser.getAttributeValue(0)) != 0;
 				} else 
 					throw new InvalidXmlException("unknown tag found: " + parser.getName());
 					
@@ -221,6 +230,7 @@ public final class Polygon extends Body implements OnMovementListener, XmlSerial
 		/* Now create the polygon */
 		setPoints(points, centroid);
 		mPhysics.setAngle(angle);
+		mPhysics.setBodyFixed(isFixed);
 		setRandomColor();
 		return readSuccess;
 	}

@@ -131,6 +131,7 @@ public class FlingboxActivity extends Activity {
         	mScene.stopSimulation();
         	mScene.clearScene();
         	System.gc();
+        	mSurface.onResume();
         	return true;
         case MENU_LOAD_SCENE:
         	loadScene();
