@@ -37,6 +37,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import edu.eside.flingbox.scene.Scene;
@@ -71,16 +72,19 @@ public class FlingboxActivity extends Activity {
         /* Request full screen view */
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        setContentView(R.layout.main);
+        mSurface = (GLSurfaceView) findViewById(R.id.gl_surface);//new GLSurfaceView(this);
+        
+        ((ImageButton) findViewById(R.id.option_button)).setImageResource(android.R.drawable.ic_menu_edit);
         
         mScene = new Scene(this);
-        
-        mSurface = new GLSurfaceView(this);
         mSurface.setRenderer(mScene.getSceneRenderer());
         
-        // Set OpenGL's surface
-        setContentView(mSurface);
         
-        showHelp();
+        
+        // Set OpenGL's surface
+        //setContentView(mSurface);
     }
     
     /**

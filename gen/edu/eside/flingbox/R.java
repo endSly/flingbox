@@ -19,16 +19,20 @@ public final class R {
         public static final int about_button=0x7f050006;
         public static final int button_remove_body=0x7f050005;
         public static final int checkbox_lock_body=0x7f050000;
+        public static final int gl_surface=0x7f050007;
+        public static final int option_button=0x7f050009;
         public static final int seek_bodys_density=0x7f050001;
         public static final int seek_kinetic_friction=0x7f050004;
         public static final int seek_restitution_coef=0x7f050002;
         public static final int seek_static_friction=0x7f050003;
+        public static final int zoom_control=0x7f050008;
     }
     public static final class layout {
         public static final int about_dialog=0x7f030000;
         public static final int body_settings=0x7f030001;
         public static final int help=0x7f030002;
-        public static final int preferences=0x7f030003;
+        public static final int main=0x7f030003;
+        public static final int preferences=0x7f030004;
     }
     public static final class string {
         public static final int app_name=0x7f040000;

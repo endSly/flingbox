@@ -45,7 +45,7 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 	 * {@link Renderizable} Object witch handles drawing pattern
 	 * and show it to OpenGL's space.
 	 */
-	private class DrawingRender extends RenderBody {
+	private class DrawingRender implements RenderBody {
 
 		/** Array of points to be drawn */
 		private final ArrayList<Vector2D> mDrawingPattern;
@@ -123,6 +123,8 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 	private boolean mIsDrawing = false;
 	private boolean mIsDrawingLocked = false;	// Drawing can be locked
 	
+	public final static int SCENE_MODE_DRAWING = 10;
+	
 	/**
 	 * Default Constructor for drawing scene
 	 * @param c	Application {@link Context}
@@ -188,7 +190,7 @@ public class DrawableScene extends StaticScene implements OnInputListener {
 		mIsDrawing = false;
 		
 		/* Remove actual drawing */
-		mOnSceneBodies.remove(mDrawingRender);
+		mSceneRenderer.remove(mDrawingRender);
 		mDrawingRender = null;
 		
 		/* Good moment to call to Garbage Collector */

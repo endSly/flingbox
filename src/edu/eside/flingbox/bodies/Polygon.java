@@ -40,7 +40,7 @@ import edu.eside.flingbox.xml.XmlImporter.XmlParseable;
  * Polygon is a general class which handles the physics
  * and render instances of a polygonal Body.
  */
-public final class Polygon extends Body implements OnMovementListener, XmlSerializable, XmlParseable {
+public class Polygon extends Body implements OnMovementListener, XmlSerializable, XmlParseable {
 	private final static String TAG_POLYGON = "polygon";
 	private final static String TAG_CONTOUR = "contour";
 	private final static String TAG_POSITION = "position";

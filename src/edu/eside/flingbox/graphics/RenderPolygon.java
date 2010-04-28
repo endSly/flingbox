@@ -25,6 +25,7 @@ import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import edu.eside.flingbox.bodies.Polygon;
 import edu.eside.flingbox.math.PolygonUtils;
 import edu.eside.flingbox.math.Vector2D;
 
@@ -36,7 +37,7 @@ import edu.eside.flingbox.math.Vector2D;
  * 
  * This should only be instantiate by {@link Polygon}.
  */
-public class RenderPolygon extends RenderBody {
+public class RenderPolygon implements RenderBody {
 	/** Buffer with vertex, for OpenGL */
 	private final FloatBuffer mVertexBuffer;
 	/** Buffer with triangulation indexes, for OpenGL */

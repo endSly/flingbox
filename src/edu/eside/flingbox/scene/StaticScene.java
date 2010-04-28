@@ -20,10 +20,13 @@ package edu.eside.flingbox.scene;
 
 import java.util.ArrayList;
 
+import android.app.Activity;
 import android.content.Context;
 import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView.Renderer;
 import android.os.Vibrator;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import edu.eside.flingbox.Preferences;
@@ -37,42 +40,11 @@ import edu.eside.flingbox.physics.ScenePhysics;
 import edu.eside.flingbox.physics.gravity.GravitySource;
 
 public class StaticScene implements OnInputListener {
-	/*
-	protected final class BackgroundRender extends RenderPolygon {
-		
-		private final static float BACKGROUND_COLOR_R = 0.6f;
-		private final static float BACKGROUND_COLOR_G = 0.6f;
-		private final static float BACKGROUND_COLOR_B = 1.0f;
-		
-		public BackgroundRender(float left, float right, float top, float bottom) {
-			super(new Point[] {
-					new Point(left, top), 
-					new Point(left, bottom),
-					new Point(right, top),
-					new Point(right, bottom)
-					
-			}, new short[] {
-					0, 1, 2, 
-					1, 2, 3
-			});
-			setColor(BACKGROUND_COLOR_R, BACKGROUND_COLOR_G, BACKGROUND_COLOR_B, 1.0f);
-		}
 
-	}
-	*/
-	// Constant limits for the Scene borders
-	final static float SCENE_LEFT_BORDER = -1024f;
-	final static float SCENE_RIGHT_BORDER = 1024f;
-	final static float SCENE_BOTTOM_BORDER = -1024f;
-	final static float SCENE_TOP_BORDER = 1024f;
-	
-	// Constants to Zoom
-	final static float SCENE_MAX_WIDTH = SCENE_RIGHT_BORDER - SCENE_LEFT_BORDER;
-	final static float SCENE_MIN_WIDTH = 128f;
 	
 	// TODO Support for all screen sizes
-	protected final float mDisplayWidth = 320f;
-	protected final float mDisplayHeight = 480f;
+	protected float mDisplayWidth = 320f;
+	protected float mDisplayHeight = 480f;
 	
 	// Vibrator instance
 	protected Vibrator mVibrator;
@@ -86,6 +58,10 @@ public class StaticScene implements OnInputListener {
 	protected final ArrayList<Body> mOnSceneBodies;
 	
 	protected final Context mContext;
+	
+	public final static int SCENE_MODE_NONE = 0;
+	
+	private int mMode = SCENE_MODE_NONE;
 	
 	public StaticScene(Context c) {
 		mContext = c;
@@ -116,8 +92,23 @@ public class StaticScene implements OnInputListener {
 		
 		mVibrator = (Vibrator) c.getSystemService(Context.VIBRATOR_SERVICE);
 		
+		if (c instanceof Activity) {
+		    DisplayMetrics dm = new DisplayMetrics(); 
+		    ((Activity) c).getWindowManager().getDefaultDisplay().getMetrics(dm); 
+		    mDisplayHeight = dm.heightPixels; 
+		    mDisplayWidth = dm.widthPixels; 
+		}
+		
 		System.gc();	// This is a good moment to call to Garbage Collector.
 	}
+	
+	public void setSceneMode(int mode) {
+	    mMode = mode;
+	}
+	
+	public int getSceneMode() {
+        return mMode;
+    }
 	
 	public void add(Body body) {
 		mOnSceneBodies.add(body);
@@ -132,6 +123,15 @@ public class StaticScene implements OnInputListener {
 		return removed;
 	}
 	
+	   /**
+     * clear scene
+     */
+    public void clearScene() {
+        ArrayList<Body> bodies = mOnSceneBodies;
+        while(!bodies.isEmpty())
+            remove(bodies.get(0));
+    }
+	
 	public Renderer getSceneRenderer() {
 		return mSceneRenderer;
 	}
@@ -139,30 +139,7 @@ public class StaticScene implements OnInputListener {
 	public boolean onTouchEvent(MotionEvent ev) {
 		return mGestureDetector.onTouchEvent(ev);
 	}
-	
-	public boolean onTrackballEvent(MotionEvent ev) {
-		onZoom(0f, 0f, 1f + ev.getY() / 8f);
-		
-		return true;
-	}
 
-	/**
-	 * Called when multitouch zoom occurs.
-	 * Also corrects to fit camera to scene.
-	 */
-
-	public boolean onZoom(float x, float y, float scale) {
-		mCamera.setAperture(mCamera.getAperture().mul(scale));
-		
-		return true;
-	}
-	
-	public boolean onScroll(MotionEvent downEv, MotionEvent ev, float distanceX,
-			float distanceY) {
-		final Vector2D distance = mCamera.scale(new Vector2D(distanceX, distanceY));
-		mCamera.setPosition(mCamera.getPosition().add(distance));
-		return true;
-	}
 
 	@Override
 	public boolean onUp(MotionEvent ev) {
@@ -192,5 +169,33 @@ public class StaticScene implements OnInputListener {
 	public boolean onSingleTapUp(MotionEvent e) {
 		return false;
 	}
+
+    @Override
+    public boolean onMultitouchScroll(MotionEvent ev1, MotionEvent ev2,
+            float dX, float dY) {
+        final Vector2D distance = mCamera.scale(new Vector2D(dX, dY));
+        mCamera.setPosition(mCamera.getPosition().add(distance));
+        return true;
+    }
+
+    @Override
+    public boolean onMultitouchZoom(MotionEvent ev1, MotionEvent ev2,
+            float scale) {
+        mCamera.setAperture(mCamera.getAperture().mul(scale));
+        return true;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent arg0, MotionEvent arg1, float dX,
+            float dY) {
+        final Vector2D distance = mCamera.scale(new Vector2D(dX, dY));
+        mCamera.setPosition(mCamera.getPosition().add(distance));
+        return true;
+    }
+
+    public boolean onTrackballEvent(MotionEvent ev) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
 }

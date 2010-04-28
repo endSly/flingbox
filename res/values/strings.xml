@@ -16,7 +16,7 @@
 
 <string name="help">Help</string>
 <string name="help_draw"><b>Tap and Draw:</b> Draws new body.</string>
-<string name="help_body_properties"><b>Long press over body:</b> Edit body's properties.</string>
+<string name="help_body_properties"><b>Long press over body:</b> Edit bodys properties.</string>
 <string name="help_drag"><b>Drag over background:</b> Moves scene camera.</string>
 <string name="help_move_body"><b>Drag over body:</b> Moves body</string>
 <string name="help_zoom"><b>Scroll trackball:</b> Zoom</string>

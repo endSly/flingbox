@@ -92,10 +92,8 @@ public class Scene extends DrawableScene implements OnInputListener, XmlSerializ
 	 * clear scene
 	 */
 	public void clearScene() {
-		ArrayList<Body> bodies = mOnSceneBodies;
 		stopSimulation();
-		while(!bodies.isEmpty())
-			remove(bodies.get(0));
+		super.clearScene();
 	}
 	
 
@@ -111,7 +109,7 @@ public class Scene extends DrawableScene implements OnInputListener, XmlSerializ
 			final float vy = (velocityY * cameraScale);
 			
 			mSelectedBody.getPhysics().setVelocity(vx, vy);
-			handled = true;
+			handled = true; 
 		}
 			
 		return handled;
@@ -195,7 +193,6 @@ public class Scene extends DrawableScene implements OnInputListener, XmlSerializ
 	/**
 	 * 
 	 */
-	@Override
 	public boolean onTrackballEvent(MotionEvent ev) {
 		boolean handled = false;
 		if (ev.getAction() == MotionEvent.ACTION_DOWN) 
@@ -204,7 +201,7 @@ public class Scene extends DrawableScene implements OnInputListener, XmlSerializ
 			else
 				handled |= startSimulation();
 			
-		return handled ? true : super.onTrackballEvent(ev);
+		return handled;
 	}
 	
 	/**
