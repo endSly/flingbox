@@ -37,10 +37,9 @@ public class SceneGestureDetector extends GestureDetector {
 		 * @return
 		 */
 		public boolean onUp(MotionEvent ev);
-		
-		public boolean onMultitouchZoom(MotionEvent ev1, MotionEvent ev2, float scale);
-		
-		public boolean onMultitouchScroll(MotionEvent ev1, MotionEvent ev2, float dX, float dY);
+
+        public boolean onPinch(MotionEvent ev1, MotionEvent ev2, float scale,
+                float dX, float dY);
 	}
 	
 	/** Handler of processed gesture events */
@@ -95,17 +94,16 @@ public class SceneGestureDetector extends GestureDetector {
 	        
 	        final float dx = -((x0 - lastX0) + (x1 - lastX1)) / 2;
 	        final float dy = -((y0 - lastY0) + (y1 - lastY1)) / 2;
-	        
-	        if (dx > -40 && dx < 40 && dy > -40 && dy < 40)
-	        mListener.onMultitouchScroll(mLastMotionEvent, ev, dx, dy);
-	       
+
 	        final float scale = (float) Math.sqrt(
                     ((lastX1 - lastX0) * (lastX1 - lastX0) + (lastY1 - lastY0) * (lastY1 - lastY0))
                     / ((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0))
                     );
 	        
-	        if (scale < 1.5 && scale > 0.6667)
-	            mListener.onMultitouchZoom(mLastMotionEvent, ev, scale);
+	        if ((scale < 1.5 && scale > 0.6667) 
+	                && (dx > -40 && dx < 40 && dy > -40 && dy < 40))
+	            mListener.onPinch(mLastMotionEvent, ev, scale, dx, dy);
+	        
 	        return true;
 	    }
 	    return false;
