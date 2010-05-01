@@ -52,7 +52,7 @@ import edu.eside.flingbox.xml.XmlImporter.XmlParseable;
 public class Scene {
 
     private float mDisplayWidth = 320f;
-    private float mDisplayHeight = 480f;
+    // private float mDisplayHeight = 480f; // We don't need this
 
     // Vibrator instance
     private Vibrator mVibrator;
@@ -70,7 +70,7 @@ public class Scene {
     private Body mSelectedBody = null;
     private boolean mIsDraggingBody = false;
     
-    private DrawingBody mDrawingBody = null;
+    private DrawingBody mDrawingBody;
     
     public final static int SCENE_MODE_PREVIEW = 0;
     public final static int SCENE_MODE_DRAWING = 10;
@@ -96,13 +96,9 @@ public class Scene {
             gravity = GravitySource.getStaticGravity(0f,
                     -SensorManager.GRAVITY_EARTH);
 
-        /* Create list of objects. */
         mSceneRenderer = new SceneRenderer();
         mScenePhysics = new ScenePhysics(gravity);
-        /*
-         * mSceneRenderer.add(new BackgroundRender( SCENE_LEFT_BORDER,
-         * SCENE_RIGHT_BORDER, SCENE_TOP_BORDER, SCENE_BOTTOM_BORDER));
-         */
+
         mGestureDetector = new SceneGestureDetector(c, mInputListener);
 
         mCamera = mSceneRenderer.getCamera();
@@ -113,48 +109,43 @@ public class Scene {
             DisplayMetrics dm = new DisplayMetrics();
             ((Activity) c).getWindowManager().getDefaultDisplay()
                     .getMetrics(dm);
-            mDisplayHeight = dm.heightPixels;
+            // mDisplayHeight = dm.heightPixels;
             mDisplayWidth = dm.widthPixels;
         }
 
         System.gc(); // This is a good moment to call to Garbage Collector.
     }
 
-    /**
-     * Starts physical simulation
-     * 
-     * @return true if simulation is started
-     */
-    public boolean startSimulation() {
-        if (mScenePhysics.isSimulating())
-            return false;
-        mScenePhysics.startSimulation();
-        return true;
+    public ScenePhysics getScenePhysics() {
+        return mScenePhysics;
     }
-
-    /**
-     * @return true if success
-     */
-    public boolean stopSimulation() {
-        if (!mScenePhysics.isSimulating())
-            return false;
-        mScenePhysics.stopSimulation();
-        return true;
-    }
-
-    /**
-     * @return true if simulating
-     */
-    public boolean isSimulating() {
-        return mScenePhysics.isSimulating();
-    }
-
+    
+    
     public void setSceneMode(int mode) {
+        switch (mode) {
+        case SCENE_MODE_PREVIEW:
+            mDrawingBody = null;
+            break;
+            
+        case SCENE_MODE_DRAWING_POLYGON:
+            mDrawingBody = new DrawingPolygon();
+            
+            break;
+        }
+        
         mMode = mode;
     }
 
     public int getSceneMode() {
         return mMode;
+    }
+    
+    public void onZoom(final float scale) {
+        mCamera.setAperture(mCamera.getAperture().mul(1 / scale));
+    }
+    
+    public void onMoveCamera(final Vector2D distance) {
+        mCamera.setPosition(mCamera.getPosition().add(distance));
     }
 
     public void add(Body body) {
@@ -171,33 +162,32 @@ public class Scene {
     }
 
     /**
-     * clear scene
+     * Clear all bodys on scene
      */
     public void clearScene() {
         final ArrayList<Body> bodies = mOnSceneBodies;
-        stopSimulation();
+        mScenePhysics.stopSimulation();
         while (!bodies.isEmpty())
             remove(bodies.get(0));
     }
 
+    /**
+     * @return Renderer for the scene
+     */
     public Renderer getSceneRenderer() {
         return mSceneRenderer;
     }
-
-    public boolean onTouchEvent(MotionEvent ev) {
-        return mGestureDetector.onTouchEvent(ev);
-    }
     
     /**
-     * 
+     * Must be called when trackball event occurs
      */
     public boolean onTrackballEvent(MotionEvent ev) {
         switch (ev.getAction()) {
         case MotionEvent.ACTION_DOWN:
             if (mScenePhysics.isSimulating())
-                stopSimulation();
+                mScenePhysics.stopSimulation();
             else
-                startSimulation();
+                mScenePhysics.startSimulation();
             return true;
 
         case MotionEvent.ACTION_MOVE:
@@ -208,6 +198,18 @@ public class Scene {
         return false;
     }
 
+    /**
+     * Must be called when touch event occurs
+     * @param ev event
+     * @return true if event caugth
+     */
+    public boolean onTouchEvent(MotionEvent ev) {
+        return mGestureDetector.onTouchEvent(ev);
+    }
+    
+    /**
+     * Touch input callbacks
+     */
     private OnInputListener mInputListener = new OnInputListener() {
 
         /**
@@ -295,7 +297,8 @@ public class Scene {
             case SCENE_MODE_DRAWING:
                 mSceneRenderer.remove(mDrawingBody.getDrawingRender());
                 final Body drawedBody = mDrawingBody.finalizeDrawing();
-                add(drawedBody);
+                if (drawedBody != null)
+                    add(drawedBody);
                 
                 System.gc();
                 break;
@@ -341,8 +344,8 @@ public class Scene {
         public boolean onPinch(MotionEvent ev1, MotionEvent ev2, float scale,
                 float dX, float dY) {
             final Vector2D distance = mCamera.scale(new Vector2D(dX, dY));
-            mCamera.setPosition(mCamera.getPosition().add(distance));
-            mCamera.setAperture(mCamera.getAperture().mul(scale));
+            onMoveCamera(distance);
+            onZoom(scale);
             return true;
         }
 
@@ -357,7 +360,7 @@ public class Scene {
 
     };
 
-
+    
     private final XmlSerializable mSerializer = new XmlSerializable() {
         private final static String TAG_FLINGBOX = "flingbox";
         

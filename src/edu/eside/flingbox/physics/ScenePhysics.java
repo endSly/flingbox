@@ -21,8 +21,6 @@ package edu.eside.flingbox.physics;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
-import android.util.Log;
-
 import edu.eside.flingbox.math.Vector2D;
 import edu.eside.flingbox.physics.collisions.Arbiter;
 import edu.eside.flingbox.physics.gravity.GravitySource;
@@ -34,7 +32,7 @@ import edu.eside.flingbox.utils.PositionComparator;
  * ScenePhysics manage thread for update objects 
  */
 public class ScenePhysics implements Runnable {
-	public GravitySource mGravity;
+	private final GravitySource mGravity;
 	
 	/** List of physical bodys on scene */
 	private final ArrayList<PhysicBody> mOnSceneBodies = new ArrayList<PhysicBody>();
@@ -54,7 +52,7 @@ public class ScenePhysics implements Runnable {
 	/**
 	 * Initializes an empty scene
 	 */
-	public ScenePhysics(GravitySource gravity) {
+	public ScenePhysics(final GravitySource gravity) {
 		mGravity = gravity;
 		PositionComparator.setGroundSense(gravity);
 	}
@@ -63,7 +61,7 @@ public class ScenePhysics implements Runnable {
 	 * Adds physical object
 	 * @param object object to be added
 	 */
-	public void add(PhysicBody body) {
+	public void add(final PhysicBody body) {
 		try {
 			mLockOnSceneBodys.acquire();
 		} catch (InterruptedException e) {
@@ -74,7 +72,7 @@ public class ScenePhysics implements Runnable {
 		mLockOnSceneBodys.release();
 	}
 	
-	public boolean remove(PhysicBody body) {
+	public boolean remove(final PhysicBody body) {
 		try {
 			mLockOnSceneBodys.acquire();
 		} catch (InterruptedException e) {
@@ -128,8 +126,6 @@ public class ScenePhysics implements Runnable {
 		final ArrayList<PhysicBody> bodies = mOnSceneBodies;
 		long lastTime = System.currentTimeMillis();
 		long time;
-		int fpsCounter = 0;
-		long fpsLastTimeShowed = lastTime;
 		final Vector2D force = new Vector2D();
 		
 		for (; !mDoKill; ) {
@@ -139,21 +135,10 @@ public class ScenePhysics implements Runnable {
 				e2.printStackTrace();
 			}
 			
-			/* Show fps */
-			long currentTime = System.currentTimeMillis();
-			if (currentTime - fpsLastTimeShowed >= 1000) {
-				Log.d("Flingbox", "Simulation fps: " + 1000f * (float)fpsCounter / (float)(currentTime - fpsLastTimeShowed));
-				fpsLastTimeShowed = currentTime;
-				fpsCounter = 0;
-			}
-			fpsCounter++;
-			
 			/* Compute time */
-			time = currentTime - lastTime;
-			lastTime = currentTime;
-			
-			
-			
+			time = System.currentTimeMillis() - lastTime;
+			lastTime = System.currentTimeMillis();
+
 			/* We need a semaphore here */
 			try {
 				mLockOnSceneBodys.acquire();
@@ -180,16 +165,15 @@ public class ScenePhysics implements Runnable {
 				body.onUpdateBody((float) time / 1000f);
 			
 			mLockOnSceneBodys.release();
+			
+			mSimulationMutex.release();
 			/* Keep max frame-rate */
 			try {
 				if (time < 40) 
-					Thread.sleep(40 - time);
-				
+					Thread.sleep(40 - time);		
 			} catch (InterruptedException e) {
-				Log.e("Flingbox", "Can't sleep during simulation.");
 				e.printStackTrace();
 			} 
-			mSimulationMutex.release();
 		}
 		mDoKill = false;
 	}

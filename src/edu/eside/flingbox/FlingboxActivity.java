@@ -23,7 +23,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
@@ -39,6 +41,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
+import android.widget.ZoomControls;
 
 import edu.eside.flingbox.scene.Scene;
 import edu.eside.flingbox.xml.XmlExporter;
@@ -59,6 +62,8 @@ public class FlingboxActivity extends Activity {
     private final static int MENU_LOAD_SCENE = 11;
     private final static int MENU_SAVE_SCENE = 12;
 
+    private ImageButton mModeButton;
+
     private GLSurfaceView mSurface;
     private Scene mScene;
 
@@ -73,17 +78,64 @@ public class FlingboxActivity extends Activity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.main);
-        mSurface = (GLSurfaceView) findViewById(R.id.gl_surface);// new
-                                                                 // GLSurfaceView(this);
-
-        ((ImageButton) findViewById(R.id.option_button))
-                .setImageResource(android.R.drawable.ic_menu_edit);
+        mSurface = (GLSurfaceView) findViewById(R.id.gl_surface);
 
         mScene = new Scene(this);
         mSurface.setRenderer(mScene.getSceneRenderer());
 
-        // Set OpenGL's surface
-        // setContentView(mSurface);
+        mScene.setSceneMode(Scene.SCENE_MODE_DRAWING);
+
+        mModeButton = (ImageButton) findViewById(R.id.option_button);
+        mModeButton.setImageResource(android.R.drawable.ic_menu_edit);
+        mModeButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                changeSceneMode();
+            }
+        });
+
+        final ZoomControls zoomControl = (ZoomControls) findViewById(R.id.zoom_control);
+        zoomControl.setOnZoomInClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                mScene.onZoom(1.2f);
+            }
+        });
+
+        zoomControl.setOnZoomOutClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                mScene.onZoom(0.8333f);
+            }
+        });
+    }
+
+    private void changeSceneMode() {
+        final CharSequence[] items = { getText(R.string.mode_view),
+                getText(R.string.mode_drawing) };
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.select_scene_mode);
+
+        builder.setSingleChoiceItems(items,
+                mScene.getSceneMode() == Scene.SCENE_MODE_PREVIEW ? 0 : 1,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int item) {
+                        switch (item) {
+                        case 0:
+                            mModeButton
+                                    .setImageResource(android.R.drawable.ic_menu_mylocation);
+                            mScene.setSceneMode(Scene.SCENE_MODE_PREVIEW);
+                            break;
+                        case 1:
+                            mModeButton
+                                    .setImageResource(android.R.drawable.ic_menu_edit);
+                            mScene.setSceneMode(Scene.SCENE_MODE_DRAWING);
+                            break;
+                        }
+                        dialog.dismiss();
+                    }
+
+                });
+        final AlertDialog chioceDialog = builder.create();
+        chioceDialog.show();
     }
 
     /**
@@ -111,10 +163,10 @@ public class FlingboxActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case MENU_PLAY_PAUSE:
-            if (mScene.isSimulating())
-                mScene.stopSimulation();
+            if (mScene.getScenePhysics().isSimulating())
+                mScene.getScenePhysics().stopSimulation();
             else
-                mScene.startSimulation();
+                mScene.getScenePhysics().startSimulation();
             return true;
         case MENU_PREFERENCES:
             return true;
@@ -123,7 +175,7 @@ public class FlingboxActivity extends Activity {
             return true;
         case MENU_NEW_SCENE:
             mSurface.onPause();
-            mScene.stopSimulation();
+            mScene.getScenePhysics().stopSimulation();
             mScene.clearScene();
             System.gc();
             mSurface.onResume();
@@ -144,8 +196,7 @@ public class FlingboxActivity extends Activity {
         final FileReader inFileReader;
         boolean readSuccess = false;
         mScene.clearScene();
-        if (mScene.isSimulating())
-            mScene.stopSimulation();
+        mScene.getScenePhysics().stopSimulation();
         try {
             if (!infile.exists())
                 return false;
@@ -205,7 +256,7 @@ public class FlingboxActivity extends Activity {
     @Override
     public void onPause() {
         super.onPause();
-        mScene.stopSimulation();
+        mScene.getScenePhysics().stopSimulation();
         mSurface.onPause();
     }
 
@@ -220,7 +271,7 @@ public class FlingboxActivity extends Activity {
      */
     public void onStop() {
         super.onStop();
-        mScene.stopSimulation();
+        mScene.getScenePhysics().stopSimulation();
     }
 
     @Override

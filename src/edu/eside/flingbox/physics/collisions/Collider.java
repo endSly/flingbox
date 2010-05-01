@@ -27,75 +27,76 @@ import edu.eside.flingbox.utils.PositionComparator.Positionable;
  * Abstract collision manager for any object.
  */
 public abstract class Collider implements OnMovementListener, Positionable {
-	
-	/** bounding circle radius, needed to discartd quickly collisions */
-	protected float mRadius; 
 
-	/** Objects position. needs to be updated */
-	protected final Vector2D mPosition;
-	protected float mAngle = 0f;
-	 
-	protected final PhysicBody mPhysicBody;
-	
-	/**
-	 * Local constructor for any collider.
-	 * 
-	 * @param listener Collision listener
-	 */
-	public Collider(final PhysicBody physicBody) {
-		mPosition = new Vector2D();
-		mPhysicBody = physicBody;
-	}
-	
-	/**
-	 * Checks if objects can collide
-	 * 
-	 * @param collider other objects collider.
-	 * @return true if objects can collide
-	 */
-	public abstract Contact[] checkContacts(final Collider collider);
-	
-	/**
-	 * @return true if there are a chance of collision
-	 */
-	public boolean canContact(final Collider collider) {
-		/* Start checking bounding circle */
-		final float radiusLength = mRadius + collider.mRadius;
-		final float thisX = mPosition.i, thisY = mPosition.j, 
-			otherX = collider.mPosition.i, otherY = collider.mPosition.j;
-		final float distanceSqr = (thisX - otherX) * (thisX - otherX) 
-				+ (thisY - otherY) * (thisY - otherY);
-		
-		if (distanceSqr > (radiusLength * radiusLength))
-			return false; // No collision possible
+    /** bounding circle radius, needed to discartd quickly collisions */
+    protected float mRadius;
 
-		return true;
-		
-	}
-	
-	/**
-	 * Called when a movement occurs
-	 */
-	public void onMovement(final Vector2D newPosition, float newAngle) {
-		mPosition.set(newPosition);
-		mAngle = newAngle;
-	}
-	
-	public Vector2D getPosition() {
-		return mPosition;
-	}
-	
-	/**
-	 * @return Bounding circle's radius
-	 */
-	public float getBoundingCircle() {
-		return mRadius;
-	}
-	
-	/**
-	 * @return associated PhysicBody
-	 */
-	public PhysicBody getAssociatedBody() {
-		return mPhysicBody;
-	}
+    /** Objects position. needs to be updated */
+    protected final Vector2D mPosition;
+    protected float mAngle = 0f;
+
+    protected final PhysicBody mPhysicBody;
+
+    /**
+     * Local constructor for any collider.
+     * 
+     * @param listener
+     *            Collision listener
+     */
+    public Collider(final PhysicBody physicBody) {
+        mPosition = new Vector2D();
+        mPhysicBody = physicBody;
+    }
+
+    /**
+     * Checks if objects can collide
+     * 
+     * @param collider
+     *            other objects collider.
+     * @return true if objects can collide
+     */
+    public abstract Contact[] checkContacts(final Collider collider);
+
+    /**
+     * @return true if there are a chance of collision
+     */
+    public boolean canContact(final Collider collider) {
+        /* Start checking bounding circle */
+        final float radiusLength = mRadius + collider.mRadius;
+        final float thisX = mPosition.i, thisY = mPosition.j, otherX = collider.mPosition.i, otherY = collider.mPosition.j;
+        final float distanceSqr = (thisX - otherX) * (thisX - otherX)
+                + (thisY - otherY) * (thisY - otherY);
+
+        if (distanceSqr > (radiusLength * radiusLength))
+            return false; // No collision possible
+
+        return true;
+
+    }
+
+    /**
+     * Called when a movement occurs
+     */
+    public void onMovement(final Vector2D newPosition, float newAngle) {
+        mPosition.set(newPosition);
+        mAngle = newAngle;
+    }
+
+    public Vector2D getPosition() {
+        return mPosition;
+    }
+
+    /**
+     * @return Bounding circle's radius
+     */
+    public float getBoundingCircle() {
+        return mRadius;
+    }
+
+    /**
+     * @return associated PhysicBody
+     */
+    public PhysicBody getAssociatedBody() {
+        return mPhysicBody;
+    }
 }

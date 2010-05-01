@@ -34,126 +34,157 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class BodySettingsDialog extends Dialog {
 
-	/** Contains Body to change properties */
-	protected Body mBody;
-	protected Scene mScene;
+    /** Contains Body to change properties */
+    protected final Body mBody;
+    protected final Scene mScene;
 
-	public BodySettingsDialog(Context context, Body body, Scene scene) {
-		super(context);
-		//mContext = context;
-		mBody = body;
-		mScene = scene;
-	}
-	
-    /** 
-     * Called when the dialog is first created. 
+    public BodySettingsDialog(Context context, final Body body,
+            final Scene scene) {
+        super(context);
+        // mContext = context;
+        mBody = body;
+        mScene = scene;
+    }
+
+    /**
+     * Called when the dialog is first created.
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-    	// Set dialog content
-    	setContentView(R.layout.body_settings);
+        // Set dialog content
+        setContentView(R.layout.body_settings);
 
-    	// Sets dialog title
-		setTitle(R.string.body_settings_name);
-		
-		/*
-		 * Lock Body Checkbox
-		 */
-		CheckBox lockBodyCheckbox = (CheckBox) findViewById(R.id.checkbox_lock_body);
-		lockBodyCheckbox.setChecked(mBody.getPhysics().isFixed());
-		lockBodyCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-				mBody.getPhysics().setBodyFixed(arg1);
-			}
-			
-		});
-		
-		/*
-		 * Density SeekBar 
-		 */
-		SeekBar densitySeekBar = (SeekBar) findViewById(R.id.seek_bodys_density);
-		densitySeekBar.setMax(400); /* Density is between [-200, 199] */
-		densitySeekBar.setProgress((int) (Math.log( /* Logaritmical progress */
-				mBody.getPhysics().getDensity()) * 10f + 200f));
+        // Sets dialog title
+        setTitle(R.string.body_settings_name);
 
-		densitySeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-				if (!fromUser)
-					return;
-				/* Density is adjusted exponentially */
-				mBody.getPhysics().setDensity((float) Math.exp( 
-						((float) seekBar.getProgress() - 200f) / 10f));
-			}
+        /*
+         * Lock Body Checkbox
+         */
+        CheckBox lockBodyCheckbox = (CheckBox) findViewById(R.id.checkbox_lock_body);
+        lockBodyCheckbox.setChecked(mBody.getPhysics().isFixed());
+        lockBodyCheckbox
+                .setOnCheckedChangeListener(new OnCheckedChangeListener() {
+                    public void onCheckedChanged(CompoundButton arg0,
+                            boolean arg1) {
+                        mBody.getPhysics().setBodyFixed(arg1);
+                    }
 
-			public void onStartTrackingTouch(SeekBar seekBar) { }
-			public void onStopTrackingTouch(SeekBar seekBar) { }
-		});
+                });
 
-		/*
-		 * Restitution SeekBar 
-		 */
-		SeekBar restitutionSeekBar = (SeekBar) findViewById(R.id.seek_restitution_coef);
-		restitutionSeekBar.setMax(1024);
-		restitutionSeekBar.setProgress((int) (mBody.getPhysics().getRestitutionCoeficient() * 1024));
+        /*
+         * Density SeekBar
+         */
+        SeekBar densitySeekBar = (SeekBar) findViewById(R.id.seek_bodys_density);
+        densitySeekBar.setMax(400); /* Density is between [-200, 199] */
+        densitySeekBar.setProgress((int) (Math.log( /* Logaritmical progress */
+        mBody.getPhysics().getDensity()) * 10f + 200f));
 
-		restitutionSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-				if (!fromUser)
-					return;
-				mBody.getPhysics().setRestitutionCoeficient((float) progress / 1024f);
-			}
+        densitySeekBar
+                .setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+                    public void onProgressChanged(SeekBar seekBar,
+                            int progress, boolean fromUser) {
+                        if (!fromUser)
+                            return;
+                        /* Density is adjusted exponentially */
+                        mBody.getPhysics()
+                                .setDensity(
+                                        (float) Math.exp(((float) seekBar
+                                                .getProgress() - 200f) / 10f));
+                    }
 
-			public void onStartTrackingTouch(SeekBar seekBar) { }
-			public void onStopTrackingTouch(SeekBar seekBar) { }
-		});
-		
-		/*
-		 * Static friction SeekBar 
-		 */
-		SeekBar staticFrictionSeekBar = (SeekBar) findViewById(R.id.seek_static_friction);
-		staticFrictionSeekBar.setMax(1024);
-		staticFrictionSeekBar.setProgress((int) (mBody.getPhysics().getStaticFrictionCoeficient() * 1024));
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                    }
 
-		staticFrictionSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-				if (!fromUser)
-					return;
-				mBody.getPhysics().setStaticFrictionCoeficient((float) progress / 1024f);
-			}
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                    }
+                });
 
-			public void onStartTrackingTouch(SeekBar seekBar) { }
-			public void onStopTrackingTouch(SeekBar seekBar) { }
-		});
-	
-		/*
-		 * Kinetic friction SeekBar 
-		 */
-		SeekBar kineticFrictionSeekBar = (SeekBar) findViewById(R.id.seek_kinetic_friction);
-		kineticFrictionSeekBar.setMax(1024);
-		kineticFrictionSeekBar.setProgress((int) (mBody.getPhysics().getDynamicFrictionCoeficient() * 1024));
+        /*
+         * Restitution SeekBar
+         */
+        SeekBar restitutionSeekBar = (SeekBar) findViewById(R.id.seek_restitution_coef);
+        restitutionSeekBar.setMax(1024);
+        restitutionSeekBar.setProgress((int) (mBody.getPhysics()
+                .getRestitutionCoeficient() * 1024));
 
-		kineticFrictionSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-				if (!fromUser)
-					return;
-				mBody.getPhysics().setDynamicFrictionCoeficient((float) progress / 1024f);
-			}
+        restitutionSeekBar
+                .setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+                    public void onProgressChanged(SeekBar seekBar,
+                            int progress, boolean fromUser) {
+                        if (!fromUser)
+                            return;
+                        mBody.getPhysics().setRestitutionCoeficient(
+                                (float) progress / 1024f);
+                    }
 
-			public void onStartTrackingTouch(SeekBar seekBar) { }
-			public void onStopTrackingTouch(SeekBar seekBar) { }
-		});
-		
-		Button removeButton = (Button) findViewById(R.id.button_remove_body);
-		removeButton.setOnClickListener(new View.OnClickListener() {
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                    }
 
-			@Override
-			public void onClick(View v) {
-				mScene.remove(mBody);
-				cancel();
-			}
-			
-		});
-	
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                    }
+                });
+
+        /*
+         * Static friction SeekBar
+         */
+        SeekBar staticFrictionSeekBar = (SeekBar) findViewById(R.id.seek_static_friction);
+        staticFrictionSeekBar.setMax(1024);
+        staticFrictionSeekBar.setProgress((int) (mBody.getPhysics()
+                .getStaticFrictionCoeficient() * 1024));
+
+        staticFrictionSeekBar
+                .setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+                    public void onProgressChanged(SeekBar seekBar,
+                            int progress, boolean fromUser) {
+                        if (!fromUser)
+                            return;
+                        mBody.getPhysics().setStaticFrictionCoeficient(
+                                (float) progress / 1024f);
+                    }
+
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                    }
+
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                    }
+                });
+
+        /*
+         * Kinetic friction SeekBar
+         */
+        SeekBar kineticFrictionSeekBar = (SeekBar) findViewById(R.id.seek_kinetic_friction);
+        kineticFrictionSeekBar.setMax(1024);
+        kineticFrictionSeekBar.setProgress((int) (mBody.getPhysics()
+                .getDynamicFrictionCoeficient() * 1024));
+
+        kineticFrictionSeekBar
+                .setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+                    public void onProgressChanged(SeekBar seekBar,
+                            int progress, boolean fromUser) {
+                        if (!fromUser)
+                            return;
+                        mBody.getPhysics().setDynamicFrictionCoeficient(
+                                (float) progress / 1024f);
+                    }
+
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                    }
+
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                    }
+                });
+
+        Button removeButton = (Button) findViewById(R.id.button_remove_body);
+        removeButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mScene.remove(mBody);
+                cancel();
+            }
+
+        });
+
     }
 
 }

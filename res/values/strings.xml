@@ -10,6 +10,12 @@
 <string name="body_settings_lock_body">Lock Body</string><string name="body_settings_density">Density</string>
 <string name="body_settings_restitution">Restitution Coeficient</string>
 
+<string name="select_scene_mode">Select scene mode:</string>
+<string name="mode_view">Free view</string>
+<string name="mode_drawing">Free drawing</string>
+<string name="mode_ground_drawing">Ground drawing</string>
+
+
 <string name="body_settings_static_friction">Static Friction</string>
 <string name="body_settings_kinetic_friction">Kinetic Friction</string>
 <string name="body_settings_remove_body">Remove body</string>

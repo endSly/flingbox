@@ -67,8 +67,11 @@ public class SceneGestureDetector extends GestureDetector {
 			handled |= mListener.onUp(ev);
 		
 		// Check for multitouch event
-		if (ev.getPointerCount() > 1)
+		if (ev.getPointerCount() > 1) {
 		    handled |= this.onMultitouchEvent(ev);
+		    // Cancel last event
+		    super.onTouchEvent(MotionEvent.obtain(0, 0, MotionEvent.ACTION_CANCEL, 0f, 0f, 0));
+		}
 		
 		mLastMotionEvent = ev;
         return handled ? true : super.onTouchEvent(ev);
@@ -96,11 +99,11 @@ public class SceneGestureDetector extends GestureDetector {
 	        final float dy = -((y0 - lastY0) + (y1 - lastY1)) / 2;
 
 	        final float scale = (float) Math.sqrt(
-                    ((lastX1 - lastX0) * (lastX1 - lastX0) + (lastY1 - lastY0) * (lastY1 - lastY0))
-                    / ((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0))
+	                ((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0))
+                    / ((lastX1 - lastX0) * (lastX1 - lastX0) + (lastY1 - lastY0) * (lastY1 - lastY0))
                     );
 	        
-	        if ((scale < 1.5 && scale > 0.6667) 
+	        if ((scale < 1.25 && scale > 0.8) 
 	                && (dx > -40 && dx < 40 && dy > -40 && dy < 40))
 	            mListener.onPinch(mLastMotionEvent, ev, scale, dx, dy);
 	        

@@ -91,6 +91,7 @@ public class PhysicPolygon extends PhysicBody {
 	}
 	
 
+	
 	@Override
 	public void setDensity(float density) {
 		super.setDensity(density);
